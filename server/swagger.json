@@ -86,11 +86,35 @@
             "id": {
               "type": "integer"
             },
-            "name": {
+            "first_name": {
+              "type": "string"
+            },
+            "last_name": {
               "type": "string"
             },
             "age": {
               "type": "integer"
+            },
+            "sex": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            },
+            "birthdate": {
+              "type": "string"
+            },
+            "interests": {
+              "type": "string"
+            },
+            "photos": {
+              "type": "string"
+            },
+            "bio": {
+              "type": "string"
             }
           }
         }

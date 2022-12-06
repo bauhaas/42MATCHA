@@ -4,9 +4,11 @@ import userController from './controllers/userController.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger.json';
 import bodyParser from 'body-parser';
+import cors  from 'cors';
 
 const app = express();
 
+app.use(cors());
 
 // Use the body-parser middleware to parse request bodies
 app.use(bodyParser.json());

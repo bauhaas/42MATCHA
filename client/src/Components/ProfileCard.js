@@ -45,13 +45,13 @@ const ProfileCard = ({ user }) => {
                             />
                         </motion.div>
                         <div id='cardRevealed' className="">
-                            <img className="w-full rounded-t-md" src={user} alt="user" />
+                            <img className="w-full rounded-t-md" src={user.photos} alt="user" />
                             <div className='p-2'>
                                 <div className="pb-2">
-                                    <p className="text-4xl font-bold text-orange-400">Jane, 28</p>
+                                    <p className="text-4xl font-bold text-orange-400">{user.first_name}, {user.age}</p>
                                     <p className='text-xl font-bold text-orange-400'>Student</p>
-                                    <p className='font-bold text-orange-400 pb-2'>Somewhere - 4km</p>
-                                    <p className='line-clamp-5 text-justify text-gray-300'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam dapibus rutrum iaculis. Maecenas sodales ac ligula vitae malesuada. Cras ac placerat metus. Nulla facilisi. Nam finibus enim sed augue egestas bibendum. Maecenas sed mauris at nisi mattis rhoncus. Nam eleifend mi sit amet mollis semper. Nullam condimentum ipsum justo. Nunc sollicitudin mattis mollis.</p>
+                                    <p className='font-bold text-orange-400 pb-2'>{user.city} - 4km</p>
+                                    <p className='line-clamp-5 text-justify text-gray-300'>{user.bio}</p>
                                 </div>
                                 <div className="grid grid-cols-4 gap-2">
                                     <span className="bg-orange-300 text-orange-900 text-sm font-medium py-0.5 rounded-md flex justify-center">food</span>
