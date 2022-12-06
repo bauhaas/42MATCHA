@@ -1,0 +1,98 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "User API",
+      "description": "An API for managing users in a database",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/users": {
+        "get": {
+          "description": "Get all users from the database",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved all users",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to retrieve users from the database"
+            }
+          }
+        },
+        "post": {
+            "description": "Insert a new user into the database",
+            "parameters": [
+              {
+                "name": "name",
+                "in": "formData",
+                "required": true,
+                "type": "string"
+              },
+              {
+                "name": "age",
+                "in": "formData",
+                "required": true,
+                "type": "integer"
+              }
+            ],
+            "responses": {
+              "201": {
+                "description": "Successfully inserted user into the database"
+              },
+              "500": {
+                "description": "Failed to insert user into the database"
+              }
+            }
+          }
+      },
+      "/users/{id}": {
+        "get": {
+          "description": "Get a user by their ID from the database",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved user",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "404": {
+              "description": "Failed to find user with the specified ID"
+            },
+            "500": {
+              "description": "Failed to retrieve user from the database"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "age": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+}
