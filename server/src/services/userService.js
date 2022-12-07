@@ -16,6 +16,52 @@ export const getAllUsers = async () => {
   }
 };
 
+// Get user from database where email match the paramater
+export const getLogin = async (email, password) => {
+  try {
+    console.log(email, password);
+    const client = await pool.connect();
+
+    const result = await client.query(`
+      SELECT *
+      FROM users
+      WHERE email = $1
+    `, [email]);
+    // console.log(result);
+
+
+    // If no user was found with the given email, throw an error
+    if (result.rowCount === 0) {
+      console.log('didnt find user with that mail');
+      throw new Error('Invalid email or password.');
+    }
+
+    // Get the user from the result
+    const user = result.rows[0];
+
+    // Compare the given password with the hashed password in the database
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    // If the passwords don't match, throw an error
+    if (!passwordMatch) {
+      console.log('pass didnt match');
+      throw new Error('Invalid email or password.');
+    }
+
+    // // Generate a JWT for the user
+    // const token = jwt.sign({ email: email }, 'secret-key', {
+    //   expiresIn: '1h'
+    // });
+
+    // // Return the JWT to the caller
+    // return token;
+    return 'lol';
+  } catch (err) {
+    // console.log(err);
+    throw err;
+  }
+};
+
 // Get a user by their ID from the database
 export const getUserById = async (id) => {
   try {
