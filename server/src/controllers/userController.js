@@ -29,11 +29,15 @@ router.get('/:id', async (req, res) => {
 // Insert a new user
 router.post('/', async (req, res) => {
   try {
-    const { name, age } = req.body;
-    const id = await insertUser(name, age);
+    const { firstName, lastName, email, password } = req.body;
+    const id = await insertUser(firstName, lastName, email, password);
     res.send({ id });
   } catch (err) {
-    res.status(500).send(err.message);
+    if (err.message === 'A user with the given email already exists.') {
+      res.status(403).send(err.message);
+    } else {
+      res.status(500).send(err.message);
+    }
   }
 });
 

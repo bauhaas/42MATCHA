@@ -29,16 +29,28 @@
             "description": "Insert a new user into the database",
             "parameters": [
               {
-                "name": "name",
+                "name": "firstName",
                 "in": "formData",
                 "required": true,
                 "type": "string"
               },
               {
-                "name": "age",
+                "name": "lastName",
                 "in": "formData",
                 "required": true,
-                "type": "integer"
+                "type": "string"
+              },
+              {
+                "name": "email",
+                "in": "formData",
+                "required": true,
+                "type": "string"
+              },
+              {
+                "name": "password",
+                "in": "formData",
+                "required": true,
+                "type": "string"
               }
             ],
             "responses": {

@@ -13,8 +13,8 @@ const GET_USER_BY_ID = `
 
 // Insert a new user
 const INSERT_USER = `
-  INSERT INTO users (name, age)
-  VALUES ($1, $2)
+  INSERT INTO users (first_name, last_name, email, password)
+  VALUES ($1, $2, $3, $4)
   RETURNING id
 `;
 
@@ -43,9 +43,9 @@ export const DBgetAllUsers = () => ({
   });
 
   // Define a function for inserting a new user
-  export const DBinsertUser = (name, age) => ({
+  export const DBinsertUser = (firstName, lastName, email, password) => ({
     text: INSERT_USER,
-    values: [name, age]
+    values: [firstName, lastName, email, password]
   });
 
   // Define a function for updating a user's information

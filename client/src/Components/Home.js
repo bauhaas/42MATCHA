@@ -11,9 +11,6 @@ const Menu = () => {
 
 	const [users, setUsers] = useState([]);
 
-	// Declare a state variable for the users data
-	// const [ausers, asetUsers] = useState([]);
-
 	// Fetch the users data from the backend when the component mounts
 	useEffect(() => {
 		axios.get('http://localhost:3001/users')

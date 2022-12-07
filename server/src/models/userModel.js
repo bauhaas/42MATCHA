@@ -25,11 +25,20 @@ const interestsAndHobbies = [
 export async function createUsersTable() {
   try {
     const client = await pool.connect();
+
+    const tableExists = await client.query(`
+      SELECT *
+      FROM information_schema.tables
+      WHERE table_name = 'users';
+    `);
+    if (tableExists.rowCount === 0) {
     const result = await client.query(`
       CREATE TABLE users (
         id SERIAL PRIMARY KEY,
         first_name VARCHAR(255),
         last_name VARCHAR(255),
+        email VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL,
         age INTEGER,
         sex VARCHAR(255),
         city VARCHAR(255),
@@ -39,7 +48,10 @@ export async function createUsersTable() {
         bio TEXT
       );
     `);
-    console.log(result, 'user table have been created');
+    console.log(result, 'user table have been created');}
+    else {
+      console.log('user table already exists - no need to create it');
+    }
     client.release();
   } catch (err) {
     console.error(err);
@@ -50,42 +62,61 @@ export async function createUsersTable() {
 export async function seedUsersTable() {
   try {
     const client = await pool.connect();
-    // Generate 10 fake users
-    for (let i = 0; i < 10; i++) {
-      const sex = faker.name.sex();
-      const first_name = faker.name.firstName(sex);
-      const last_name = faker.name.lastName(sex);
-      const age = faker.datatype.number({ min: 18, max: 80})
-      const city = faker.address.cityName();
-      const country = faker.address.country();
-      // const birthdate = faker.date.birthdate({refDate: Date});
-      const interests = faker.helpers.arrayElement(interestsAndHobbies, 3)
-      const photos = faker.image.avatar();
-      const bio = faker.lorem.lines(8);
-      const query = `
-        INSERT INTO users (
-          first_name,
-          last_name,
-          age,
-          sex,
-          city,
-          country,
-          interests,
-          photos,
-          bio
-        ) VALUES (
-          '${first_name}',
-          '${last_name}',
-          ${age},
-          '${sex}',
-          '${city}',
-          '${country}',
-          '${interests}',
-          '${photos}',
-          '${bio}'
-        );
-      `;
-      await client.query(query);
+
+    // Check if the 'users' table has any rows
+    const tableIsEmpty = await client.query(`
+      SELECT *
+      FROM users
+      LIMIT 1;
+    `);
+
+    if (tableIsEmpty.rowCount === 0) {
+      // Generate 10 fake users
+      for (let i = 0; i < 10; i++) {
+        const sex = faker.name.sex();
+        const first_name = faker.name.firstName(sex);
+        const last_name = faker.name.lastName(sex);
+        const email = faker.internet.email(first_name, last_name);
+        const password = faker.internet.password();
+        const age = faker.datatype.number({ min: 18, max: 80})
+        const city = faker.address.cityName();
+        const country = faker.address.country();
+        // const birthdate = faker.date.birthdate({refDate: Date});
+        const interests = faker.helpers.arrayElement(interestsAndHobbies, 3)
+        const photos = faker.image.avatar();
+        const bio = faker.lorem.lines(8);
+        const query = `
+          INSERT INTO users (
+            first_name,
+            last_name,
+            email,
+            password,
+            age,
+            sex,
+            city,
+            country,
+            interests,
+            photos,
+            bio
+          ) VALUES (
+            '${first_name}',
+            '${last_name}',
+            '${email}',
+            '${password}',
+            ${age},
+            '${sex}',
+            '${city}',
+            '${country}',
+            '${interests}',
+            '${photos}',
+            '${bio}'
+          );
+        `;
+        await client.query(query);
+        }
+      }
+    else {
+      console.log('user table already seeded - no need to seed');
     }
     client.release();
   } catch (err) {
