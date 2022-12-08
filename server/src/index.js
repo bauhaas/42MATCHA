@@ -5,9 +5,11 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger.json';
 import bodyParser from 'body-parser';
 import cors  from 'cors';
+import dotenv from 'dotenv';
 
 const app = express();
 
+dotenv.config();
 app.use(cors());
 
 // Use the body-parser middleware to parse request bodies

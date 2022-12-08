@@ -55,7 +55,7 @@ export const getLogin = async (email, password) => {
 
     // // Return the JWT to the caller
     // return token;
-    return 'lol';
+    return user;
   } catch (err) {
     // console.log(err);
     throw err;

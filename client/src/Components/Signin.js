@@ -1,19 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react"
 import {useNavigate} from 'react-router-dom';
+import useToggle from '../hooks/useToggle';
+import useIsAuthenticated from '../hooks/useIsAuthenticated';
 import axios from 'axios';
 
-// Hook
-// Parameter is the boolean, with default "false" value
-const useToggle = (initialState = false) => {
-  // Initialize the state
-  const [state, setState] = useState(initialState);
-
-  // Define and memorize toggler function in case we pass down the component,
-  // This function change the boolean value to it's opposite value
-  const toggle = useCallback(() => setState(state => !state), []);
-
-  return [state, toggle]
-}
 
 function Signin() {
 
@@ -21,13 +11,40 @@ function Signin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState([])
   const [isErrorToggle, setErrorToggle] = useToggle(false);
+  const { isAuthenticated } = useIsAuthenticated();
 
   let navigate = useNavigate();
+  let refreshToken;
+
+  useEffect(() => {
+    // Check if the user is already logged in
+    if (isAuthenticated) {
+      // Redirect the user to the Home page
+      console.log("go to home cuz already sign")
+      navigate('/home');
+    }
+  }, [isAuthenticated]);
 
   const handleSignUpClick = (event) => {
     event.preventDefault();
     navigate("/signup");
   }
+
+  function loadUserInfos() {
+    axios.get('http://localhost:3001/users/1', {
+    })
+      .then(response => {
+        // handle success
+        console.log('auth success');
+        console.log(response);
+        // navigate("/home");
+      })
+      .catch(error => {
+        // handle error
+        console.log(error);
+        console.log(error.response.data);
+      });
+}
 
   const handleSignInClick = (event) => {
     event.preventDefault();
@@ -40,7 +57,18 @@ function Signin() {
     })
       .then(response => {
         // handle success
-        navigate("/home");
+        console.log('auth success');
+        console.log(response.data);
+        console.log(response);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
+        // refreshToken = response.data.refreshToken;
+
+      // Save the JWT in local storage
+      localStorage.setItem('jwt', response.data);
+      // You can then retrieve the JWT from the local storage using the localStorage.getItem('jwt') method.
+
+        loadUserInfos();
+        // navigate("/home");
       })
       .catch(error => {
         // handle error

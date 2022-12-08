@@ -3,19 +3,7 @@ import NavBar from './NavBar';
 import { UNSAFE_DataRouterStateContext, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback} from 'react';
 import { motion } from "framer-motion"
-
-// Hook
-// Parameter is the boolean, with default "false" value
-const useToggle = (initialState = false) => {
-    // Initialize the state
-    const [state, setState] = useState(initialState);
-
-    // Define and memorize toggler function in case we pass down the component,
-    // This function change the boolean value to it's opposite value
-    const toggle = useCallback(() => setState(state => !state), []);
-
-    return [state, toggle]
-}
+import useToggle from '../hooks/useToggle';
 
 const transition = {
     duration: 0.5,

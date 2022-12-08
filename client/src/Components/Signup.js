@@ -1,20 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react"
 import {useNavigate} from 'react-router-dom';
-import useValidator from '../hooks/useValidator'
+import useValidator from '../hooks/useValidator';
+import useToggle from '../hooks/useToggle';
 import axios from 'axios';
 
-// Hook
-// Parameter is the boolean, with default "false" value
-const useToggle = (initialState = false) => {
-  // Initialize the state
-  const [state, setState] = useState(initialState);
-
-  // Define and memorize toggler function in case we pass down the component,
-  // This function change the boolean value to it's opposite value
-  const toggle = useCallback(() => setState(state => !state), []);
-
-  return [state, toggle]
-}
 
 function Signup() {
 

@@ -1,5 +1,6 @@
 import express from 'express';
 import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin } from '../services/userService.js';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -15,13 +16,24 @@ router.get('/', async (req, res) => {
 });
 
 
+function generateAccessToken(user) {
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
+}
+
+function generateRefreshToken(user) {
+  return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1y'});
+}
+
+
 // TODO move to auth folder - allow to logn and check to the db the passs and email
 router.get('/login', async (req, res) => {
   try {
     const { email, password } = req.query;
-    const login = await getLogin(email, password);
-    // console.log(login);
-    res.send(login);
+    const user = await getLogin(email, password);
+    console.log(user);
+
+    const accessToken = generateAccessToken(user);
+    res.send(accessToken);
   } catch (err) {
     if (err.message === 'Invalid email or password.') {
       res.status(401).send(err.message);
@@ -31,10 +43,29 @@ router.get('/login', async (req, res) => {
   }
 });
 
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+
+  console.log('req', req);
+  console.log('authHeader', authHeader);
+  console.log('token', token);
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) {
+      return res.sendStatus(401)
+    }
+    req.user = user;
+    next();
+  });
+}
+
 // Get a user by their ID
-router.get('/:id', async (req, res) => {
+router.get('/:id',authenticateToken, async (req, res) => {
   try {
     console.log('get user by id');
+    console.log(req);
     const id = req.params.id;
     const user = await getUserById(id);
     res.send(user);
