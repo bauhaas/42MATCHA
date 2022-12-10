@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import useToggle from '../hooks/useToggle';
 import useIsAuthenticated from '../hooks/useIsAuthenticated';
 import axios from 'axios';
+import { setCookie, getCookie } from 'cookies';
 
 
 function Signin() {
@@ -11,6 +12,7 @@ function Signin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState([])
   const [isErrorToggle, setErrorToggle] = useToggle(false);
+  const [rememberMe, setRememberMe] = useToggle(false)
   const { isAuthenticated } = useIsAuthenticated();
 
   let navigate = useNavigate();
@@ -49,11 +51,9 @@ function Signin() {
   const handleSignInClick = (event) => {
     event.preventDefault();
 
-    axios.get('http://localhost:3001/users/login', {
-      params:{
-        email: email,
-        password: password
-      } //req.query in back
+    axios.post('http://localhost:3001/users/login', {
+      email: email,
+      password: password
     })
       .then(response => {
         // handle success
@@ -63,11 +63,18 @@ function Signin() {
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
         // refreshToken = response.data.refreshToken;
 
-      // Save the JWT in local storage
-      localStorage.setItem('jwt', response.data);
-      // You can then retrieve the JWT from the local storage using the localStorage.getItem('jwt') method.
-
-        loadUserInfos();
+        if(rememberMe)
+        {
+          // Set the JWT in a cookie that will be stored for 30 days
+          setCookie('jwt', response.data, { maxAge: 60 * 60 * 24 * 30 });
+        }
+        else
+        {
+            // Save the JWT in local storage
+            localStorage.setItem('jwt', response.data);
+            // You can then retrieve the JWT from the local storage using the localStorage.getItem('jwt') method.
+        }
+        // loadUserInfos();
         // navigate("/home");
       })
       .catch(error => {
@@ -78,12 +85,6 @@ function Signin() {
         console.log(error.response.data);
       });
   }
-
-  // Fetch the users data from the backend when the component mounts
-  useEffect(() => {
-    console.log(email, password);
-  }, [email, password]);
-
 
   return (
     <>

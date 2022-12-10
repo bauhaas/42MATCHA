@@ -26,9 +26,9 @@ function generateRefreshToken(user) {
 
 
 // TODO move to auth folder - allow to logn and check to the db the passs and email
-router.get('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.query;
+    const { email, password } = req.body;
     const user = await getLogin(email, password);
     console.log(user);
 
