@@ -80,7 +80,8 @@ export async function seedNotificationsTable() {
           ) VALUES (
             ${user_id},
             ${sender_id},
-            '${read}'
+            '${type}',
+            ${read}
           );
         `;
                 await client.query(query);

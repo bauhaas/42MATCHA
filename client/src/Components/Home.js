@@ -25,24 +25,24 @@ const Menu = () => {
 	}, []);
 
 
-	useEffect(() => {
-		const token = localStorage.getItem('jwt');
-		console.log(token);
-		socket.emit('getNotifications', {token:token});
+	// useEffect(() => {
+	// 	const token = localStorage.getItem('jwt');
+	// 	console.log(token);
+	// 	socket.emit('getNotifications', {token:token});
 
-		return () => {
-		};
-	}, []);
+	// 	return () => {
+	// 	};
+	// }, []);
 
-	useEffect(() => {
-		socket.on('sendNotifications', (data) => {
-			console.log(data);
-		});
+	// useEffect(() => {
+	// 	socket.on('sendNotifications', (data) => {
+	// 		console.log(data);
+	// 	});
 
-		return () => {
-			socket.off('sendNotifications');
-		};
-	}, []);
+	// 	return () => {
+	// 		socket.off('sendNotifications');
+	// 	};
+	// }, []);
 
 
 

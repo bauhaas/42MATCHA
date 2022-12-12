@@ -76,7 +76,7 @@ function Signin() {
             // You can then retrieve the JWT from the local storage using the localStorage.getItem('jwt') method.
         }
         // loadUserInfos();
-        // navigate("/home");
+        navigate("/home");
       })
       .catch(error => {
         // handle error

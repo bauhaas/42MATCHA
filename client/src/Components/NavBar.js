@@ -1,7 +1,9 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useNavigate } from 'react-router-dom';
+import { socket } from '../App';
 
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
@@ -15,6 +17,37 @@ function classNames(...classes) {
 }
 
 function Navbar() {
+
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwt');
+    console.log(token);
+    socket.emit('getNotifications', { token: token });
+
+    return () => {
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on('sendNotifications', (data) => {
+      setNotifications(data);
+    });
+
+    return () => {
+      socket.off('sendNotifications');
+    };
+  }, [notifications]);
+
+  const logout = (event) => {
+    event.preventDefault();
+    localStorage.removeItem('jwt');
+    navigate('/signin');
+  }
+
+let navigate = useNavigate();
+
+console.log(notifications);
 return (
   <Disclosure as="nav" className="bg-gray-800 fixed top-0 z-30 min-w-full">
     {({ open }) => (
@@ -46,17 +79,48 @@ return (
               </div>
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <button
-                type="button"
-                className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <BellIcon className="h-6 w-6" aria-hidden="true" />
-              </button>
+              <Menu as="div">
+                  <div>
+                  <Menu.Button
+                    className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white"
+                  >
+                    <BellIcon className="h-6 w-6" aria-hidden="true" />
+                  </Menu.Button>
+                  </div>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    {notifications.map((notification) => (
+                        <div>lol</div>
+                      // <Menu.Item key={notification.href} as={Fragment}>
+                      //   {({ active }) => (
+                      //     <a
+                      //       href={notification.href}
+                      //       className={`${active ? 'bg-blue-500 text-white' : 'bg-white text-black'
+                      //         }`}
+                      //     >
+                      //       {notification.type}
+                      //     </a>
+                      //   )}
+                      // </Menu.Item>
+                    ))}
+                  </Menu.Items>
+                </Transition>
+
+              </Menu >
+
 
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <Menu.Button className="flex rounded-full bg-gray-800 text-sm">
                     <span className="sr-only">Open user menu</span>
                     <img
                       className="h-8 w-8 rounded-full"
@@ -97,12 +161,12 @@ return (
                     </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
-                        <a
-                          href="#a"
+                        <button
+                          onClick={logout}
                           className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                         >
                           Sign out
-                        </a>
+                        </button>
                       )}
                     </Menu.Item>
                   </Menu.Items>
