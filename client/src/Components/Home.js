@@ -4,7 +4,7 @@ import NavBar from './NavBar';
 // import { useNavigate} from 'react-router-dom';
 import ProfileCard from './ProfileCard';
 import axios from 'axios';
-
+import { socket } from '../App';
 
 const Menu = () => {
 	// let navigate = useNavigate();
@@ -22,9 +22,28 @@ const Menu = () => {
 				// Handle any errors that occurred while fetching the data
 				console.error(error);
 			});
-
-		console.log(users);
 	}, []);
+
+
+	useEffect(() => {
+		const token = localStorage.getItem('jwt');
+		console.log(token);
+		socket.emit('getNotifications', {token:token});
+
+		return () => {
+		};
+	}, []);
+
+	useEffect(() => {
+		socket.on('sendNotifications', (data) => {
+			console.log(data);
+		});
+
+		return () => {
+			socket.off('sendNotifications');
+		};
+	}, []);
+
 
 
 	return(

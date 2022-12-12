@@ -89,7 +89,27 @@
             }
           }
         }
-      }
+      },
+            "/notifications": {
+              "get": {
+                "description": "Get all notifications from the database",
+                "parameters": [],
+                "responses": {
+                  "200": {
+                    "description": "Successfully retrieved all notifications",
+                    "schema": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/Notifications"
+                      }
+                    }
+                  },
+                  "500": {
+                    "description": "Failed to retrieve notifications from the database"
+                  }
+                }
+              }
+            }
     },
     "definitions": {
         "User": {
@@ -129,6 +149,30 @@
               "type": "string"
             }
           }
-        }
+        },
+          "Notifications": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "integer"
+              },
+              "sender_id": {
+                "type": "integer"
+              },
+              "type": {
+                "type": "integer"
+              },
+              "read": {
+                "type": "boolean"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
       }
 }

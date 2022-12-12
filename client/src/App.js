@@ -5,6 +5,10 @@ import Signin from './Components/Signin';
 import Signup from './Components/Signup';
 import Unknown from './Components/Unkown';
 
+import socketIO from 'socket.io-client';
+
+export const socket = socketIO.connect('http://localhost:3001');
+
 function App() {
   return (
     <>

@@ -3,7 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import useToggle from '../hooks/useToggle';
 import useIsAuthenticated from '../hooks/useIsAuthenticated';
 import axios from 'axios';
-import { setCookie, getCookie } from 'cookies';
+// import { setCookie, getCookie } from 'cookies';
 
 
 function Signin() {
@@ -66,7 +66,8 @@ function Signin() {
         if(rememberMe)
         {
           // Set the JWT in a cookie that will be stored for 30 days
-          setCookie('jwt', response.data, { maxAge: 60 * 60 * 24 * 30 });
+          // setCookie('jwt', response.data, { maxAge: 60 * 60 * 24 * 30 });
+          localStorage.setItem('jwt', response.data);
         }
         else
         {

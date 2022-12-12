@@ -1,5 +1,6 @@
 import pool from '../config/db.js';
 import { faker } from '@faker-js/faker';
+import bcrypt from "bcryptjs";
 
 const interestsAndHobbies = [
   'skiing',
@@ -31,6 +32,8 @@ export async function createUsersTable() {
       FROM information_schema.tables
       WHERE table_name = 'users';
     `);
+
+    //TODO replace IF NOT EXIST INSTEADODTABLE EXIST
     if (tableExists.rowCount === 0) {
     const result = await client.query(`
       CREATE TABLE users (
@@ -72,6 +75,26 @@ export async function seedUsersTable() {
 
     if (tableIsEmpty.rowCount === 0) {
       // Generate 10 fake users
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync('a', salt);
+
+      const testUser = `
+          INSERT INTO users (
+            first_name,
+            last_name,
+            email,
+            password,
+            photos
+          ) VALUES (
+            'Baudoin',
+            'Haas',
+            'a@a.com',
+            '${hash}',
+            'https://randomuser.me/api/portraits/men/17.jpg'
+          );
+        `;
+      await client.query(testUser);
+
       for (let i = 0; i < 10; i++) {
         const sex = faker.name.sex();
         const first_name = faker.name.firstName(sex);
@@ -113,6 +136,8 @@ export async function seedUsersTable() {
           );
         `;
         await client.query(query);
+
+
         }
       }
     else {
