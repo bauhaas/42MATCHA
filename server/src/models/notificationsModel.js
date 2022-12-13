@@ -68,8 +68,8 @@ export async function seedNotificationsTable() {
 
             for (let i = 0; i < 10; i++) {
                 const user_id = 1;
-                const sender_id = 4;
-                const type = faker.helpers.arrayElements(['like', 'block', 'view'],1);
+                const sender_id = 1;
+                const type = faker.helpers.arrayElements(['X liked you', 'X blocked you', 'X viewed your profile'],1);
                 const read = faker.datatype.boolean();
                 const query = `
           INSERT INTO notifications (

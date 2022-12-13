@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
       WHERE user_id = $1
     `, [decoded.payload.id]
       );
-      const notifications = result.rows[0];
+      const notifications = result.rows;
       client.release();
       console.log(notifications);
       socket.emit('sendNotifications', notifications);

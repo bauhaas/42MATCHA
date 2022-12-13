@@ -31,7 +31,7 @@ function ActiveConversations() {
                       <div className="relative w-10 h-10  group">
                         <img className="rounded-full" src={user} alt="user" />
                         <button onClick={() => remove(user)} className=" text-neutral-400 hover:text-neutral-700 invisible group-hover:visible hover:bg-gray-500 h-3 w-3 absolute top-0 right-0 rounded-full bg-gray-700">
-                            <HiOutlineXMark className='h-3 w-3'/>
+                            {/* <HiOutlineXMark className='h-3 w-3'/> */}
                         </button>
                         <div className="absolute bottom-0 left-0 h-3 w-3 border-2 border-gray-500 rounded-full bg-green-400 z-2"></div>
                       </div>

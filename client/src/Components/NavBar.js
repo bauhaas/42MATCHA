@@ -4,6 +4,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom';
 import { socket } from '../App';
+import axios from 'axios';
 
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
@@ -22,7 +23,7 @@ function Navbar() {
 
   useEffect(() => {
     const token = localStorage.getItem('jwt');
-    console.log(token);
+    console.log('send getNotifications event');
     socket.emit('getNotifications', { token: token });
 
     return () => {
@@ -32,6 +33,7 @@ function Navbar() {
   useEffect(() => {
     socket.on('sendNotifications', (data) => {
       setNotifications(data);
+      console.log('reveice sendNotif event');
     });
 
     return () => {
@@ -43,6 +45,22 @@ function Navbar() {
     event.preventDefault();
     localStorage.removeItem('jwt');
     navigate('/signin');
+  }
+
+  const deleteNotifs = (notifToRemove) => {
+    console.log('delete notifs with id:', notifToRemove.id);
+
+    axios.delete(`http://localhost:3001/notifications/${notifToRemove.id}`, {id: notifToRemove.id
+    })
+      .then(response => {
+        // handle success
+        setNotifications(notifications.filter((notification) => notification.id !== notifToRemove.id));
+      })
+      .catch(error => {
+        // handle error
+        console.log(error);
+        console.log(error.response.data);
+      });
   }
 
 let navigate = useNavigate();
@@ -82,9 +100,10 @@ return (
               <Menu as="div">
                   <div>
                   <Menu.Button
-                    className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white"
+                    className="relative rounded-full bg-gray-800 pt-2 text-gray-400 hover:text-white"
                   >
-                    <BellIcon className="h-6 w-6" aria-hidden="true" />
+                    <BellIcon className="h-8 w-8" aria-hidden="true" />
+                    <div className="absolute bot-0 top-1 right-0 h-4 w-4 rounded-full bg-red-400 text-white text-sm flex items-center justify-center">{notifications.filter(notif => notif.read === false).length}</div>
                   </Menu.Button>
                   </div>
                 <Transition
@@ -96,20 +115,28 @@ return (
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <Menu.Items className="absolute right-0 z-10 mt-2 origin-top-right rounded-md h-80 bg-white py-1 shadow-lg overflow-auto scrollbar">
                     {notifications.map((notification) => (
-                        <div>lol</div>
-                      // <Menu.Item key={notification.href} as={Fragment}>
-                      //   {({ active }) => (
-                      //     <a
-                      //       href={notification.href}
-                      //       className={`${active ? 'bg-blue-500 text-white' : 'bg-white text-black'
-                      //         }`}
-                      //     >
-                      //       {notification.type}
-                      //     </a>
-                      //   )}
-                      // </Menu.Item>
+                      <Menu.Item key={notification.id} as={Fragment}>
+                        {({ active }) => (
+                          <a
+                            href={notification.href}
+                            className={classNames(notification.read ? '' : 'bg-blue-100', 'px-4 py-2 text-sm text-gray-700 flex items-center gap-1')}
+                          >
+                            <img
+                              className="h-8 w-8 rounded-full"
+                              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                              alt=""
+                            />
+                            <div className="flex-1">
+                              {notification.type}
+                            </div>
+                            <svg onClick={() =>deleteNotifs(notification)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 rounded-full hover:bg-blue-200">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </a>
+                        )}
+                      </Menu.Item>
                     ))}
                   </Menu.Items>
                 </Transition>
