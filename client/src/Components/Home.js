@@ -1,6 +1,7 @@
 import ActiveConversations from './ActiveConversations';
 import { useState, useEffect } from 'react';
 import NavBar from './NavBar';
+import Testing from './Testing';
 // import { useNavigate} from 'react-router-dom';
 import ProfileCard from './ProfileCard';
 import axios from 'axios';
@@ -50,7 +51,7 @@ const Menu = () => {
 	<>
 			<div className="bg-gray-700 min-h-screen">
 				<NavBar/>
-				<div>
+				<div className='mt-16'>
 					<ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
 						{users.map((user, index) => (
 							<li key={user + index} id={user + index} className="scale-90">
@@ -60,6 +61,7 @@ const Menu = () => {
 					</ul>
 				</div>
 				<ActiveConversations />
+				<Testing />
 			</div>
 		</>
 	)

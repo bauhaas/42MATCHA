@@ -11,6 +11,7 @@ import dotenv from 'dotenv';
 import http from 'http';
 import jwt from 'jsonwebtoken';
 import pool from './config/db.js';
+import log from './config/log.js';
 
 const app = express();
 
@@ -38,20 +39,32 @@ const io = new Server(server, {
   }
 });
 
-io.on('connection', (socket) => {
-  console.log(`⚡: ${socket.id} user just connected!`);
+global.io = io;
 
-  //TODO join all the rooms is in (all conv);
+const socketUser = new Map();
+global.socketUser = socketUser;
+
+io.on('connection', (socket) => {
+  log.info('[index.js]', `${socket.id} is connected!`);
+
+  const decoded = jwt.decode(socket.handshake.query.token, { complete: true });
+  log.info('[index.js]', 'that socket is linked to user', decoded.payload.id);
+  socketUser.set(socket.id, decoded.payload.id);
+
+  //TODO join all the rooms is in (all conv) on connection;
+  // how can I know to which user the socket refers to here ?
+
   socket.on('disconnect', () => {
-    console.log(`🔥: ${socket.id} user disconnected`);
+    log.info('[index.js]', `${socket.id} has disconnected`);
+    socketUser.delete(socket.id);
   });
 
   socket.on('getNotifications', async (data) => {
-    console.log('test', data.token);
+    // console.log('test', data.token);
     const decoded = jwt.decode(data.token, { complete: true });
-    console.log(decoded.header);
-    console.log(decoded.payload);
-    console.log(decoded.payload.id);
+    // console.log(decoded.header);
+    // console.log(decoded.payload);
+    // console.log(decoded.payload.id);
     try {
       const client = await pool.connect();
       const result = await client.query(
@@ -63,8 +76,7 @@ io.on('connection', (socket) => {
       );
       const notifications = result.rows;
       client.release();
-      console.log(notifications);
-      socket.emit('sendNotifications', notifications);
+      socket.emit('receiveNotifs', notifications);
     } catch (err) {
       throw err;
     }
@@ -74,8 +86,7 @@ io.on('connection', (socket) => {
 
 
 server.listen(port, async () => {
-  console.log(`Server listening on port ${port}`);
-
+  log.info('[index.js]', `Server listening on port ${port}`);
   // Create the table in the database and seed it with fake data
   await createUsersTable();
   await seedUsersTable();

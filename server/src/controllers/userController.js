@@ -1,13 +1,13 @@
 import express from 'express';
 import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin } from '../services/userService.js';
 import jwt from 'jsonwebtoken';
+import log from '../config/log.js';
 
 const router = express.Router();
 
 // Get all users
 router.get('/', async (req, res) => {
   try {
-    console.log('get all users')
     const users = await getAllUsers();
     res.send(users);
   } catch (err) {
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 
 
 function generateAccessToken(user) {
-  console.log(process.env.ACCESS_TOKEN_SECRET);
+  // console.log(process.env.ACCESS_TOKEN_SECRET);
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
 }
 
@@ -31,7 +31,7 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await getLogin(email, password);
-    console.log(user);
+    // console.log(user);
 
     const accessToken = generateAccessToken(user);
     res.send(accessToken);
@@ -48,9 +48,6 @@ function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
 
-  console.log('req', req);
-  console.log('authHeader', authHeader);
-  console.log('token', token);
   if (token == null) return res.sendStatus(401)
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
@@ -65,8 +62,8 @@ function authenticateToken(req, res, next) {
 // Get a user by their ID
 router.get('/:id',authenticateToken, async (req, res) => {
   try {
-    console.log('get user by id');
-    console.log(req);
+    // console.log('get user by id');
+    // console.log(req);
     const id = req.params.id;
     const user = await getUserById(id);
     res.send(user);
@@ -79,7 +76,7 @@ router.get('/:id',authenticateToken, async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
-    console.log(email, password);
+    // console.log(email, password);
     const id = await insertUser(firstName, lastName, email, password);
     res.send({ id });
   } catch (err) {

@@ -31,20 +31,25 @@ function Navbar() {
   }, []);
 
   useEffect(() => {
-    socket.on('sendNotifications', (data) => {
+    socket.on('receiveNotifs', (data) => {
+      console.log('reveiceNotif event');
       setNotifications(data);
-      console.log('reveice sendNotif event');
     });
 
     return () => {
-      socket.off('sendNotifications');
+      socket.off('receiveNotifs');
     };
-  }, [notifications]);
+  });
 
   const logout = (event) => {
     event.preventDefault();
     localStorage.removeItem('jwt');
     navigate('/signin');
+  }
+
+  const gotoprofile = (event) => {
+    event.preventDefault();
+    navigate('/profile');
   }
 
   const deleteNotifs = (notifToRemove) => {
@@ -67,7 +72,7 @@ let navigate = useNavigate();
 
 console.log(notifications);
 return (
-  <Disclosure as="nav" className="bg-gray-800 fixed top-0 z-30 min-w-full">
+  <Disclosure as="nav" className="bg-gray-800 fixed top-0 min-w-full z-40">
     {({ open }) => (
       <>
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -102,7 +107,7 @@ return (
                   <Menu.Button
                     className="relative rounded-full bg-gray-800 pt-2 text-gray-400 hover:text-white"
                   >
-                    <BellIcon className="h-8 w-8" aria-hidden="true" />
+                    <BellIcon className="h-8 w-8" aria-hidden="true" /> {/* TODO make below div hidden if no unread notifs*/}
                     <div className="absolute bot-0 top-1 right-0 h-4 w-4 rounded-full bg-red-400 text-white text-sm flex items-center justify-center">{notifications.filter(notif => notif.read === false).length}</div>
                   </Menu.Button>
                   </div>
@@ -168,12 +173,12 @@ return (
                   <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <Menu.Item>
                       {({ active }) => (
-                        <a
-                          href="#a"
+                        <button
+                          onClick={gotoprofile}
                           className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                         >
                           Your Profile
-                        </a>
+                        </button>
                       )}
                     </Menu.Item>
                     <Menu.Item>

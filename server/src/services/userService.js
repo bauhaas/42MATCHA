@@ -2,6 +2,7 @@ import pool from '../config/db.js';
 import { DBgetAllUsers, DBgetUserById, DBinsertUser, DBupdateUser, DBdeleteUser } from '../utils/queryUserUtils.js';
 import bcrypt from "bcryptjs";
 import nodemailer from 'nodemailer';
+import log from '../config/log.js';
 
 // Get all users from the database
 export const getAllUsers = async () => {
@@ -19,7 +20,6 @@ export const getAllUsers = async () => {
 // Get user from database where email match the paramater
 export const getLogin = async (email, password) => {
   try {
-    console.log(email, password);
     const client = await pool.connect();
 
     const result = await client.query(`
@@ -127,9 +127,7 @@ export const insertUser = async (firstName, lastName, email, password) => {
     console.log('gonna insert the user');
     const result = await client.query(DBinsertUser(firstName, lastName, email, hash));
     const id = result.rows[0].id;
-    console.log('after id');
     client.release();
-    console.log('after release');
     return id;
   } catch (err) {
     console.log(err);

@@ -4,10 +4,11 @@ import Home from './Components/Home';
 import Signin from './Components/Signin';
 import Signup from './Components/Signup';
 import Unknown from './Components/Unkown';
+import Profile from './Components/Profile';
 
 import socketIO from 'socket.io-client';
 
-export const socket = socketIO.connect('http://localhost:3001');
+export const socket = socketIO.connect('http://localhost:3001', { query: `token=${localStorage.getItem('jwt') }`});
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path='/home' element={<Home />} />
           <Route exact path='/signin' element={<Signin />} />
           <Route path='/signup' element={<Signup />} />
+          <Route path='/profile' element={<Profile />} />
           <Route path='*' element={<Unknown />} />
       </Routes>
     </>
