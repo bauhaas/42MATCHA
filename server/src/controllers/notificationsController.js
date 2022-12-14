@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import express from 'express';
-import { getAllNotifications, deleteNotification, insertNotification } from '../services/notificationsService.js';
+import { getAllNotifications, deleteNotification, insertNotification, updateNotification } from '../services/notificationsService.js';
 import log from '../config/log.js';
 
 const router = express.Router();
@@ -38,6 +38,20 @@ router.post('/', async (req, res) => {
         res.send({ id });
     } catch (err) {
             res.status(500).send(err.message);
+    }
+});
+
+// Update a notification's information
+router.put('/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        log.info('[notifController]', req.params);
+        log.info('[notifController]', req.body);
+        log.info('[notifController]', 'enter in updateNotifications');
+        await updateNotification(id);
+        res.send({ id });
+    } catch (err) {
+        res.status(500).send(err.message);
     }
 });
 

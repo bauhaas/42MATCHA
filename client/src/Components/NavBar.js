@@ -52,7 +52,9 @@ function Navbar() {
     navigate('/profile');
   }
 
-  const deleteNotifs = (notifToRemove) => {
+
+  const deleteNotifs = (event, notifToRemove) => {
+    event.preventDefault(); //do not delete, allow to not autoclose the notifications dropdown on a single suppresion
     console.log('delete notifs with id:', notifToRemove.id);
 
     axios.delete(`http://localhost:3001/notifications/${notifToRemove.id}`, {id: notifToRemove.id
@@ -66,18 +68,62 @@ function Navbar() {
         console.log(error);
         console.log(error.response.data);
       });
+    }
+
+
+  const setNotifRead = (event, notifToUpdate) => {
+    console.log('update notif with id:', notifToUpdate.id);
+
+    if(!notifToUpdate.read)
+    {
+      axios.put(`http://localhost:3001/notifications/${notifToUpdate.id}`, {
+        id: notifToUpdate.id
+      })
+        .then(response => {
+          // handle success
+          console.log('update notif success')
+
+          // Use the setState method to update the notifications state in an immutable way
+          setNotifications(prevState => {
+            // Make a copy of the notifications state array
+            const updatedNotifications = [...prevState];
+
+            console.log(updatedNotifications);
+            // Find the index of the notifToUpdate object in the array
+            const index = updatedNotifications.findIndex(notif => notif.id === notifToUpdate.id);
+
+            // Create a new object with the same properties as the notifToUpdate object,
+            // but with the "read" property set to true
+            const updatedNotif = {
+              ...notifToUpdate,
+              read: true
+            };
+
+            // Update the notifications state array with the new object
+            updatedNotifications[index] = updatedNotif;
+
+            // Return the new state object
+            return updatedNotifications;
+          });
+        })
+        .catch(error => {
+          // handle error
+          console.log(error);
+          console.log(error.response.data);
+        });
+    }
+
   }
 
 let navigate = useNavigate();
-
-console.log(notifications);
+  console.log(notifications);
 return (
   <Disclosure as="nav" className="bg-gray-800 fixed top-0 min-w-full z-40">
     {({ open }) => (
       <>
-        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div className="px-8">
           <div className="relative flex h-16 items-center justify-between">
-            <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            <div id="navbarMobileButton" className="absolute inset-y-0 left-0 flex items-center sm:hidden">
               {/* Mobile menu button*/}
               <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                 {open ? (
@@ -87,7 +133,7 @@ return (
                 )}
               </Disclosure.Button>
             </div>
-            <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+            <div id="navbarLogo" className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
               <div className="flex flex-shrink-0 items-center">
                 <img
                   className="block h-8 w-auto lg:hidden"
@@ -101,16 +147,12 @@ return (
                 />
               </div>
             </div>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            <div id="navbarRightButtons" className="absolute right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
               <Menu as="div">
-                  <div>
-                  <Menu.Button
-                    className="relative rounded-full bg-gray-800 pt-2 text-gray-400 hover:text-white"
-                  >
+                  <Menu.Button className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                     <BellIcon className="h-8 w-8" aria-hidden="true" /> {/* TODO make below div hidden if no unread notifs*/}
-                    <div className="absolute bot-0 top-1 right-0 h-4 w-4 rounded-full bg-red-400 text-white text-sm flex items-center justify-center">{notifications.filter(notif => notif.read === false).length}</div>
+                    <div id="notifCount" className="absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm">{notifications.filter(notif => notif.read === false).length}</div>
                   </Menu.Button>
-                  </div>
                 <Transition
                   as={Fragment}
                   enter="transition ease-out duration-100"
@@ -122,30 +164,21 @@ return (
                 >
                   <Menu.Items className="absolute right-0 z-10 mt-2 origin-top-right rounded-md h-80 bg-white py-1 shadow-lg overflow-auto scrollbar">
                     {notifications.map((notification) => (
-                      <Menu.Item key={notification.id} as={Fragment}>
-                        {({ active }) => (
-                          <a
-                            href={notification.href}
-                            className={classNames(notification.read ? '' : 'bg-blue-100', 'px-4 py-2 text-sm text-gray-700 flex items-center gap-1')}
-                          >
+                      <Menu.Item key={notification.id}>
+                        <div onMouseEnter={(event) => setNotifRead(event, notification)} className={classNames(notification.read ? '' : 'bg-blue-100', 'px-4 py-2 text-sm text-gray-700 flex items-center gap-1')}>
                             <img
                               className="h-8 w-8 rounded-full"
                               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                              alt=""
-                            />
-                            <div className="flex-1">
-                              {notification.type}
-                            </div>
-                            <svg onClick={() =>deleteNotifs(notification)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 rounded-full hover:bg-blue-200">
+                              alt=""/>
+                            <div className="flex-1">{notification.type}</div>
+                            <svg onClick={(event) =>deleteNotifs(event, notification)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 rounded-full hover:bg-blue-200">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
-                          </a>
-                        )}
+                          </div>
                       </Menu.Item>
                     ))}
                   </Menu.Items>
                 </Transition>
-
               </Menu >
 
 

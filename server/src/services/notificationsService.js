@@ -27,6 +27,19 @@ export const deleteNotification = async (id) => {
     }
 };
 
+// Update a notifications's information in the database
+export const updateNotification = async (id) => {
+    try {
+        log.info('', 'id:', id);
+        const client = await pool.connect();
+        await client.query(`UPDATE notifications SET read = $1 WHERE id = $2`, [true, id]);
+        client.release();
+    } catch (err) {
+        throw err;
+    }
+};
+
+
 function getKey(value) {
     const socketmap = global.socketUser;
     return [...socketmap].find(([key, val]) => val == value)[0]
