@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom';
-import { socket } from '../App';
+import { manager } from './Home';
 import axios from 'axios';
 
 const navigation = [
@@ -24,20 +24,20 @@ function Navbar() {
   useEffect(() => {
     const token = localStorage.getItem('jwt');
     console.log('send getNotifications event');
-    socket.emit('getNotifications', { token: token });
+    manager.socket('/').emit('getNotifications', { token: token });
 
     return () => {
     };
   }, []);
 
   useEffect(() => {
-    socket.on('receiveNotifs', (data) => {
+    manager.socket('/').on('receiveNotifs', (data) => {
       console.log('reveiceNotif event');
       setNotifications(data);
     });
 
     return () => {
-      socket.off('receiveNotifs');
+      manager.socket('/').off('receiveNotifs');
     };
   });
 
@@ -150,8 +150,8 @@ return (
             <div id="navbarRightButtons" className="absolute right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
               <Menu as="div">
                   <Menu.Button className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
-                    <BellIcon className="h-8 w-8" aria-hidden="true" /> {/* TODO make below div hidden if no unread notifs*/}
-                    <div id="notifCount" className="absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm">{notifications.filter(notif => notif.read === false).length}</div>
+                    <BellIcon className={`h-8 w-8`} aria-hidden="true" />
+                    <div id="notifCount" className={`${notifications.filter(notif => notif.read === false).length === 0 ? 'hidden' : ''} absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{notifications.filter(notif => notif.read === false).length}</div>
                   </Menu.Button>
                 <Transition
                   as={Fragment}

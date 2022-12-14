@@ -6,9 +6,7 @@ import Signup from './Components/Signup';
 import Unknown from './Components/Unkown';
 import Profile from './Components/Profile';
 
-import socketIO from 'socket.io-client';
 
-export const socket = socketIO.connect('http://localhost:3001', { query: `token=${localStorage.getItem('jwt') }`});
 
 function App() {
   return (

@@ -30,7 +30,7 @@ export const deleteNotification = async (id) => {
 // Update a notifications's information in the database
 export const updateNotification = async (id) => {
     try {
-        log.info('', 'id:', id);
+        log.info('[notifService]', 'id:', id);
         const client = await pool.connect();
         await client.query(`UPDATE notifications SET read = $1 WHERE id = $2`, [true, id]);
         client.release();

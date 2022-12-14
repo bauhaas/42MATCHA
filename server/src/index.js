@@ -44,12 +44,16 @@ global.io = io;
 const socketUser = new Map();
 global.socketUser = socketUser;
 
-io.on('connection', (socket) => {
+
+io.of('/').on('connection', (socket) => {
   log.info('[index.js]', `${socket.id} is connected!`);
 
+  console.log(socket.handshake);
   const decoded = jwt.decode(socket.handshake.query.token, { complete: true });
-  log.info('[index.js]', 'that socket is linked to user', decoded.payload.id);
-  socketUser.set(socket.id, decoded.payload.id);
+  //TODO not clean at all technique
+    log.info('[index.js]', 'that socket is linked to user', decoded.payload.id);
+    socketUser.set(socket.id, decoded.payload.id);
+
 
   //TODO join all the rooms is in (all conv) on connection;
   // how can I know to which user the socket refers to here ?
