@@ -45,14 +45,15 @@ const socketUser = new Map();
 global.socketUser = socketUser;
 
 
-io.of('/').on('connection', (socket) => {
+io.on('connection', (socket) => {
   log.info('[index.js]', `${socket.id} is connected!`);
 
   console.log(socket.handshake);
-  const decoded = jwt.decode(socket.handshake.query.token, { complete: true });
-  //TODO not clean at all technique
-    log.info('[index.js]', 'that socket is linked to user', decoded.payload.id);
-    socketUser.set(socket.id, decoded.payload.id);
+  console.log(socket.handshake.query);
+  // const decoded = jwt.decode(socket.handshake.query.token, { complete: true });
+  // // //TODO not clean at all technique
+  //   log.info('[index.js]', 'that socket is linked to user', decoded.payload.id);
+  //   socketUser.set(socket.id, decoded.payload.id);
 
 
   //TODO join all the rooms is in (all conv) on connection;

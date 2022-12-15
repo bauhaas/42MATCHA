@@ -75,27 +75,27 @@ export async function seedUsersTable() {
 
     if (tableIsEmpty.rowCount === 0) {
       // Generate 10 fake users
-      var salt = bcrypt.genSaltSync(10);
-      var hash = bcrypt.hashSync('a', salt);
+      // var salt = bcrypt.genSaltSync(10);
+      // var hash = bcrypt.hashSync('a', salt);
 
-      const testUser = `
-          INSERT INTO users (
-            first_name,
-            last_name,
-            email,
-            password,
-            photos
-          ) VALUES (
-            'Baudoin',
-            'Haas',
-            'a@a.com',
-            '${hash}',
-            'https://randomuser.me/api/portraits/men/17.jpg'
-          );
-        `;
-      await client.query(testUser);
+      // const testUser = `
+      //     INSERT INTO users (
+      //       first_name,
+      //       last_name,
+      //       email,
+      //       password,
+      //       photos
+      //     ) VALUES (
+      //       'Baudoin',
+      //       'Haas',
+      //       'a@a.com',
+      //       '${hash}',
+      //       'https://randomuser.me/api/portraits/men/17.jpg'
+      //     );
+      //   `;
+      // await client.query(testUser);
 
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 40; i++) {
         const sex = faker.name.sex();
         const first_name = faker.name.firstName(sex);
         const last_name = faker.name.lastName(sex);
@@ -105,7 +105,7 @@ export async function seedUsersTable() {
         const city = faker.address.cityName();
         const country = faker.address.country();
         // const birthdate = faker.date.birthdate({refDate: Date});
-        const interests = faker.helpers.arrayElement(interestsAndHobbies, 3)
+        // const interests = faker.helpers.arrayElement(interestsAndHobbies, 3)
         const photos = faker.image.avatar();
         const bio = faker.lorem.lines(8);
         const query = `
@@ -118,7 +118,6 @@ export async function seedUsersTable() {
             sex,
             city,
             country,
-            interests,
             photos,
             bio
           ) VALUES (
@@ -130,7 +129,6 @@ export async function seedUsersTable() {
             '${sex}',
             '${city}',
             '${country}',
-            '${interests}',
             '${photos}',
             '${bio}'
           );

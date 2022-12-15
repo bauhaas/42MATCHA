@@ -3,15 +3,8 @@ import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom';
-import { socket2 } from './Home';
+// import { socket2 } from './Home';
 import axios from 'axios';
-
-const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
-]
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -24,20 +17,20 @@ function Navbar() {
   useEffect(() => {
     const token = localStorage.getItem('jwt');
     console.log('send getNotifications event');
-    socket2.emit('getNotifications', { token: token });
+    // socket2.emit('getNotifications', { token: token });
 
     return () => {
     };
   }, []);
 
   useEffect(() => {
-    socket2.on('receiveNotifs', (data) => {
-      console.log('reveiceNotif event');
-      setNotifications(data);
-    });
+    //   socket2.on('receiveNotifs', (data) => {
+    //   console.log('reveiceNotif event');
+    //   setNotifications(data);
+    // });
 
     return () => {
-      socket2.off('receiveNotifs');
+      // socket2.off('receiveNotifs');
     };
   });
 
@@ -123,31 +116,8 @@ return (
       <>
         <div className="px-8">
           <div className="relative flex h-16 items-center justify-between">
-            <div id="navbarMobileButton" className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-              {/* Mobile menu button*/}
-              <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                {open ? (
-                  <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-                ) : (
-                  <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-                )}
-              </Disclosure.Button>
-            </div>
-            <div id="navbarLogo" className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-              <div className="flex flex-shrink-0 items-center">
-                <img
-                  className="block h-8 w-auto lg:hidden"
-                  src="../logo.png"
-                  alt="Your Company"
-                />
-                <img
-                  className="hidden h-8 w-auto lg:block"
-                  src="../logo.png"
-                  alt="Your Company"
-                />
-              </div>
-            </div>
-            <div id="navbarRightButtons" className="absolute right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            <img className="block h-8 w-auto" src="../logo.png" alt="logo"/>
+            <div id="navbarRightButtons" className="flex items-center">
               <Menu as="div">
                   <Menu.Button className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                     <BellIcon className={`h-8 w-8`} aria-hidden="true" />
@@ -162,7 +132,7 @@ return (
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute right-0 z-10 mt-2 origin-top-right rounded-md h-80 bg-white py-1 shadow-lg overflow-auto scrollbar">
+                  <Menu.Items className="h-80 w-full absolute right-0 z-10 mt-2 rounded-md  bg-white py-1 shadow-lg overflow-auto scrollbar">
                     {notifications.map((notification) => (
                       <Menu.Item key={notification.id}>
                         <div onMouseEnter={(event) => setNotifRead(event, notification)} className={classNames(notification.read ? '' : 'bg-blue-100', 'px-4 py-2 text-sm text-gray-700 flex items-center gap-1')}>
@@ -208,7 +178,7 @@ return (
                       {({ active }) => (
                         <button
                           onClick={gotoprofile}
-                          className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                          className={classNames(active ? 'bg-gray-200' : '', 'block px-4 py-2 text-sm text-gray-700 min-w-full text-start')}
                         >
                           Your Profile
                         </button>
@@ -216,19 +186,9 @@ return (
                     </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
-                        <a
-                          href="#a"
-                          className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                        >
-                          Settings
-                        </a>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
                         <button
                           onClick={logout}
-                          className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                          className={classNames(active ? 'bg-gray-200' : '', 'block px-4 py-2 text-sm text-gray-700 min-w-full text-start')}
                         >
                           Sign out
                         </button>
@@ -240,25 +200,6 @@ return (
             </div>
           </div>
         </div>
-
-        <Disclosure.Panel className="sm:hidden">
-          <div className="space-y-1 px-2 pt-2 pb-3">
-            {navigation.map((item) => (
-              <Disclosure.Button
-                key={item.name}
-                as="a"
-                href={item.href}
-                className={classNames(
-                  item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                  'block px-3 py-2 rounded-md text-base font-medium'
-                )}
-                aria-current={item.current ? 'page' : undefined}
-              >
-                {item.name}
-              </Disclosure.Button>
-            ))}
-          </div>
-        </Disclosure.Panel>
       </>
     )}
   </Disclosure>
