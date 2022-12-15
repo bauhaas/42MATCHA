@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react"
+import React, { useState } from "react"
 import {useNavigate} from 'react-router-dom';
 import useValidator from '../hooks/useValidator';
 import useToggle from '../hooks/useToggle';
@@ -24,8 +24,6 @@ function Signup() {
       }
     });
 
-    let navigate = useNavigate();
-
     const addUser = () => {
       axios.post('http://localhost:3001/users', {
         firstName: firstName,
@@ -34,15 +32,12 @@ function Signup() {
         password:password
       })
         .then(response => {
-          // handle success
           console.log(response);
         })
         .catch(error => {
-          // handle error
           setErrorToggle(true);
           setError([error.response.status, error.response.data]);
           console.log(error);
-          console.log(error.response.data);
         });
     }
 
@@ -51,7 +46,6 @@ function Signup() {
 
       if (validator.allValid()) {
         console.log("form is valid");
-        // navigate()
         addUser();
 
 
@@ -84,7 +78,7 @@ function Signup() {
           </span>
         </div>
 
-        <img className="w-screen object-cover h-1/4 md:w-1/2 md:h-screen" src='../aaa-transformed.jpeg' alt='Profile'/>
+        <img className="w-screen object-cover h-1/4 md:w-1/2 md:h-screen" src='../bg-signin-signup.jpeg' alt='bg-signin-signup'/>
         <div className="w-full h-full md:w-1/2">
 
 

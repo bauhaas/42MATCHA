@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom';
-import { manager } from './Home';
+import { socket2 } from './Home';
 import axios from 'axios';
 
 const navigation = [
@@ -24,20 +24,20 @@ function Navbar() {
   useEffect(() => {
     const token = localStorage.getItem('jwt');
     console.log('send getNotifications event');
-    manager.socket('/').emit('getNotifications', { token: token });
+    socket2.emit('getNotifications', { token: token });
 
     return () => {
     };
   }, []);
 
   useEffect(() => {
-    manager.socket('/').on('receiveNotifs', (data) => {
+    socket2.on('receiveNotifs', (data) => {
       console.log('reveiceNotif event');
       setNotifications(data);
     });
 
     return () => {
-      manager.socket('/').off('receiveNotifs');
+      socket2.off('receiveNotifs');
     };
   });
 
@@ -137,12 +137,12 @@ return (
               <div className="flex flex-shrink-0 items-center">
                 <img
                   className="block h-8 w-auto lg:hidden"
-                  src="../logo2-B65YbTK81-transformed.png"
+                  src="../logo.png"
                   alt="Your Company"
                 />
                 <img
                   className="hidden h-8 w-auto lg:block"
-                  src="../logo2-B65YbTK81-transformed.png"
+                  src="../logo.png"
                   alt="Your Company"
                 />
               </div>

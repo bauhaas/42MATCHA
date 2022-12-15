@@ -1,7 +1,3 @@
-import ActiveConversations from './ActiveConversations';
-import NavBar from './NavBar';
-import { UNSAFE_DataRouterStateContext, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useCallback} from 'react';
 import { motion } from "framer-motion"
 import useToggle from '../hooks/useToggle';
 
@@ -10,7 +6,6 @@ const transition = {
     ease: 'linear',
     delay: 0.5
 }
-
 
 const ProfileCard = ({ user }) => {
 
@@ -22,14 +17,14 @@ const ProfileCard = ({ user }) => {
                 {
                     <>
                         <motion.div transition={transition} whileHover={{ translateY: '50%'}}   id='cardHidden' className={isToggle ?'absolute rounded-md min-w-full min-h-full  grid ':'hidden'}>
-                            <img src="../rose-petals.svg" className="col-start-1 row-start-1 object-cover w-full h-full rounded-md" alt="Hidden Card" />
+                            <img src="../bg-profilecard.svg" className="col-start-1 row-start-1 object-cover w-full h-full rounded-md" alt="Hidden Card" />
                             <div className="col-start-1 row-start-1 self-center justify-self-center text-4xl font-bold group-hover:animate-wiggle">
                                 100%
                             </div>
                             <img
                                 className="col-start-1 row-start-1 h-8 w-8 self-end justify-self-center mb-10 group-hover:animate-wiggle"
-                                src="../logo2-B65YbTK81-transformed.png"
-                                alt="Your Company"
+                                src="../logo.png"
+                                alt="logo"
                             />
                         </motion.div>
                         <div id='cardRevealed' className="">

@@ -1,8 +1,4 @@
-import ActiveConversations from './ActiveConversations';
-import { useState, useEffect } from 'react';
-import NavBar from './NavBar';
 import axios from 'axios';
-import { socket } from '../App';
 
 const Testing = () => {
 
@@ -29,8 +25,8 @@ const Testing = () => {
     return (
         <>
             <div className='fixed bottom-0 left-0 border-red-400 border-2'>
-                <div className='text-white text-2xl '>Utils buttons</div>
-                <button onClick={sendNotif} className='bg-blue-500 border-2 border-blue-800'>send notifs</button>
+                <div className='text-white text-2xl '>TEST buttons</div>
+                <button onClick={sendNotif} className='bg-blue-500 border-2 border-blue-800'>send notifs to user 1</button>
             </div>
 
         </>

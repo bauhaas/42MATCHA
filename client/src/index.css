@@ -16,6 +16,7 @@ code {
     monospace;
 }
 
+/* used for scrollbar notifications */
 @layer utilities {
   .scrollbar::-webkit-scrollbar {
     width: 20px;

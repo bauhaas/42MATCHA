@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import jwt_decode from "jwt-decode";
 
-// import jwtDecode from 'jsonwebtoken';
-// import 'buffer-polyfill';
-
 function useIsAuthenticated() {
   // Declare a state variable to store the authentication status
   const [isAuthenticated, setIsAuthenticated] = useState(false);

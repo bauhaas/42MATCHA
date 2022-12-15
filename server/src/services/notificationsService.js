@@ -30,6 +30,7 @@ export const deleteNotification = async (id) => {
 // Update a notifications's information in the database
 export const updateNotification = async (id) => {
     try {
+        console.log('sss');
         log.info('[notifService]', 'id:', id);
         const client = await pool.connect();
         await client.query(`UPDATE notifications SET read = $1 WHERE id = $2`, [true, id]);
@@ -64,7 +65,6 @@ export const insertNotification = async (sender_id, user_id, type) => {
             WHERE user_id = $1
             `, [user_id]);
         const notifications = result.rows;
-        log.info('[notifService]', 'retrieved notifications:', notifications);
         log.info('[notifService]', socketid, 'must get \'receiveNotifs\' event');
         const io = global.io;
         io.to(socketid).emit('receiveNotifs', notifications);

@@ -1,8 +1,5 @@
 import ActiveConversations from './ActiveConversations';
-import { useState, useEffect } from 'react';
 import NavBar from './NavBar';
-import axios from 'axios';
-import { socket } from '../App';
 
 const Profile = () => {
 

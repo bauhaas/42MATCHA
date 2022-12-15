@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect } from "react"
 import {useNavigate} from 'react-router-dom';
 import useToggle from '../hooks/useToggle';
 import useIsAuthenticated from '../hooks/useIsAuthenticated';
 import axios from 'axios';
-// import { setCookie, getCookie } from 'cookies';
 
 
 function Signin() {
@@ -16,7 +15,6 @@ function Signin() {
   const { isAuthenticated } = useIsAuthenticated();
 
   let navigate = useNavigate();
-  let refreshToken;
 
   useEffect(() => {
     // Check if the user is already logged in
@@ -32,21 +30,6 @@ function Signin() {
     navigate("/signup");
   }
 
-  function loadUserInfos() {
-    axios.get('http://localhost:3001/users/1', {
-    })
-      .then(response => {
-        // handle success
-        console.log('auth success');
-        console.log(response);
-        // navigate("/home");
-      })
-      .catch(error => {
-        // handle error
-        console.log(error);
-        console.log(error.response.data);
-      });
-}
 
   const handleSignInClick = (event) => {
     event.preventDefault();
@@ -56,34 +39,24 @@ function Signin() {
       password: password
     })
       .then(response => {
-        // handle success
-        console.log('auth success');
-        console.log(response.data);
         console.log(response);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
-        // refreshToken = response.data.refreshToken;
 
         if(rememberMe)
         {
+          // TODO had issue with cookies lib
           // Set the JWT in a cookie that will be stored for 30 days
+          console.log('toodo');
           // setCookie('jwt', response.data, { maxAge: 60 * 60 * 24 * 30 });
-          localStorage.setItem('jwt', response.data);
         }
         else
-        {
-            // Save the JWT in local storage
             localStorage.setItem('jwt', response.data);
-            // You can then retrieve the JWT from the local storage using the localStorage.getItem('jwt') method.
-        }
-        // loadUserInfos();
         navigate("/home");
       })
       .catch(error => {
-        // handle error
         setErrorToggle(true);
         setError([error.response.status, error.response.data]);
         console.log(error);
-        console.log(error.response.data);
       });
   }
 
@@ -99,10 +72,10 @@ function Signin() {
           </span>
         </div>
 
-        <img className="w-screen object-cover h-1/3 md:w-1/2 md:h-screen" src='../aaa-transformed.jpeg' alt='Profile'/>
+        <img className="w-screen object-cover h-1/3 md:w-1/2 md:h-screen" src='../bg-signin-signup.jpeg' alt='bg-signin-signup'/>
         <div className="w-full h-full md:w-1/2">
           <div className="w-full min-h-full flex flex-col items-center justify-center px-10 md:px-36">
-            <img className="w-1/5 self-start" src='../logo2-B65YbTK81-transformed.png' alt='logo'/>
+            <img className="w-1/5 self-start" src='../logo.png' alt='logo'/>
             <h1 className="self-start text-2xl font-bold mb-4">Sign in to your account</h1>
             <label className="block text-gray-700 text-sm font-bold self-start mb-2">
               Email address

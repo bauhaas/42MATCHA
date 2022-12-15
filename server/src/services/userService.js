@@ -45,7 +45,7 @@ export const getLogin = async (email, password) => {
     // If the passwords don't match, throw an error
     if (!passwordMatch) {
       console.log('pass didnt match');
-      throw new Error('Invalid email or password.');
+      throw new Error('Invalid email or password .');
     }
 
     // // Generate a JWT for the user

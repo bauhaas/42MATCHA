@@ -45,7 +45,6 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        log.info('[notifController]', req.params);
         log.info('[notifController]', req.body);
         log.info('[notifController]', 'enter in updateNotifications');
         await updateNotification(id);
@@ -54,6 +53,5 @@ router.put('/:id', async (req, res) => {
         res.status(500).send(err.message);
     }
 });
-
 
 export default router
