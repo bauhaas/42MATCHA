@@ -30,7 +30,6 @@ export const deleteNotification = async (id) => {
 // Update a notifications's information in the database
 export const updateNotification = async (id) => {
     try {
-        console.log('sss');
         log.info('[notifService]', 'id:', id);
         const client = await pool.connect();
         await client.query(`UPDATE notifications SET read = $1 WHERE id = $2`, [true, id]);
@@ -73,7 +72,7 @@ export const insertNotification = async (sender_id, user_id, type) => {
         client.release();
         return id;
     } catch (err) {
-        console.log(err);
+        log.error('[notifService]', err);
         throw err;
     }
 };

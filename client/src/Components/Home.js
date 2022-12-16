@@ -35,58 +35,6 @@ const Home = () => {
 		// });
 		// socket.connect();
 	// 	manager.connect();
-	// console.log(socket);
-
-	useEffect(() => {
-		console.log('try connect');
-
-		// socket.on('connection', () => {
-		// 	console.log('connected');
-		// });
-		// // the connection was successfully established
-
-		// socket.on("connect_error", (err) => {
-		// 	console.log(`connect_error due to ${err.message}`);
-		// });
-
-
-		// if (localStorage.getItem('jwt'))
-		// {
-		// 	console.log(`socket gonna connect with token=${localStorage.getItem('jwt')}`);
-		// 	const token = localStorage.getItem('jwt');
-		// 	const query = { token };
-		// 	console.log('query:', query);
-		// 	query.token = token;
-		// 	socket2.connect({ query });
-		// }
-		// else
-		// 	console.log('didnt find the jwt');
-
-		// socket2.on('connection', () => {
-		// 	console.log('connected');
-		// });
-		// // the connection was successfully established
-
-		// socket2.on("connect_error", (err) => {
-		// 	console.log(`connect_error due to ${err.message}`);
-		// });
-		// manager.connect();
-
-		// //same as manager.connect()
-		// manager.open((err) => {
-		// 	if (err) {
-		// 		console.log('error');
-
-		// 		// an error has occurred
-		// 	} else {
-		// 		console.log('success');
-
-		// 		socket.on('connect', () => {
-		// 			console.log('connected');});
-		// 		// the connection was successfully established
-		// 	}
-		// });
-	}, []);
 
 	return(
 		<>

@@ -1,5 +1,6 @@
 import pool from '../config/db.js';
 import { faker } from '@faker-js/faker';
+import log from '../config/log.js';
 
 // Create the users table
 export async function createNotificationsTable() {
@@ -24,14 +25,14 @@ export async function createNotificationsTable() {
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
             `);
-            console.log(result, 'notifications table have been created');
+          log.info('[notifModel.js]', result, 'notifications table have been created');
         }
         else {
-            console.log('notifications table already exists - no need to create it');
+          log.info('[notifModel.js]', 'notifications table already exists - no need to create it');
         }
         client.release();
     } catch (err) {
-        console.error(err);
+      log.error('[notifModel.js]', err);
     }
 }
 
@@ -44,10 +45,10 @@ export async function seedNotificationsTable() {
 
         // Check if the 'users' table has any rows
         const tableIsEmpty = await client.query(`
-      SELECT *
-      FROM notifications
-      LIMIT 1;
-    `);
+          SELECT *
+          FROM notifications
+          LIMIT 1;
+        `);
 
         if (tableIsEmpty.rowCount === 0) {
 
@@ -64,7 +65,7 @@ export async function seedNotificationsTable() {
             false
           );
         `;
-            await client.query(testNotifs);
+          await client.query(testNotifs);
 
             for (let i = 0; i < 10; i++) {
                 const user_id = 1;
@@ -85,15 +86,13 @@ export async function seedNotificationsTable() {
           );
         `;
                 await client.query(query);
-
-
             }
         }
         else {
-            console.log('notifs table already seeded - no need to seed');
+          log.info('[notifModel.js]', 'notifs table already seeded - no need to seed');
         }
         client.release();
     } catch (err) {
-        console.error(err);
+      log.error('[notifModel.js]', err);
     }
 }

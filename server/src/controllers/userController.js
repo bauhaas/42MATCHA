@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin } from '../services/userService.js';
+import { getAllUsers, getUserById, insertUser, deleteUser, getLogin } from '../services/userService.js';
 import jwt from 'jsonwebtoken';
 import log from '../config/log.js';
 
@@ -15,23 +15,21 @@ router.get('/', async (req, res) => {
   }
 });
 
-
 function generateAccessToken(user) {
-  // console.log(process.env.ACCESS_TOKEN_SECRET);
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
 }
 
+//TODO
 function generateRefreshToken(user) {
   return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1y'});
 }
 
 
-// TODO move to auth folder - allow to logn and check to the db the passs and email
+// TODO maybe create an auth controller/sevice ?
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await getLogin(email, password);
-    // console.log(user);
 
     const accessToken = generateAccessToken(user);
     res.send(accessToken);
@@ -44,11 +42,14 @@ router.post('/login', async (req, res) => {
   }
 });
 
+
+//TODO move to middleware file (atm only used on get /users/:id)
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
 
-  if (token == null) return res.sendStatus(401)
+  if (token == null)
+    return res.sendStatus(401)
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) {
@@ -62,10 +63,7 @@ function authenticateToken(req, res, next) {
 // Get a user by their ID
 router.get('/:id',authenticateToken, async (req, res) => {
   try {
-    // console.log('get user by id');
-    // console.log(req);
-    const id = req.params.id;
-    const user = await getUserById(id);
+    const user = await getUserById(req.params.id);
     res.send(user);
   } catch (err) {
     res.status(500).send(err.message);
@@ -76,7 +74,6 @@ router.get('/:id',authenticateToken, async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
-    // console.log(email, password);
     const id = await insertUser(firstName, lastName, email, password);
     res.send({ id });
   } catch (err) {
@@ -87,18 +84,6 @@ router.post('/', async (req, res) => {
     }
   }
 });
-
-// Update a user's information
-router.put('/:id', async (req, res) => {
-    try {
-      const id = req.params.id;
-      const { name, age } = req.body;
-      await updateUser(name, age, id);
-      res.send({ id });
-    } catch (err) {
-      res.status(500).send(err.message);
-    }
-  });
 
 // Delete a user by their ID
 router.delete('/:id', async (req, res) => {

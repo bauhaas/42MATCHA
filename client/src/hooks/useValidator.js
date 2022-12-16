@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import SimpleReactValidator from 'simple-react-validator'  //yup seems better
+import SimpleReactValidator from 'simple-react-validator'  //yup lib seems more used generally
 
 const useValidator = (customMessage = {}, customValidator = {}) => {
     const [show, setShow] = useState(false)

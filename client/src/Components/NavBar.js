@@ -15,7 +15,7 @@ function Navbar() {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem('jwt');
+    // const token = localStorage.getItem('jwt');
     console.log('send getNotifications event');
     // socket2.emit('getNotifications', { token: token });
 
@@ -81,35 +81,27 @@ function Navbar() {
             // Make a copy of the notifications state array
             const updatedNotifications = [...prevState];
 
-            console.log(updatedNotifications);
-            // Find the index of the notifToUpdate object in the array
             const index = updatedNotifications.findIndex(notif => notif.id === notifToUpdate.id);
-
-            // Create a new object with the same properties as the notifToUpdate object,
-            // but with the "read" property set to true
             const updatedNotif = {
               ...notifToUpdate,
               read: true
             };
-
-            // Update the notifications state array with the new object
             updatedNotifications[index] = updatedNotif;
 
-            // Return the new state object
             return updatedNotifications;
           });
         })
         .catch(error => {
           // handle error
           console.log(error);
-          console.log(error.response.data);
         });
     }
 
   }
 
-let navigate = useNavigate();
+  let navigate = useNavigate();
   console.log(notifications);
+
 return (
   <Disclosure as="nav" className="bg-gray-800 fixed top-0 min-w-full z-40">
     {({ open }) => (
@@ -156,7 +148,6 @@ return (
               <Menu as="div" className="relative ml-3">
                 <div>
                   <Menu.Button className="flex rounded-full bg-gray-800 text-sm">
-                    <span className="sr-only">Open user menu</span>
                     <img
                       className="h-8 w-8 rounded-full"
                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"

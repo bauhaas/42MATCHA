@@ -32,7 +32,7 @@ const Profile = () => {
                         </div>
                     </div>
                 </div>
-                {/* <ActiveConversations /> */}
+                <ActiveConversations />
             </div>
         </>
     )

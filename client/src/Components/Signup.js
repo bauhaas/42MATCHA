@@ -1,70 +1,64 @@
 import React, { useState } from "react"
-import {useNavigate} from 'react-router-dom';
 import useValidator from '../hooks/useValidator';
 import useToggle from '../hooks/useToggle';
 import axios from 'axios';
 
-
 function Signup() {
+  const [isErrorToggle, setErrorToggle] = useToggle(false);
+  const [error, setError] = useState([])
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [invalidFields, setInvalidFields] = useState([]);
+  const [validator, showValidationMessage] = useValidator(null,
+  {
+    match: {
+      rule: () => {
+        return password === passwordConfirm;
+      },
+    }
+  });
 
-    const [isErrorToggle, setErrorToggle] = useToggle(false);
-    const [error, setError] = useState([])
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [passwordConfirm, setPasswordConfirm] = useState("");
-    const [invalidFields, setInvalidFields] = useState([]);
-    const [validator, showValidationMessage] = useValidator(null,
-    {
-      match: {
-        rule: () => {
-          return password === passwordConfirm;
-        },
-      }
-    });
-
-    const addUser = () => {
-      axios.post('http://localhost:3001/users', {
-        firstName: firstName,
-        lastName: lastName,
-        email:email,
-        password:password
+  const addUser = () => {
+    axios.post('http://localhost:3001/users', {
+      firstName: firstName,
+      lastName: lastName,
+      email:email,
+      password:password
+    })
+      .then(response => {
+        console.log(response);
       })
-        .then(response => {
-          console.log(response);
-        })
-        .catch(error => {
-          setErrorToggle(true);
-          setError([error.response.status, error.response.data]);
-          console.log(error);
-        });
+      .catch(error => {
+        setErrorToggle(true);
+        setError([error.response.status, error.response.data]);
+        console.log(error);
+      });
+  }
+
+  const handleSignUpClick = (event) => {
+    event.preventDefault();
+    if (validator.allValid()) {
+      console.log("form is valid");
+      addUser();
+    } else {
+      const invalidFieldsSet = new Set(invalidFields);
+      (!validator.check(firstName, "required|alpha|max:15")) ? invalidFieldsSet.add('firstName') : invalidFieldsSet.delete('firstName');
+      (!validator.check(lastName, "required|alpha|max:15")) ? invalidFieldsSet.add('lastName') : invalidFieldsSet.delete('lastName');
+      (!validator.check(email, "required|email")) ? invalidFieldsSet.add('email') : invalidFieldsSet.delete('email');
+      (!validator.check(password, "required")) ? invalidFieldsSet.add('password')  : invalidFieldsSet.delete('password');
+      (!validator.check(passwordConfirm, "required|match")) ? invalidFieldsSet.add('passwordConfirm')  : invalidFieldsSet.delete('passwordConfirm');
+
+      // validator.showMessages();
+      // rerender to show messages for the first time
+      console.log(invalidFieldsSet);
+      showValidationMessage(true);
+      setInvalidFields(Array.from(invalidFieldsSet));
+      return
     }
-
-    const handleSignUpClick = (event) => {
-      event.preventDefault();
-
-      if (validator.allValid()) {
-        console.log("form is valid");
-        addUser();
-
-
-      } else {
-        const invalidFieldsSet = new Set(invalidFields);
-        (!validator.check(firstName, "required|alpha|max:15")) ? invalidFieldsSet.add('firstName') : invalidFieldsSet.delete('firstName');
-        (!validator.check(lastName, "required|alpha|max:15")) ? invalidFieldsSet.add('lastName') : invalidFieldsSet.delete('lastName');
-        (!validator.check(email, "required|email")) ? invalidFieldsSet.add('email') : invalidFieldsSet.delete('email');
-        (!validator.check(password, "required")) ? invalidFieldsSet.add('password')  : invalidFieldsSet.delete('password');
-        (!validator.check(passwordConfirm, "required|match")) ? invalidFieldsSet.add('passwordConfirm')  : invalidFieldsSet.delete('passwordConfirm');
-
-        // validator.showMessages();
-        // rerender to show messages for the first time
-        console.log(invalidFieldsSet);
-        showValidationMessage(true);
-        setInvalidFields(Array.from(invalidFieldsSet));
-        return
-      }
-    }
+  }
 
   return (
     <>
@@ -80,8 +74,6 @@ function Signup() {
 
         <img className="w-screen object-cover h-1/4 md:w-1/2 md:h-screen" src='../bg-signin-signup.jpeg' alt='bg-signin-signup'/>
         <div className="w-full h-full md:w-1/2">
-
-
 
           <div className="w-full min-h-full flex flex-col items-center justify-center px-10 md:px-36">
             <h1 className="self-start text-2xl font-bold mb-2">Create your account</h1>

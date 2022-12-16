@@ -1,6 +1,7 @@
 import pool from '../config/db.js';
 import { faker } from '@faker-js/faker';
 import bcrypt from "bcryptjs";
+import log from '../config/log.js';
 
 const interestsAndHobbies = [
   'skiing',
@@ -33,7 +34,7 @@ export async function createUsersTable() {
       WHERE table_name = 'users';
     `);
 
-    //TODO replace IF NOT EXIST INSTEADODTABLE EXIST
+    //TODO replace IF NOT EXIST INSTEAD OF tableExists
     if (tableExists.rowCount === 0) {
     const result = await client.query(`
       CREATE TABLE users (
@@ -51,13 +52,13 @@ export async function createUsersTable() {
         bio TEXT
       );
     `);
-    console.log(result, 'user table have been created');}
+      log.info('[userModel.js]', result, 'user table have been created');}
     else {
-      console.log('user table already exists - no need to create it');
+      log.info('[userModel.js]', 'user table already exists - no need to create it');
     }
     client.release();
   } catch (err) {
-    console.error(err);
+    log.error('[userModel.js]', err);
   }
 }
 
@@ -74,26 +75,25 @@ export async function seedUsersTable() {
     `);
 
     if (tableIsEmpty.rowCount === 0) {
-      // Generate 10 fake users
-      // var salt = bcrypt.genSaltSync(10);
-      // var hash = bcrypt.hashSync('a', salt);
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync('a', salt);
 
-      // const testUser = `
-      //     INSERT INTO users (
-      //       first_name,
-      //       last_name,
-      //       email,
-      //       password,
-      //       photos
-      //     ) VALUES (
-      //       'Baudoin',
-      //       'Haas',
-      //       'a@a.com',
-      //       '${hash}',
-      //       'https://randomuser.me/api/portraits/men/17.jpg'
-      //     );
-      //   `;
-      // await client.query(testUser);
+      const testUser = `
+          INSERT INTO users (
+            first_name,
+            last_name,
+            email,
+            password,
+            photos
+          ) VALUES (
+            'Baudoin',
+            'Haas',
+            'a@a.com',
+            '${hash}',
+            'https://randomuser.me/api/portraits/men/17.jpg'
+          );
+        `;
+      await client.query(testUser);
 
       for (let i = 0; i < 40; i++) {
         const sex = faker.name.sex();
@@ -134,15 +134,13 @@ export async function seedUsersTable() {
           );
         `;
         await client.query(query);
-
-
         }
       }
     else {
-      console.log('user table already seeded - no need to seed');
+      log.info('[userModel.js]', 'user table already seeded - no need to seed');
     }
     client.release();
   } catch (err) {
-    console.error(err);
+    log.error('[userModel.js]', err);
   }
 }

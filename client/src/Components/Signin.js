@@ -23,7 +23,7 @@ function Signin() {
       console.log("go to home cuz already sign")
       navigate('/home');
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   const handleSignUpClick = (event) => {
     event.preventDefault();
