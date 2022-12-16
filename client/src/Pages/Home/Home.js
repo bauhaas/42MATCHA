@@ -1,9 +1,8 @@
-import ActiveConversations from './ActiveConversations';
-import { useEffect } from 'react';
-import NavBar from './NavBar';
-import Testing from './Testing';
+import ActiveConversations from './Components/ActiveConversations';
+import NavBar from '../Navbar/NavBar';
+import Testing from './Components/Testing';
 import {io, Manager} from 'socket.io-client';
-import CardsMap from './CardsMap';
+import CardsMap from './Components/CardsMap';
 
 
 //TODO socket file

@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import useValidator from '../hooks/useValidator';
-import useToggle from '../hooks/useToggle';
+import useValidator from '../../Hooks/useValidator';
+import useToggle from '../../Hooks/useToggle';
 import axios from 'axios';
 
 function Signup() {

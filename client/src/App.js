@@ -1,11 +1,11 @@
-import Home from './Components/Home';
-import Signin from './Components/Signin';
-import Signup from './Components/Signup';
-import Unknown from './Components/Unkown';
-import Profile from './Components/Profile';
+import Home from './Pages/Home/Home';
+import Signin from './Pages/Signin/Signin';
+import Signup from './Pages/Signup/Signup';
+import Unknown from './Pages/Unknown/Unknown';
+import Profile from './Pages/Profile/Profile';
 import { Route, Routes } from 'react-router-dom';
 import { useContext } from 'react';
-import {socket, SocketContext} from './context/socket';
+import {socket, SocketContext} from './Context/socket';
 
 function App() {
   return (

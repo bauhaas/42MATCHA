@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import {useNavigate} from 'react-router-dom';
-import useToggle from '../hooks/useToggle';
-import useIsAuthenticated from '../hooks/useIsAuthenticated';
+import useToggle from '../../Hooks/useToggle';
+import useIsAuthenticated from '../../Hooks/useIsAuthenticated';
 import axios from 'axios';
 
 

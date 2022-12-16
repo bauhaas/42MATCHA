@@ -1,5 +1,4 @@
-import ActiveConversations from './ActiveConversations';
-import NavBar from './NavBar';
+import NavBar from '../Navbar/NavBar';
 
 const Profile = () => {
 
@@ -32,7 +31,6 @@ const Profile = () => {
                         </div>
                     </div>
                 </div>
-                <ActiveConversations />
             </div>
         </>
     )
