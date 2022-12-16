@@ -45,11 +45,17 @@ export async function createUsersTable() {
         password VARCHAR(255) NOT NULL,
         age INTEGER,
         sex VARCHAR(255),
+        sex_orientation VARCHAR(255),
         city VARCHAR(255),
         country TEXT,
         interests TEXT,
         photos TEXT,
-        bio TEXT
+        bio TEXT,
+        active BOOLEAN,
+        last_location POINT,
+        fame_rating INT,
+        report_count INT,
+
       );
     `);
       log.info('[userModel.js]', result, 'user table have been created');}
