@@ -12,7 +12,7 @@ const GET_USER_BY_ID = `
 const INSERT_USER = `
   INSERT INTO users (first_name, last_name, email, password)
   VALUES ($1, $2, $3, $4)
-  RETURNING id
+  RETURNING *
 `;
 
 const DELETE_USER = `

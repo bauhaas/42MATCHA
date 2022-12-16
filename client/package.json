@@ -12,6 +12,7 @@
     "axios": "^1.2.1",
     "buffer-polyfill": "^6.0.3",
     "cookies": "^0.8.0",
+    "daisyui": "^2.45.0",
     "framer-motion": "^7.6.18",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",

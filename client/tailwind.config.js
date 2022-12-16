@@ -46,6 +46,7 @@ module.exports = {
 
   },
   plugins: [
+    require("daisyui"),
     require('@tailwindcss/line-clamp'),
     plugin(({ matchUtilities, theme }) => {
       matchUtilities(

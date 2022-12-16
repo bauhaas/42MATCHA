@@ -3,6 +3,7 @@ import { DBgetAllUsers, DBgetUserById, DBinsertUser, DBdeleteUser } from '../uti
 import bcrypt from "bcryptjs";
 import nodemailer from 'nodemailer';
 import log from '../config/log.js';
+import jwt from 'jsonwebtoken';
 
 // Get all users from the database
 export const getAllUsers = async () => {
@@ -65,8 +66,14 @@ export const getUserById = async (id) => {
   }
 };
 
+
+function generateAccessToken(user) {
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
+}
+
+
 // Send a confirmation email to the given email address
-export const sendConfirmationEmail = async (email, firstName, lastName) => {
+export const sendConfirmationEmail = async (email, firstName, lastName, accessToken) => {
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport(
@@ -84,7 +91,7 @@ export const sendConfirmationEmail = async (email, firstName, lastName) => {
     from: '"Matcha" <matcha@noreply.com>', // sender address
     to: email, // list of receivers
     subject: "Confirm your Matcha account", // Subject line
-    text: "Hi " + firstName + " " + lastName + ",\n\nIn order to get full access to Matcha features, you need to confirm your email address by following the link below.\nhttp://localhost:3000/home\n— Matcha", // plain text body
+    text: "Hi " + firstName + " " + lastName + `,\n\nIn order to get full access to Matcha features, you need to confirm your email address by following the link below.\nhttp://localhost:3000/profile?token=${accessToken}\n— Matcha`, // plain text body
     // html: "<b>Hello world?</b>", // html body
   });
 
@@ -106,14 +113,19 @@ export const insertUser = async (firstName, lastName, email, password) => {
     if (dupplicateEmailResult.rowCount > 0)
       throw new Error('A user with the given email already exists.');
 
-    await sendConfirmationEmail(email, firstName, lastName);
 
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);
 
     log.info('[userService]', 'gonna insert the user');
     const result = await client.query(DBinsertUser(firstName, lastName, email, hash));
+    log.info('[userService]', JSON.stringify(result.rows[0], null,2));
     const id = result.rows[0].id;
+
+    const accessToken = generateAccessToken(result.rows[0]);
+
+    await sendConfirmationEmail(email, firstName, lastName, accessToken);
+
     client.release();
     return id;
   } catch (err) {

@@ -1,12 +1,34 @@
 import NavBar from '../Navbar/NavBar';
+import { useLocation } from 'react-router-dom';
+import jwt_decode from "jwt-decode";
+import InitProfile from './Components/InitProfile';
 
 const Profile = () => {
 
+    // Save the token receive from email
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+
+    // Use the token value in your component
+    if(token)
+    {
+        //store it in localstorage to allow future api calls
+        localStorage.setItem('jwt', token);
+
+        //log to check
+        const user = jwt_decode(token);
+        console.log(user);
+    }
+
     return (
         <>
-            <div className="bg-gray-700 min-h-screen pt-20">
+            <div className="bg-gray-700 min-h-screen">
                 <NavBar />
-                <div className='flex mx-48 py-2 min-h-full rounded-lg bg-slate-600'>
+                <div className='mt-16 '>
+                    {token ? <InitProfile/> : <div>do not has token</div>}
+                </div>
+                {/* <div className='flex mx-48 py-2 min-h-full rounded-lg bg-slate-600'>
 
                     <img
                         className="h-32 w-32 rounded-full"
@@ -30,7 +52,7 @@ const Profile = () => {
                             <span className="bg-orange-300 text-orange-900 text-sm font-medium py-0.5 rounded-md flex justify-center">test</span>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </>
     )

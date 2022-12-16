@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
 });
 
 
-//TODO move to middleware file (atm only used on get /users/:id)
+//TODO move to middleware file
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
