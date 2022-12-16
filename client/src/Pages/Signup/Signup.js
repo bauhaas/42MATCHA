@@ -2,9 +2,13 @@ import React, { useState } from "react"
 import useValidator from '../../Hooks/useValidator';
 import useToggle from '../../Hooks/useToggle';
 import axios from 'axios';
+import WaitEmailConfirmation from "./Components/WaitEmailConfirmation";
+import SignUpForm from "./Components/SignUpForm";
 
 function Signup() {
   const [isErrorToggle, setErrorToggle] = useToggle(false);
+  const [emailConfirmation, setEmailConfirmation] = useToggle(false);
+  const [hasSignedUp, setHasSignedUP] = useToggle(false);
   const [error, setError] = useState([])
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -30,6 +34,7 @@ function Signup() {
     })
       .then(response => {
         console.log(response);
+        setHasSignedUP(true);
       })
       .catch(error => {
         setErrorToggle(true);
@@ -74,8 +79,8 @@ function Signup() {
 
         <img className="w-screen object-cover h-1/4 md:w-1/2 md:h-screen" src='../bg-signin-signup.jpeg' alt='bg-signin-signup'/>
         <div className="w-full h-full md:w-1/2">
-
           <div className="w-full min-h-full flex flex-col items-center justify-center px-10 md:px-36">
+            {hasSignedUp ? <SignUpForm /> : <WaitEmailConfirmation />}
             <h1 className="self-start text-2xl font-bold mb-2">Create your account</h1>
             <label className={`block ${invalidFields.includes('firstName') ? "text-red-500" : "text-gray-700"} text-sm font-bold self-start mb-1`}>
               First name
