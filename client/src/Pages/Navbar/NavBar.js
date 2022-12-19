@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, XMarkIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom';
 // import { socket2 } from './Home';
 import axios from 'axios';
@@ -43,6 +43,11 @@ function Navbar() {
   const gotoprofile = (event) => {
     event.preventDefault();
     navigate('/profile');
+  }
+
+  const gotochat = (event) => {
+    event.preventDefault();
+    navigate('/chat');
   }
 
 
@@ -109,7 +114,13 @@ return (
         <div className="px-8">
           <div className="relative flex h-16 items-center justify-between">
             <img className="block h-8 w-auto" src="../logo.png" alt="logo"/>
-            <div id="navbarRightButtons" className="flex items-center">
+            <div id="navbarRightButtons" className="flex items-center gap-4">
+              <Menu as="div">
+                <Menu.Button onClick={gotochat} className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
+                  <ChatBubbleLeftRightIcon className={`h-8 w-8`} aria-hidden="true" />
+                  <div id="chat" className={`${notifications.filter(notif => notif.read === false).length === 0 ? 'hidden' : ''} absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{notifications.filter(notif => notif.read === false).length}</div>
+                </Menu.Button>
+              </Menu >
               <Menu as="div">
                   <Menu.Button className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                     <BellIcon className={`h-8 w-8`} aria-hidden="true" />
