@@ -4,41 +4,6 @@ import log from '../config/log.js';
 //TODO
 // import { DBgetAllNotifications, DBdeleteNotification } from '../utils/queryNotificationsUtils.js';
 
-// Get all notifications from the database
-export const getAllNotifications = async () => {
-    try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM notifications`);
-        client.release();
-        return result.rows;
-    } catch (err) {
-        throw err;
-    }
-};
-
-// Delete a user from the database
-export const deleteNotification = async (id) => {
-    try {
-        const client = await pool.connect();
-        await client.query(`DELETE FROM notifications WHERE id = $1`, [id]);
-        client.release();
-    } catch (err) {
-        throw err;
-    }
-};
-
-// Update a notifications's information in the database
-export const updateNotification = async (id) => {
-    try {
-        log.info('[notifService]', 'id:', id);
-        const client = await pool.connect();
-        await client.query(`UPDATE notifications SET read = $1 WHERE id = $2`, [true, id]);
-        client.release();
-    } catch (err) {
-        throw err;
-    }
-};
-
 
 function getKey(value) {
     const socketmap = global.socketUser;
@@ -73,6 +38,62 @@ export const insertNotification = async (sender_id, user_id, type) => {
         return id;
     } catch (err) {
         log.error('[notifService]', err);
+        throw err;
+    }
+};
+
+
+
+// Get all notifications from the database
+export const getAllNotifications = async () => {
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`SELECT * FROM notifications`);
+        client.release();
+        return result.rows;
+    } catch (err) {
+        throw err;
+    }
+};
+
+
+
+// Update a notifications's updated_at in the database
+export const updateTimeNotification = async (id) => {
+    try {
+        log.info('[notifService]', 'id:', id);
+        const client = await pool.connect();
+
+        await client.query(`UPDATE notifications SET updated_at = NOW() WHERE id = $1`, [id]);
+        client.release();
+    } catch (err) {
+        throw err;
+    }
+};
+
+// Update a notifications's read to its inverse in the database
+export const updateReadNotification = async (id) => {
+    try {
+        log.info('[notifService]', 'id:', id);
+        const client = await pool.connect();
+
+        await client.query(`UPDATE notifications SET read = NOT read WHERE id = $1`, [id]);
+        await updateTimeNotification(id);
+        client.release();
+    } catch (err) {
+        throw err;
+    }
+};
+
+
+
+// Delete a user from the database
+export const deleteNotification = async (id) => {
+    try {
+        const client = await pool.connect();
+        await client.query(`DELETE FROM notifications WHERE id = $1`, [id]);
+        client.release();
+    } catch (err) {
         throw err;
     }
 };

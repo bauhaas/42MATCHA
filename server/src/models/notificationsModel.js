@@ -22,7 +22,8 @@ export async function createNotificationsTable() {
                 FOREIGN KEY (sender_id) REFERENCES users (id),
                 type VARCHAR(255),
                 read BOOLEAN,
-                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
             `);
           log.info('[notifModel.js]', result, 'notifications table have been created');

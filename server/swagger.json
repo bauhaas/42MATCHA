@@ -90,26 +90,78 @@
           }
         }
       },
-            "/notifications": {
-              "get": {
-                "description": "Get all notifications from the database",
-                "parameters": [],
-                "responses": {
-                  "200": {
-                    "description": "Successfully retrieved all notifications",
-                    "schema": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/definitions/Notifications"
-                      }
-                    }
-                  },
-                  "500": {
-                    "description": "Failed to retrieve notifications from the database"
-                  }
+      "/notifications": {
+        "get": {
+          "description": "Get all notifications from the database",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved all notifications",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Notifications"
                 }
               }
+            },
+            "500": {
+              "description": "Failed to retrieve notifications from the database"
             }
+          }
+        }
+      },
+      "/notifications/{id}/update_read": {
+        "put": {
+          "description": "Update notification id's read status in the database",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            }],
+          "responses": {
+            "200": {
+              "description": "Successfully updated the update_at of the notification",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Notifications"
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to retrieve notifications from the database"
+            }
+          }
+        }
+      },
+      "/notifications/{id}/update_time": {
+        "put": {
+          "description": "Update notification id's updated_at in the database",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            }],
+          "responses": {
+            "200": {
+              "description": "Successfully updated the updated_at of the notification",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Notifications"
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to retrieve notifications from the database"
+            }
+          }
+        }
+      }
     },
     "definitions": {
         "User": {
@@ -169,6 +221,10 @@
                 "type": "boolean"
               },
               "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
                 "type": "string",
                 "format": "date-time"
               }
