@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState, useRef } from 'react';
 
-const PictureForm = () => {
+const PictureForm = ({ setPictures }) => {
     const fileInputRef = useRef(null);
     const [imageUrls, setImageUrls] = useState([]);
 
@@ -17,6 +17,7 @@ const PictureForm = () => {
                     newImageUrls.push(event.target.result);
                     if (newImageUrls.length === files.length) {
                         setImageUrls([...imageUrls, ...newImageUrls]);
+                        setPictures((prevPictures) => [...prevPictures, ...newImageUrls]);
                     }
                 };
                 fileReader.readAsDataURL(file);
@@ -27,15 +28,17 @@ const PictureForm = () => {
     const deleteImage = (event, imageUrl) => {
         event.preventDefault();
         setImageUrls(imageUrls.filter((url) => url !== imageUrl));
+        setPictures((prevPictures) => [...prevPictures, imageUrl]);
     };
 
-    console.log(imageUrls);
+    // console.log(imageUrls);
 
     return (
         <>
             <div className='flex flex-col items-center'>
                 <p className='mt-4 font-bold text-2xl'>Upload up to 5 photos</p>
                 <p className='text-sm'>The first one will be your profile picture</p>
+                <p className='text-sm'>You must have at least 1 picture to confirm your profile</p>
                 <input
                     type="file"
                     className="file-input file-input-sm w-full max-w-xs m-auto mt-2"
