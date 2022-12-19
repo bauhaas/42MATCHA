@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, insertUser, deleteUser, getLogin } from '../services/userService.js';
+import { getAllUsers, getUserById, insertUser, deleteUser, getLogin, CreateFakeUser } from '../services/userService.js';
 import jwt from 'jsonwebtoken';
 import log from '../config/log.js';
 
@@ -31,6 +31,25 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await getLogin(email, password);
 
+    const accessToken = generateAccessToken(user);
+    res.send(accessToken);
+  } catch (err) {
+    if (err.message === 'Invalid email or password.') {
+      res.status(401).send(err.message);
+    } else {
+      res.status(500).send(err.message);
+    }
+  }
+});
+
+
+// TODO maybe create an auth controller/sevice ?
+router.post('/fake', async (req, res) => {
+  try {
+    const fakeUser = req.body.fakeUserName;
+    console.log(fakeUser);
+    const user = await CreateFakeUser(fakeUser);
+    console.log(user);
     const accessToken = generateAccessToken(user);
     res.send(accessToken);
   } catch (err) {

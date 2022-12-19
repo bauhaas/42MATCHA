@@ -134,6 +134,33 @@ export const insertUser = async (firstName, lastName, email, password) => {
   }
 };
 
+
+// Insert a new user into the database
+export const CreateFakeUser = async (fakeUser) => {
+  try {
+    const client = await pool.connect();
+
+
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(fakeUser, salt);
+
+    log.info('[userService]', 'gonna insert the fake user');
+    const fakeMail = fakeUser + "@" + fakeUser + ".com" ;
+    const result = await client.query(`
+    INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+    RETURNING *;
+  `, [fakeUser, fakeUser, fakeMail, fakeUser, 20, "man", "hetero", "Paris", "France", "test_interets", "", fakeUser, true, 0, 0]);
+    log.info('[userService]', JSON.stringify(result.rows[0], null,2));
+
+    client.release();
+    return result.rows[0];
+  } catch (err) {
+    log.error('[userService]', err);
+    throw err;
+  }
+};
+
 // Delete a user from the database
 export const deleteUser = async (id) => {
   try {
