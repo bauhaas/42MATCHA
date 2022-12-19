@@ -1,19 +1,18 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 
-const InterestsForm = () => {
+const InterestsForm = ({ interests, setInterests }) => {
 
-    const [interests, setInterests] = useState([]);
-    const [currentStep, setCurrentStep] = useState(0);
+    const [example, setExample] = useState([]);
 
     function addToInterests(event, interest) {
         event.preventDefault();
-        console.log(interest);
+        setInterests((prevInterests) => [...prevInterests, interest]);
     }
 
     //random test data
     useEffect(() => {
-        setInterests(
+        setExample(
             [
                 "cinema",
                 "test",
@@ -54,7 +53,7 @@ const InterestsForm = () => {
                     <p className='text-center'>Click to add them to your profile</p>
                     <br />
                     <ul className="flex gap-2 justify-center flex-wrap">
-                        {interests.map((interest, index) => (
+                        {example.map((interest, index) => (
                             <li key={`${interest}-${index}`} id={interest} className="flex">
                                 <div onClick={(event) => addToInterests(event, interest)} className="badge badge-lg bg-emerald-300 text-black hover:text-white hover:bg-indigo-700">{interest}</div>
                             </li>

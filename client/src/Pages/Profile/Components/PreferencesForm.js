@@ -1,11 +1,12 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 
-const PreferencesForm = () => {
+const PreferencesForm = ({ setSexOrientation }) => {
     const [selectedOption, setSelectedOption] = useState(null);
 
     const handleOptionChange = (event) => {
         setSelectedOption(event.target.value);
+        setSexOrientation(event.target.value);
     };
 
     console.log(selectedOption);
