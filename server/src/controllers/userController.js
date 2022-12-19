@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, insertUser, deleteUser, getLogin, CreateFakeUser } from '../services/userService.js';
+import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser } from '../services/userService.js';
 import jwt from 'jsonwebtoken';
 import log from '../config/log.js';
 
@@ -105,13 +105,71 @@ router.post('/', async (req, res) => {
 });
 
 
-// Update 1st profile completion
-router.put('/:id/update', async (req, res) => {
+function changeUserData(user, update) {
+  if (update.first_name) {
+    user.first_name = update.first_name;
+  }
+  if (update.last_name) {
+    user.last_name = update.last_name;
+  }
+  if (update.email) {
+    user.email = update.email;
+  }
+  if (update.password) {
+    user.password = update.password;
+  }
+  if (update.age) {
+    user.age = update.age;
+  }
+  if (update.sex) {
+    user.sex = update.sex;
+  }
+  if (update.sex_orientation) {
+    user.sex_orientation = update.sex_orientation;
+  }
+  if (update.city) {
+    user.city = update.city;
+  }
+  if (update.country) {
+    user.country = update.country;
+  }
+  if (update.interests) {
+    user.interests = update.interests;
+  }
+  if (update.bio) {
+    user.bio = update.bio;
+  }
+  if (update.active) {
+    user.active = update.active;
+  }
+  if (update.last_location) {
+    user.last_location = update.last_location;
+  }
+  if (update.fame_rating) {
+    user.fame_rating = update.fame_rating;
+  }
+  if (update.report_count) {
+    user.report_count = update.report_count;
+  }
+
+  return user
+}
+
+// Update user
+router.put('/:id/update', authenticateToken, async (req, res) => {
   try {
-    const { bio, interests, sexOrientation, pictures } = req.body;
-    log.info('[userController]', req.body);
-    log.info('[userController]', req.params.id);
-    res.send(req.params.id);
+    log.info("id", req.params.id);
+    var user = await getUserById(req.params.id);
+    console.log(user);
+    console.log(req.body);
+    log.info(req.body);
+    user = changeUserData(user, req.body);
+    console.log("changed", user);
+
+    log.info(user);
+    const newUser = await updateUser(user);
+
+    res.send(newUser);
   } catch (err) {
     if (err.message === 'A user with the given email already exists.') {
       res.status(403).send(err.message);

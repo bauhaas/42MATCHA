@@ -134,6 +134,58 @@ export const insertUser = async (firstName, lastName, email, password) => {
   }
 };
 
+// Insert a new user into the database
+export const updateUser = async (data) => {
+  try {
+    const client = await pool.connect();
+
+    log.info(data);
+    log.info('[userService]', 'gonna update the user');
+    const result = await client.query(`
+    UPDATE users SET
+    first_name = $1,
+    last_name = $2,
+    email = $3,
+    password = $4,
+    age = $5,
+    sex = $6,
+    sex_orientation = $7,
+    city = $8,
+    country = $9,
+    interests = $10,
+    photos = $11,
+    bio = $12,
+    active = $13,
+    fame_rating = $14,
+    report_count = $15
+    WHERE id = $16
+    RETURNING *;`, [
+      data.first_name,
+      data.last_name,
+      data.email,
+      data.password,
+      data.age,
+      data.sex,
+      data.sex_orientation,
+      data.city,
+      data.country,
+      data.interests,
+      data.photos,
+      data.bio,
+      data.active,
+      data.fame_rating,
+      data.report_count,
+      data.id
+    ]);
+    const user = result.rows[0];
+
+    client.release();
+    return user;
+  } catch (err) {
+    log.error('[userService]', err);
+    throw err;
+  }
+};
 
 // Insert a new user into the database
 export const CreateFakeUser = async (fakeUser) => {

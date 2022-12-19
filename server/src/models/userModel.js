@@ -112,7 +112,7 @@ export async function seedUsersTable() {
         // const birthdate = faker.date.birthdate({refDate: Date});
         // const interests = faker.helpers.arrayElement(interestsAndHobbies, 3)
         const photos = faker.image.avatar();
-        const bio = faker.lorem.lines(8);
+        const bio = faker.lorem.lines(3);
         const query = `
           INSERT INTO users (
             first_name,

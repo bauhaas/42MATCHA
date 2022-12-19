@@ -90,6 +90,102 @@
           }
         }
       },
+      "/users/{id}/update": {
+        "put": {
+          "description": "Update user from the database",
+          "parameters": [
+            {
+            "name": "id",
+            "in": "path",
+            "type": "int"
+            },
+            {
+              "name": "first_name",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "last_name",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "email",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "age",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "sex",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "sex_orientation",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "city",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "country",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "interests",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "bio",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "active",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "fame_rating",
+              "in": "formData",
+              "type": "string"
+            },
+            {
+              "name": "report_count",
+              "in": "formData",
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully updated user",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "404": {
+              "description": "Failed to find user with the specified ID"
+            },
+            "500": {
+              "description": "Failed to update user from the database"
+            }
+          }
+        }
+      },
       "/notifications": {
         "get": {
           "description": "Get all notifications from the database",

@@ -4,13 +4,17 @@ import Signup from './Pages/Signup/Signup';
 import Unknown from './Pages/Unknown/Unknown';
 import Profile from './Pages/Profile/Profile';
 import Chat from './Pages/Chat/Chat';
-import { Route, Routes } from 'react-router-dom';
 import Conversation from './Pages/Chat/Components/Conversation';
+
+import { Route, Routes, Navigate } from 'react-router-dom';
+import { useContext } from 'react';
+import {socket, SocketContext} from './Context/socket';
 
 function App() {
   return (
     <>
     <Routes>
+        <Route exact path="/" element={ <Navigate to="/home" /> } />
         <Route path='/home' element={<Home />} />
         <Route exact path='/signin' element={<Signin />} />
         <Route path='/signup' element={<Signup />} />
