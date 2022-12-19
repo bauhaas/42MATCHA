@@ -122,7 +122,7 @@
           {
             "name": "age",
             "in": "formData",
-            "type": "string"
+            "type": "integer"
           },
           {
             "name": "sex",
@@ -157,17 +157,17 @@
           {
             "name": "active",
             "in": "formData",
-            "type": "string"
+            "type": "boolean"
           },
           {
             "name": "fame_rating",
             "in": "formData",
-            "type": "string"
+            "type": "integer"
           },
           {
             "name": "report_count",
             "in": "formData",
-            "type": "string"
+            "type": "integer"
           }
         ],
         "responses": {
@@ -240,7 +240,7 @@
             "name": "blocker_id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }],
         "responses": {
           "200": {
@@ -253,7 +253,7 @@
             }
           },
           "500": {
-            "description": "Failed to retrieve notifications from the database"
+            "description": "Failed to get the blocks from the database"
           }
         }
       }
@@ -266,17 +266,17 @@
             "name": "blocker_id",
             "in": "formData",
             "required": true,
-            "type": "string"
+            "type": "integer"
           },
           {
             "name": "blocked_id",
             "in": "formData",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }],
         "responses": {
           "200": {
-            "description": "Successfully create block",
+            "description": "Successfully created the block",
             "schema": {
               "type": "array",
               "items": {
@@ -285,7 +285,7 @@
             }
           },
           "500": {
-            "description": "Failed to retrieve notifications from the database"
+            "description": "Failed to create the block"
           }
         }
       },
@@ -296,17 +296,17 @@
             "name": "blocker_id",
             "in": "formData",
             "required": true,
-            "type": "string"
+            "type": "integer"
           },
           {
             "name": "blocked_id",
             "in": "formData",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }],
         "responses": {
           "200": {
-            "description": "Successfully updated the updated_at of the notification",
+            "description": "Successfully deleted the block",
             "schema": {
               "type": "array",
               "items": {
@@ -315,7 +315,106 @@
             }
           },
           "500": {
-            "description": "Failed to retrieve notifications from the database"
+            "description": "Failed to delete the block from the database"
+          }
+        }
+      }
+    },"/messages/{sender_id}/{receiver_id}": {
+      "get": {
+        "description": "get messages of conversation between sender and receiver",
+        "parameters": [
+          {
+            "name": "sender_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "receiver_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully gotten the conversation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Messages"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve the conversation"
+          }
+        }
+      }
+    },
+    "/messages": {
+      "post": {
+        "description": "Create message in the database",
+        "parameters": [
+          {
+            "name": "sender_id",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "receiver_id",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "message",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully created message",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Messages"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create message in the database"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete conversation",
+        "parameters": [
+          {
+            "name": "sender_id",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "receiver_id",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the conversation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Blocks"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to delete the conversation"
           }
         }
       }
@@ -399,6 +498,27 @@
         },
         "blocked_id": {
           "type": "integer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Messages": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "sender_id": {
+          "type": "integer"
+        },
+        "receiver_id": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
         },
         "created_at": {
           "type": "string",

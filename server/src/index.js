@@ -2,6 +2,8 @@ import express from 'express';
 import { createUsersTable, seedUsersTable } from './models/userModel.js';
 import { createNotificationsTable, seedNotificationsTable } from './models/notificationsModel.js';
 import { createBlocksTable } from './models/blockModel.js';
+import { createMessagesTable } from './models/messageModel.js';
+import messageController from './controllers/messageController.js';
 import userController from './controllers/blockController.js';
 import blockController from './controllers/blockController.js';
 import notificationsController from './controllers/notificationsController.js';
@@ -98,12 +100,14 @@ server.listen(port, async () => {
   await createNotificationsTable();
   await seedNotificationsTable();
   await createBlocksTable();
+  await createMessagesTable();
 });
 
 // Set up the routes
 app.use('/users', userController);
 app.use('/notifications', notificationsController);
 app.use('/block', blockController);
+app.use('/messages', messageController);
 
 
 export default server;
