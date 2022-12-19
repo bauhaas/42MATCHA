@@ -6,12 +6,9 @@ import PreferencesForm from "./PreferencesForm";
 import InterestsForm from "./InterestsForm";
 import PictureForm from "./PictureForm";
 import IntroForm from "./IntroForm";
+import axios from 'axios';
 
-// Create the context object
-const MyContext = React.createContext();
-
-
-const InitProfile = () => {
+const InitProfile = ({userId}) => {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -27,18 +24,31 @@ const InitProfile = () => {
         setParams(new URLSearchParams(location.search));
     }, [location]);
 
-    //TODO /users/:id/update
-
     function handleSubmit() {
-        // Remove the token and setup parameters from the URL
-        params.delete('token');
-        navigate('/profile')
+        axios.put(`http://localhost:3001/users/${userId}/update`, {
+            bio:bio,
+            interests:interests,
+            sexOrientation:sexOrientation,
+            pictures:pictures
+        })
+            .then(response => {
+                console.log(response);
+
+                // Remove the token and setup parameters from the URL
+                params.delete('token');
+                navigate('/profile')
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
 
     function handleNextClick() {
         if (currentStep !== 4)
             setCurrentStep(currentStep + 1);
+        else if(currentStep === 4 && pictures.length > 0)
+         handleSubmit();
     }
 
     function handlePreviousClick() {
@@ -47,8 +57,6 @@ const InitProfile = () => {
     }
 
     console.log('infos:', "bio:", bio, "interests:", interests, "sexorientation:", sexOrientation, "pictures:", pictures);
-    console.log(currentStep);
-    console.log(pictures);
     return (
         <>
             <div className="bg-emerald-600 min-h-screen">
@@ -57,7 +65,7 @@ const InitProfile = () => {
                 {currentStep === 2 && <PreferencesForm  setSexOrientation={setSexOrientation}/>}
                 {currentStep === 3 && <InterestsForm interests={interests} setInterests={setInterests}/>}
                 {currentStep === 4 && (
-                        <PictureForm setPictures={setPictures}/>
+                        <PictureForm pictures={pictures} setPictures={setPictures}/>
                 )}
                 <div className="flex flex-col absolute bottom-5 left-0 right-0">
                     <ul className="steps steps-horizontal">

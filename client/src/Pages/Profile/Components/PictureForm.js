@@ -1,9 +1,9 @@
 import React from 'react';
 import { useEffect, useState, useRef } from 'react';
 
-const PictureForm = ({ setPictures }) => {
+const PictureForm = ({pictures, setPictures }) => {
     const fileInputRef = useRef(null);
-    const [imageUrls, setImageUrls] = useState([]);
+    // const [imageUrls, setImageUrls] = useState([]);
 
     const handleFileChange = (event) => {
         const files = event.target.files;
@@ -16,7 +16,7 @@ const PictureForm = ({ setPictures }) => {
                 fileReader.onload = (event) => {
                     newImageUrls.push(event.target.result);
                     if (newImageUrls.length === files.length) {
-                        setImageUrls([...imageUrls, ...newImageUrls]);
+                        // setImageUrls([...imageUrls, ...newImageUrls]);
                         setPictures((prevPictures) => [...prevPictures, ...newImageUrls]);
                     }
                 };
@@ -27,8 +27,7 @@ const PictureForm = ({ setPictures }) => {
 
     const deleteImage = (event, imageUrl) => {
         event.preventDefault();
-        setImageUrls(imageUrls.filter((url) => url !== imageUrl));
-        setPictures((prevPictures) => [...prevPictures, imageUrl]);
+        setPictures(pictures.filter((url) => url !== imageUrl));
     };
 
     // console.log(imageUrls);
@@ -48,10 +47,10 @@ const PictureForm = ({ setPictures }) => {
                 />
                 {
                     <div className="carousel max-h-96 mt-4 mx-4 rounded-lg">
-                        {imageUrls.map((imageUrl, index) => (
+                        {pictures.map((imageUrl, index) => (
                             <div id={index} className="carousel-item relative w-full">
                                 <img src={imageUrl} className="mx-auto object-center object-contain" alt="randomshit" />
-                                <div className={`absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2 ${imageUrls.length <= 1 ? 'hidden':null}`}>
+                                <div className={`absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2 ${pictures.length <= 1 ? 'hidden':null}`}>
                                     <a href={'#' + (index - 1)} className="btn btn-circle">❮</a>
                                     <a href={'#' + (index + 1)} className="btn btn-circle">❯</a>
                                 </div>
@@ -65,7 +64,7 @@ const PictureForm = ({ setPictures }) => {
 
                     </div>
                 }
-                <p>{imageUrls.length}/5</p>
+                <p>{pictures.length}/5</p>
             </div>
         </>
     );

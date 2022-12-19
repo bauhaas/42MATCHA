@@ -2,6 +2,7 @@ import NavBar from '../Navbar/NavBar';
 import { useLocation } from 'react-router-dom';
 import jwt_decode from "jwt-decode";
 import InitProfile from './Components/InitProfile';
+import { useState, useEffect } from 'react';
 
 const Profile = () => {
 
@@ -10,23 +11,30 @@ const Profile = () => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
 
-    // Use the token value in your component
-    if(token)
-    {
-        //store it in localstorage to allow future api calls
-        localStorage.setItem('jwt', token);
+    const [user, setUser] = useState();
 
-        //log to check
-        const user = jwt_decode(token);
-        console.log(user);
-    }
+    useEffect(() => {
+        // Use the token value in your component
+        if (token) {
+            //store it in localstorage to allow future api calls
+            localStorage.setItem('jwt', token);
+
+            //log to check
+            const user = jwt_decode(token);
+            setUser(user);
+            console.log(user.id);
+            console.log(user);
+        }
+    }, []);
+
+
 
     return (
         <>
             <div className="bg-gray-700 min-h-screen">
                 {/* <NavBar /> */}
                 <div className=''>
-                    {token ? <InitProfile/> : <div>do not has token</div>}
+                    {token ? <InitProfile user={user.id}/> : <div>do not has token</div>}
                 </div>
                 {/* <div className='flex mx-48 py-2 min-h-full rounded-lg bg-slate-600'>
 
