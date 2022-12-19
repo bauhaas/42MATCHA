@@ -2,7 +2,7 @@ import pool from '../config/db.js';
 import { faker } from '@faker-js/faker';
 import log from '../config/log.js';
 
-// Create the users table
+// Create the notifications table
 export async function createNotificationsTable() {
     try {
         const client = await pool.connect();

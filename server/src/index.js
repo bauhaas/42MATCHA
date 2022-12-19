@@ -1,7 +1,9 @@
 import express from 'express';
 import { createUsersTable, seedUsersTable } from './models/userModel.js';
 import { createNotificationsTable, seedNotificationsTable } from './models/notificationsModel.js';
-import userController from './controllers/userController.js';
+import { createBlocksTable } from './models/blockModel.js';
+import userController from './controllers/blockController.js';
+import blockController from './controllers/blockController.js';
 import notificationsController from './controllers/notificationsController.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger.json';
@@ -95,11 +97,13 @@ server.listen(port, async () => {
   await seedUsersTable();
   await createNotificationsTable();
   await seedNotificationsTable();
+  await createBlocksTable();
 });
 
 // Set up the routes
 app.use('/users', userController);
 app.use('/notifications', notificationsController);
+app.use('/block', blockController);
 
 
 export default server;

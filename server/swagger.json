@@ -1,330 +1,410 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "title": "User API",
-      "description": "An API for managing users in a database",
-      "version": "1.0.0"
-    },
-    "paths": {
-      "/users": {
-        "get": {
-          "description": "Get all users from the database",
-          "parameters": [],
-          "responses": {
-            "200": {
-              "description": "Successfully retrieved all users",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/User"
-                }
-              }
-            },
-            "500": {
-              "description": "Failed to retrieve users from the database"
-            }
-          }
-        },
-        "post": {
-            "description": "Insert a new user into the database",
-            "parameters": [
-              {
-                "name": "firstName",
-                "in": "formData",
-                "required": true,
-                "type": "string"
-              },
-              {
-                "name": "lastName",
-                "in": "formData",
-                "required": true,
-                "type": "string"
-              },
-              {
-                "name": "email",
-                "in": "formData",
-                "required": true,
-                "type": "string"
-              },
-              {
-                "name": "password",
-                "in": "formData",
-                "required": true,
-                "type": "string"
-              }
-            ],
-            "responses": {
-              "201": {
-                "description": "Successfully inserted user into the database"
-              },
-              "500": {
-                "description": "Failed to insert user into the database"
-              }
-            }
-          }
-      },
-      "/users/{id}": {
-        "get": {
-          "description": "Get a user by their ID from the database",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "integer"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successfully retrieved user",
-              "schema": {
+  "swagger": "2.0",
+  "info": {
+    "title": "User API",
+    "description": "An API for managing users in a database",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "description": "Get all users from the database",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all users",
+            "schema": {
+              "type": "array",
+              "items": {
                 "$ref": "#/definitions/User"
               }
-            },
-            "404": {
-              "description": "Failed to find user with the specified ID"
-            },
-            "500": {
-              "description": "Failed to retrieve user from the database"
             }
+          },
+          "500": {
+            "description": "Failed to retrieve users from the database"
           }
         }
       },
-      "/users/{id}/update": {
-        "put": {
-          "description": "Update user from the database",
+      "post": {
+          "description": "Insert a new user into the database",
           "parameters": [
             {
-            "name": "id",
-            "in": "path",
-            "type": "int"
-            },
-            {
-              "name": "first_name",
+              "name": "firstName",
               "in": "formData",
+              "required": true,
               "type": "string"
             },
             {
-              "name": "last_name",
+              "name": "lastName",
               "in": "formData",
+              "required": true,
               "type": "string"
             },
             {
               "name": "email",
               "in": "formData",
+              "required": true,
               "type": "string"
             },
             {
               "name": "password",
               "in": "formData",
-              "type": "string"
-            },
-            {
-              "name": "age",
-              "in": "formData",
-              "type": "string"
-            },
-            {
-              "name": "sex",
-              "in": "formData",
-              "type": "string"
-            },
-            {
-              "name": "sex_orientation",
-              "in": "formData",
-              "type": "string"
-            },
-            {
-              "name": "city",
-              "in": "formData",
-              "type": "string"
-            },
-            {
-              "name": "country",
-              "in": "formData",
-              "type": "string"
-            },
-            {
-              "name": "interests",
-              "in": "formData",
-              "type": "string"
-            },
-            {
-              "name": "bio",
-              "in": "formData",
-              "type": "string"
-            },
-            {
-              "name": "active",
-              "in": "formData",
-              "type": "string"
-            },
-            {
-              "name": "fame_rating",
-              "in": "formData",
-              "type": "string"
-            },
-            {
-              "name": "report_count",
-              "in": "formData",
+              "required": true,
               "type": "string"
             }
           ],
           "responses": {
-            "200": {
-              "description": "Successfully updated user",
-              "schema": {
-                "$ref": "#/definitions/User"
-              }
-            },
-            "404": {
-              "description": "Failed to find user with the specified ID"
+            "201": {
+              "description": "Successfully inserted user into the database"
             },
             "500": {
-              "description": "Failed to update user from the database"
+              "description": "Failed to insert user into the database"
             }
           }
         }
-      },
-      "/notifications": {
-        "get": {
-          "description": "Get all notifications from the database",
-          "parameters": [],
-          "responses": {
-            "200": {
-              "description": "Successfully retrieved all notifications",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/Notifications"
-                }
-              }
-            },
-            "500": {
-              "description": "Failed to retrieve notifications from the database"
-            }
+    },
+    "/users/{id}": {
+      "get": {
+        "description": "Get a user by their ID from the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
           }
-        }
-      },
-      "/notifications/{id}/update_read": {
-        "put": {
-          "description": "Update notification id's read status in the database",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "integer"
-            }],
-          "responses": {
-            "200": {
-              "description": "Successfully updated the update_at of the notification",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/Notifications"
-                }
-              }
-            },
-            "500": {
-              "description": "Failed to retrieve notifications from the database"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user",
+            "schema": {
+              "$ref": "#/definitions/User"
             }
-          }
-        }
-      },
-      "/notifications/{id}/update_time": {
-        "put": {
-          "description": "Update notification id's updated_at in the database",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "integer"
-            }],
-          "responses": {
-            "200": {
-              "description": "Successfully updated the updated_at of the notification",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/Notifications"
-                }
-              }
-            },
-            "500": {
-              "description": "Failed to retrieve notifications from the database"
-            }
+          },
+          "404": {
+            "description": "Failed to find user with the specified ID"
+          },
+          "500": {
+            "description": "Failed to retrieve user from the database"
           }
         }
       }
     },
-    "definitions": {
-        "User": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "integer"
-            },
-            "first_name": {
-              "type": "string"
-            },
-            "last_name": {
-              "type": "string"
-            },
-            "age": {
-              "type": "integer"
-            },
-            "sex": {
-              "type": "string"
-            },
-            "city": {
-              "type": "string"
-            },
-            "country": {
-              "type": "string"
-            },
-            "birthdate": {
-              "type": "string"
-            },
-            "interests": {
-              "type": "string"
-            },
-            "photos": {
-              "type": "string"
-            },
-            "bio": {
-              "type": "string"
-            }
+    "/users/{id}/update": {
+      "put": {
+        "description": "Update user from the database",
+        "parameters": [
+          {
+          "name": "id",
+          "in": "path",
+          "type": "int"
+          },
+          {
+            "name": "first_name",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "last_name",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "age",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "sex",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "sex_orientation",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "city",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "interests",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "bio",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "active",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "fame_rating",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "report_count",
+            "in": "formData",
+            "type": "string"
           }
-        },
-          "Notifications": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "integer"
-              },
-              "user_id": {
-                "type": "integer"
-              },
-              "sender_id": {
-                "type": "integer"
-              },
-              "type": {
-                "type": "integer"
-              },
-              "read": {
-                "type": "boolean"
-              },
-              "created_at": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "updated_at": {
-                "type": "string",
-                "format": "date-time"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "Failed to find user with the specified ID"
+          },
+          "500": {
+            "description": "Failed to update user from the database"
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "description": "Get all notifications from the database",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all notifications",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notifications"
               }
             }
+          },
+          "500": {
+            "description": "Failed to retrieve notifications from the database"
           }
+        }
       }
+    },
+    "/notifications/{id}/update_read": {
+      "put": {
+        "description": "Update notification id's read status in the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully updated the update_at of the notification",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notifications"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve notifications from the database"
+          }
+        }
+      }
+    },
+    "/block/{blocker_id}": {
+      "get": {
+        "description": "get blocks in the database",
+        "parameters": [
+          {
+            "name": "blocker_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully gotten the blocked users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Blocks"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve notifications from the database"
+          }
+        }
+      }
+    },
+    "/block": {
+      "post": {
+        "description": "Create block in the database",
+        "parameters": [
+          {
+            "name": "blocker_id",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "blocked_id",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully create block",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Blocks"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve notifications from the database"
+          }
+        }
+      },
+      "delete": {
+        "description": "Update notification id's updated_at in the database",
+        "parameters": [
+          {
+            "name": "blocker_id",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "blocked_id",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully updated the updated_at of the notification",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Blocks"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve notifications from the database"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "age": {
+          "type": "integer"
+        },
+        "sex": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "birthdate": {
+          "type": "string"
+        },
+        "interests": {
+          "type": "string"
+        },
+        "photos": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        }
+      }
+    },
+    "Notifications": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "user_id": {
+          "type": "integer"
+        },
+        "sender_id": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "integer"
+        },
+        "read": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Blocks": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "blocker_id": {
+          "type": "integer"
+        },
+        "blocked_id": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
 }
