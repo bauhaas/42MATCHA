@@ -54,8 +54,7 @@ export async function createUsersTable() {
         active BOOLEAN,
         last_location POINT,
         fame_rating INT,
-        report_count INT,
-
+        report_count INT
       );
     `);
       log.info('[userModel.js]', result, 'user table have been created');}
@@ -64,7 +63,7 @@ export async function createUsersTable() {
     }
     client.release();
   } catch (err) {
-    log.error('[userModel.js]', err);
+    log.error('[userModel.js - create user table]', err);
   }
 }
 
