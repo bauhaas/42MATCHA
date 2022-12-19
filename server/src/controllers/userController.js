@@ -104,6 +104,24 @@ router.post('/', async (req, res) => {
   }
 });
 
+
+// Update 1st profile completion
+router.put('/:id/update', async (req, res) => {
+  try {
+    const { bio, interests, sexOrientation, pictures } = req.body;
+    log.info('[userController]', req.body);
+    log.info('[userController]', req.params.id);
+    res.send(req.params.id);
+  } catch (err) {
+    if (err.message === 'A user with the given email already exists.') {
+      res.status(403).send(err.message);
+    } else {
+      res.status(500).send(err.message);
+    }
+  }
+});
+
+
 // Delete a user by their ID
 router.delete('/:id', async (req, res) => {
   try {

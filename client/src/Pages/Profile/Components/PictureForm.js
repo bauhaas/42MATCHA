@@ -3,7 +3,6 @@ import { useEffect, useState, useRef } from 'react';
 
 const PictureForm = ({pictures, setPictures }) => {
     const fileInputRef = useRef(null);
-    // const [imageUrls, setImageUrls] = useState([]);
 
     const handleFileChange = (event) => {
         const files = event.target.files;
@@ -16,7 +15,6 @@ const PictureForm = ({pictures, setPictures }) => {
                 fileReader.onload = (event) => {
                     newImageUrls.push(event.target.result);
                     if (newImageUrls.length === files.length) {
-                        // setImageUrls([...imageUrls, ...newImageUrls]);
                         setPictures((prevPictures) => [...prevPictures, ...newImageUrls]);
                     }
                 };

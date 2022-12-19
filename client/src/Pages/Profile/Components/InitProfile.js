@@ -25,6 +25,7 @@ const InitProfile = ({userId}) => {
     }, [location]);
 
     function handleSubmit() {
+        console.log(userId);
         axios.put(`http://localhost:3001/users/${userId}/update`, {
             bio:bio,
             interests:interests,
@@ -36,7 +37,7 @@ const InitProfile = ({userId}) => {
 
                 // Remove the token and setup parameters from the URL
                 params.delete('token');
-                navigate('/profile')
+                navigate(`/profile/${userId}`)
             })
             .catch(error => {
                 console.log(error);
