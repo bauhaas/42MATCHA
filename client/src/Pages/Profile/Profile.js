@@ -24,8 +24,8 @@ const Profile = () => {
     return (
         <>
             <div className="bg-gray-700 min-h-screen">
-                <NavBar />
-                <div className='mt-16 '>
+                {/* <NavBar /> */}
+                <div className=''>
                     {token ? <InitProfile/> : <div>do not has token</div>}
                 </div>
                 {/* <div className='flex mx-48 py-2 min-h-full rounded-lg bg-slate-600'>
