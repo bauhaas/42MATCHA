@@ -102,17 +102,17 @@ export async function seedUsersTable() {
 
       for (let i = 0; i < 40; i++) {
         const sex = faker.name.sex();
-        const first_name = faker.name.firstName(sex);
-        const last_name = faker.name.lastName(sex);
+        const first_name = faker.name.firstName(sex).replace('\'', '');
+        const last_name = faker.name.lastName(sex).replace('\'', '');
         const email = faker.internet.email(first_name, last_name);
         const password = faker.internet.password();
         const age = faker.datatype.number({ min: 18, max: 80})
-        const city = faker.address.cityName();
-        const country = faker.address.country();
+        const city = faker.address.cityName().replace('\'', '');
+        const country = faker.address.country().replace('\'', '');
         // const birthdate = faker.date.birthdate({refDate: Date});
         // const interests = faker.helpers.arrayElement(interestsAndHobbies, 3)
         const photos = faker.image.avatar();
-        const bio = faker.lorem.lines(3);
+        const bio = faker.lorem.lines(3).replace('\'', '');
         const query = `
           INSERT INTO users (
             first_name,
