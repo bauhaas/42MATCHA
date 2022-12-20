@@ -50,6 +50,11 @@ function Navbar() {
     navigate('/chat');
   }
 
+  const gotosettings = (event) => {
+    event.preventDefault();
+    navigate('/settings');
+  }
+
 
   const deleteNotifs = (event, notifToRemove) => {
     event.preventDefault(); //do not delete, allow to not autoclose the notifications dropdown on a single suppresion
@@ -183,6 +188,16 @@ return (
                           className={classNames(active ? 'bg-gray-200' : '', 'block px-4 py-2 text-sm text-gray-700 min-w-full text-start')}
                         >
                           Your Profile
+                        </button>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <button
+                          onClick={gotosettings}
+                          className={classNames(active ? 'bg-gray-200' : '', 'block px-4 py-2 text-sm text-gray-700 min-w-full text-start')}
+                        >
+                          Settings
                         </button>
                       )}
                     </Menu.Item>
