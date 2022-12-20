@@ -18,8 +18,8 @@ const Conversation = () => {
         <>
             <div className="bg-gray-700 min-h-screen">
                 <NavBar />
-                <div className='flex gap-2 mx-2 mt-16 h-screen'>
-                    <div className='grow bg-gray-500 m-2 rounded-lg border-gray-600 border-2'>
+                <div className='flex gap-2 mx-2 pt-16 h-screen'>
+                    <div className='grow relative bg-gray-500 m-2 rounded-lg border-gray-600 border-2'>
                         <div className='bg-gray-200 p-2 rounded-t-lg'>
                             <div className='flex  items-center gap-2'>
                                 <button onClick={gobacktoconv} className="btn btn-sm btn-circle mr-auto bg-gray-800">
@@ -64,7 +64,7 @@ const Conversation = () => {
                         </div>
                         <div className='flex absolute bottom-0 items-center gap-2 w-full p-2'>
                             <input type="text" placeholder="Type here" className="input text-black grow" />
-                            <PaperAirplaneIcon className={`h-8 w-8`} aria-hidden="true" />
+                            <PaperAirplaneIcon className={`h-8 w-8 text-white`} aria-hidden="true" />
                         </div>
                     </div>
                 </div>

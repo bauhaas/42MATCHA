@@ -19,8 +19,8 @@ code {
 /* used for scrollbar notifications */
 @layer utilities {
   .scrollbar::-webkit-scrollbar {
-    width: 20px;
-    height: 20px;
+    width: 10px;
+    height: 10px;
   }
 
   .scrollbar::-webkit-scrollbar-track {
@@ -28,12 +28,11 @@ code {
   }
 
   .scrollbar::-webkit-scrollbar-thumb {
-    background: #d9d9d9;
+    background: #60616f;
     border-radius: 100vh;
-    border: 2px solid white;
   }
 
   .scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #aeaeae;
+    background: #ae1818;
   }
 }
