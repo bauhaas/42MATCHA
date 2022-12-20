@@ -4,7 +4,7 @@ import { createNotificationsTable, seedNotificationsTable } from './models/notif
 import { createBlocksTable } from './models/blockModel.js';
 import { createMessagesTable } from './models/messageModel.js';
 import messageController from './controllers/messageController.js';
-import userController from './controllers/blockController.js';
+import userController from './controllers/userController.js';
 import blockController from './controllers/blockController.js';
 import notificationsController from './controllers/notificationsController.js';
 import swaggerUi from 'swagger-ui-express';
