@@ -11,32 +11,32 @@ const SettingsMenu = () => {
 
     return (
         <>
-            <ul className="menu bg-base-100 w-auto p-2 rounded-box">
-                            <li>
+            <ul className="menu bg-chess-dark min-w-fit h-fit text-chess-bar rounded-lg">
+                            <li className='hover:text-white hover:bg-chess-hover border-b-2 text-xs font-bold border-chess-default'>
                                 <a onClick={() => gotoRoute('')}>
                                     <UserIcon className={`h-6 w-6`}/>
                                     <span className='hidden sm:inline'>Profile</span>
                                 </a>
                             </li>
-                            <li>
+                            <li className='hover:text-white hover:bg-chess-hover border-b-2 text-xs font-bold border-chess-default'>
                             <a onClick={() => gotoRoute('blockedUsers')}>
                                     <NoSymbolIcon className={`h-6 w-6`}/>
                                     <span className='hidden sm:inline'>Blocked users</span>
                                 </a>
                             </li>
-                            <li>
+                            <li className='hover:text-white hover:bg-chess-hover border-b-2 text-xs font-bold border-chess-default'>
                             <a onClick={() => gotoRoute('matchedUsers')}>
                                     <HeartIcon className={`h-6 w-6`}/>
                                     <span className='hidden sm:inline'>Matched users</span>
                                 </a>
                             </li>
-                            <li>
+                            <li className='hover:text-white hover:bg-chess-hover border-b-2 text-xs font-bold border-chess-default'>
                             <a onClick={() => gotoRoute('likedUsers')}>
                                     <UsersIcon className={`h-6 w-6`}/>
                                     <span className='hidden sm:inline'>Liked users</span>
                                 </a>
                             </li>
-                            <li>
+                            <li className='hover:text-white hover:bg-chess-hover border-b-2 text-xs font-bold border-chess-default'>
                             <a onClick={() => gotoRoute('password')}>
                                     <KeyIcon className={`h-6 w-6`}/>
                                     <span className='hidden sm:inline'>Password</span>

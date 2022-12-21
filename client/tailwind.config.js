@@ -6,6 +6,17 @@ module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
     extend: {
+      colors: {
+        'chess-default':'#312e2b',
+        'chess-dark':'#272522',
+        'chess-bar':'#939291',
+        'chess-text':'#ffffff',
+        'chess-hover':'#21201d',
+        'chess-placeholder':'#3d3b39',
+        'chess-place-text':'#9e9d9c',
+        'chess-button':'#363432'
+
+      },
       aspectRatio: {
         '4/3': '4 / 3',
         '25/3': '25 / 3',

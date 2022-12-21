@@ -80,7 +80,7 @@ function authenticateToken(req, res, next) {
 }
 
 // Get a user by their ID
-router.get('/:id',authenticateToken, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const user = await getUserById(req.params.id);
     res.send(user);

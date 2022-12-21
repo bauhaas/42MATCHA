@@ -2,7 +2,7 @@ import NavBar from '../../Navbar/NavBar';
 import SettingsMenu from './SettingsMenu';
 import { Cog6ToothIcon,  } from '@heroicons/react/24/outline';
 
-const LikedUsers = () => {
+const SettingsProfile = () => {
 
 	return (
 		<>
@@ -56,4 +56,4 @@ const LikedUsers = () => {
 	)
 }
 
-export default LikedUsers;
+export default SettingsProfile;
