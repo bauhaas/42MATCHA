@@ -14,7 +14,8 @@ function classNames(...classes) {
 function Navbar() {
 
   const [notifications, setNotifications] = useState([]);
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user.user);
+  let navigate = useNavigate();
 
   // useEffect(() => {
   //   // const token = localStorage.getItem('jwt');
@@ -37,7 +38,7 @@ function Navbar() {
   });
 
   useEffect(() => {
-    console.log(user.id);
+    console.log('redux user:', user);
   }, []);
 
   const logout = (event) => {
@@ -115,8 +116,6 @@ function Navbar() {
 
   }
 
-  let navigate = useNavigate();
-  console.log(notifications);
 
 return (
   <Disclosure as="nav" className="bg-chess-dark fixed top-0 min-w-full z-40">

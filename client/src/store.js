@@ -1,20 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { persistStore } from 'redux-persist';
+import { persistStore, persistReducer } from 'redux-persist';
+import userReducer from './userSlice';
+import storage from 'redux-persist/lib/storage';
 
-const store = configureStore({
+const persistConfig = {
+    key: 'root',
+    storage,
+}
+
+const persistedReducer = persistReducer(persistConfig, userReducer)
+
+export const store = configureStore({
     reducer: {
-        user: (state = null, action) => {
-            switch (action.type) {
-                case 'SET_USER':
-                    return action.user;
-                default:
-                    return state;
-            }
-        },
-    },
+        user: persistedReducer,
+    }
 });
 
-// const persistor = persistStore(store);
-
-// export { persistor };
-export default store;
+export const persistor = persistStore(store);

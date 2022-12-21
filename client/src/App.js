@@ -15,14 +15,14 @@ import MatchedUsers from './Pages/Settings/Components/MatchedUsers';
 import BlockedUsers from './Pages/Settings/Components/BlockedUsers';
 
 import { Provider } from 'react-redux';
-import store, {persistor} from './store';
+import {store, persistor} from './store';
 import { PersistGate } from 'redux-persist/integration/react';
 
 function App() {
   return (
     <>
     <Provider store={store}>
-        {/* <PersistGate persistor={persistor}> */}
+        <PersistGate persistor={persistor}>
           <Routes>
             <Route exact path="/" element={<Navigate to="/home" />} />
             <Route path='/home' element={<Home />} />
@@ -41,7 +41,7 @@ function App() {
             </Route>
             <Route path='*' element={<Unknown />} />
           </Routes>
-        {/* </PersistGate> */}
+        </PersistGate>
     </Provider>
 
     </>

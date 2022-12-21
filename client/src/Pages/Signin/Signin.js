@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import { useDispatch } from 'react-redux';
 import jwt_decode from "jwt-decode";
+import { setUser } from "../../userSlice";
 
 function Signin() {
 
@@ -37,8 +38,10 @@ function Signin() {
   const saveToRedux = (data) => {
     const user = jwt_decode(data);
     console.log('redux save', user);
-    dispatch({ type: 'SET_USER', user });
+    dispatch(setUser(user));
   }
+
+  const [test, setTest] = useState({});
 
   const handleSignInClick = (event) => {
     event.preventDefault();
@@ -61,6 +64,7 @@ function Signin() {
         else
         {
           saveToRedux(response.data);
+          setTest(response.data);
           localStorage.setItem('jwt', response.data);
         }
         navigate("/home");
@@ -92,6 +96,10 @@ function Signin() {
         console.log(error);
       });
   }
+
+  useEffect(() => {
+    console.log('useEffect test lol');
+  }, [test]);
 
   return (
     <>
