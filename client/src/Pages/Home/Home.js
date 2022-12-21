@@ -37,7 +37,7 @@ const Home = () => {
 
 	return(
 		<>
-			<div className="bg-gray-700 min-h-screen">
+			<div className="bg-chess-default min-h-screen">
 				<NavBar/>
 				<CardsMap/>
 				<ActiveConversations />

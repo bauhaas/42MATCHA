@@ -113,7 +113,7 @@ function Navbar() {
   console.log(notifications);
 
 return (
-  <Disclosure as="nav" className="bg-gray-800 fixed top-0 min-w-full z-40">
+  <Disclosure as="nav" className="bg-chess-dark fixed top-0 min-w-full z-40">
     {({ open }) => (
       <>
         <div className="px-8">

@@ -1,6 +1,5 @@
 import NavBar from '../../Navbar/NavBar';
 import SettingsMenu from './SettingsMenu';
-import { Cog6ToothIcon,  } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import SettingsHeader from './SettingsHeader';
@@ -71,7 +70,7 @@ const BlockedUsers = () => {
 					<SettingsHeader />
 					<div className='flex gap-4 mt-2 sm:mx-40'>
 						<SettingsMenu/>
-						<div className='text-white bg-chess-dark p-4 rounded-lg'>
+						<div className='text-white bg-chess-dark p-4 rounded-lg w-full'>
 							<span className='font-bold'>Blocked Users</span>
 							<p className='text-sm py-2 break-words'>
 								A blocked user will not see your profile appear in their searches, or be able to send you messages. Blocking a user will delete your chat history with them

@@ -18,7 +18,7 @@ const Chat = () => {
 
     return (
         <>
-            <div className="bg-gray-700 min-h-screen">
+            <div className="bg-chess-default min-h-screen">
                 <NavBar />
                 <div className='flex gap-2 mx-2 pt-16 h-screen text-white'>
                     <div id="convList" className='grow rounded-lg pt-2 scrollbar overflow-auto sm:px-80'>
