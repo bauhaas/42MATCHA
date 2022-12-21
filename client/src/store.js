@@ -2,10 +2,10 @@ import { configureStore } from '@reduxjs/toolkit';
 
 const store = configureStore({
     reducer: {
-        id: (state = null, action) => {
+        user: (state = null, action) => {
             switch (action.type) {
-                case 'SET_ID':
-                    return action.id;
+                case 'SET_USER':
+                    return action.user;
                 default:
                     return state;
             }

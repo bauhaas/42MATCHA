@@ -36,7 +36,7 @@ function Signin() {
 
   const saveToRedux = (data) => {
     const user = jwt_decode(data);
-    dispatch({ type: 'SET_ID', id: user.id });
+    dispatch({ type: 'SET_USER', user });
   }
 
   const handleSignInClick = (event) => {
