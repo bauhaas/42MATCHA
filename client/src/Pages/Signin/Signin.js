@@ -4,6 +4,8 @@ import useToggle from '../../Hooks/useToggle';
 import useIsAuthenticated from '../../Hooks/useIsAuthenticated';
 import axios from 'axios';
 
+import { useDispatch } from 'react-redux';
+import jwt_decode from "jwt-decode";
 
 function Signin() {
 
@@ -16,6 +18,7 @@ function Signin() {
   const { isAuthenticated } = useIsAuthenticated();
 
   let navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Check if the user is already logged in
@@ -31,6 +34,10 @@ function Signin() {
     navigate("/signup");
   }
 
+  const saveToRedux = (data) => {
+    const user = jwt_decode(data);
+    dispatch({ type: 'SET_ID', id: user.id });
+  }
 
   const handleSignInClick = (event) => {
     event.preventDefault();
@@ -51,7 +58,10 @@ function Signin() {
           // setCookie('jwt', response.data, { maxAge: 60 * 60 * 24 * 30 });
         }
         else
-            localStorage.setItem('jwt', response.data);
+        {
+          saveToRedux(response.data);
+          localStorage.setItem('jwt', response.data);
+        }
         navigate("/home");
       })
       .catch(error => {
@@ -71,7 +81,7 @@ function Signin() {
       .then(response => {
         console.log(response);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
-
+        saveToRedux(response.data);
         localStorage.setItem('jwt', response.data);
         navigate("/home");
       })

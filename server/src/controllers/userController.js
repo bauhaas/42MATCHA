@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser } from '../services/userService.js';
+import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword } from '../services/userService.js';
 import jwt from 'jsonwebtoken';
 import log from '../config/log.js';
 
@@ -168,6 +168,27 @@ router.put('/:id/update', authenticateToken, async (req, res) => {
     const newUser = await updateUser(user);
 
     res.send(newUser);
+  } catch (err) {
+    if (err.message === 'A user with the given email already exists.') {
+      res.status(403).send(err.message);
+    } else {
+      res.status(500).send(err.message);
+    }
+  }
+});
+
+
+// Update user
+router.put('/resetpassword', async (req, res) => {
+  try {
+    log.info('[userController]', 'resetpassword');
+    log.info('[userController]', req.body);
+    const {currentPassword, newPassword, id} = req.body;
+    const user = await getUserById(id);
+
+    await resetPassword(currentPassword, newPassword, user);
+
+   res.sendStatus(200);
   } catch (err) {
     if (err.message === 'A user with the given email already exists.') {
       res.status(403).send(err.message);

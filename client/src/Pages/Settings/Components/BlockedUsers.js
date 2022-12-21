@@ -3,6 +3,7 @@ import SettingsMenu from './SettingsMenu';
 import { Cog6ToothIcon,  } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import SettingsHeader from './SettingsHeader';
 
 const BlockedUsers = () => {
 
@@ -67,10 +68,7 @@ const BlockedUsers = () => {
 			<div className="bg-chess-default min-h-screen overflow-y-auto">
 				<NavBar/>
 				<div className='mx-2 pt-16 h-screen'>
-					<div className='flex items-center gap-2 p-2 text-white font-bold text-2xl sm:mx-40'>
-						<Cog6ToothIcon className={`h-6 w-6`}/>
-						<span>Settings</span>
-					</div>
+					<SettingsHeader />
 					<div className='flex gap-4 mt-2 sm:mx-40'>
 						<SettingsMenu/>
 						<div className='text-white bg-chess-dark p-4 rounded-lg'>

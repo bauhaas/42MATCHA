@@ -66,6 +66,35 @@ export const getUserById = async (id) => {
   }
 };
 
+export const resetPassword = async (oldPassword, newPassword, user) => {
+  try {
+    log.info('[userService]', 'resetPassword');
+
+    // Compare the given password with the hashed password in the database
+    log.info('[userService]', 'old:',oldPassword, ', new:', newPassword);
+    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+
+    // If the passwords don't match, throw an error
+    if (!passwordMatch) {
+      log.error('[userService]', 'pass didnt match');
+      throw new Error('Invalid email or password .');
+    }
+    else
+    {
+      var salt = bcrypt.genSaltSync(10);
+      var newHash = bcrypt.hashSync(newPassword, salt);
+      const client = await pool.connect();
+      const result = await client.query(
+        'UPDATE users SET password = $1 WHERE id = $2',
+        [newHash, user.id]
+      );
+      client.release();
+    }
+  } catch (err) {
+    throw err;
+  }
+};
+
 
 function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
@@ -194,7 +223,7 @@ export const CreateFakeUser = async (fakeUser) => {
 
 
     var salt = bcrypt.genSaltSync(10);
-    var hash = bcrypt.hashSync(fakeUser, salt);
+    var fakeHash = bcrypt.hashSync(fakeUser, salt);
 
     log.info('[userService]', 'gonna insert the fake user');
     const fakeMail = fakeUser + "@" + fakeUser + ".com" ;
@@ -202,7 +231,7 @@ export const CreateFakeUser = async (fakeUser) => {
     INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
     RETURNING *;
-  `, [fakeUser, fakeUser, fakeMail, fakeUser, 20, "man", "hetero", "Paris", "France", "test_interets", "", fakeUser, true, 0, 0]);
+  `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "man", "hetero", "Paris", "France", "test_interets", "", fakeUser, true, 0, 0]);
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));
 
     client.release();

@@ -14,26 +14,33 @@ import LikedUsers from './Pages/Settings/Components/LikedUsers';
 import MatchedUsers from './Pages/Settings/Components/MatchedUsers';
 import BlockedUsers from './Pages/Settings/Components/BlockedUsers';
 
+import { Provider } from 'react-redux';
+import store from './store';
+
 function App() {
   return (
     <>
-    <Routes>
-        <Route exact path="/" element={ <Navigate to="/home" /> } />
-        <Route path='/home' element={<Home />} />
-        <Route exact path='/signin' element={<Signin />} />
-        <Route path='/signup' element={<Signup />} />
-        <Route path='/profile/:id' element={<Profile />} />
-        <Route path='/profile/' element={<Profile />} />
-        <Route path='/chat/' element={<Chat />} />
-        <Route path='/settings/' element={<Settings />} />
-        <Route path='/chat/:id' element={<Conversation />} />
-        <Route path="/settings/blockedUsers" element={<BlockedUsers />} />
-        <Route path="/settings/matchedUsers" element={<MatchedUsers />} />
-        <Route path="/settings/likedUsers" element={<LikedUsers />} />
-        <Route path="/settings/password" element={<Password />} />
+    <Provider store={store}>
+        <Routes>
+          <Route exact path="/" element={<Navigate to="/home" />} />
+          <Route path='/home' element={<Home />} />
+          <Route exact path='/signin' element={<Signin />} />
+          <Route path='/signup' element={<Signup />} />
+          <Route path='/profile/:id' element={<Profile />} />
+          <Route path='/profile/' element={<Profile />} />
+          <Route path='/chat/' element={<Chat />} />
+          <Route path='/chat/:id' element={<Conversation />} />
+          <Route path='settings'>
+            <Route index element={<Settings />} />
+            <Route path="blockedUsers" element={<BlockedUsers />} />
+            <Route path="matchedUsers" element={<MatchedUsers />} />
+            <Route path="likedUsers" element={<LikedUsers />} />
+            <Route path="password" element={<Password />} />
+          </Route>
+          <Route path='*' element={<Unknown />} />
+        </Routes>
+    </Provider>
 
-        <Route path='*' element={<Unknown />} />
-    </Routes>
     </>
   );
 }
