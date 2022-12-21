@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import jwt_decode from "jwt-decode";
 import InitProfile from './Components/InitProfile';
 import { useState, useEffect } from 'react';
+import ProfileDetails from './Components/ProfileDetails';
+import {  useParams } from 'react-router-dom';
 
 const Profile = () => {
 
@@ -11,7 +13,8 @@ const Profile = () => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
 
-    const [user, setUser] = useState();
+    const { id } = useParams();
+
     const [userId, setUserId] = useState();
     useEffect(() => {
         // Use the token value in your component
@@ -21,10 +24,7 @@ const Profile = () => {
 
             //log to check
             const user = jwt_decode(token);
-            setUser(user);
             setUserId(user.id);
-            console.log(user.id);
-            console.log(user);
         }
     }, [token]);
 
@@ -33,14 +33,13 @@ const Profile = () => {
     return (
         <>
             <div className="bg-chess-default min-h-screen">
-                {token ?
+                {
+                token ?
                 <InitProfile userId={userId}/>
                 :
                 <div>
                     <NavBar />
-                    <div className='mx-2 pt-16 h-full'>
-                        <div className='text-white'>WIP profile</div>
-                    </div>
+                    <ProfileDetails id={id}/>
                 </div>
                 }
 

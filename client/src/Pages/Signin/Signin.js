@@ -36,6 +36,7 @@ function Signin() {
 
   const saveToRedux = (data) => {
     const user = jwt_decode(data);
+    console.log('redux save', user);
     dispatch({ type: 'SET_USER', user });
   }
 

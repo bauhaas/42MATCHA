@@ -15,30 +15,33 @@ import MatchedUsers from './Pages/Settings/Components/MatchedUsers';
 import BlockedUsers from './Pages/Settings/Components/BlockedUsers';
 
 import { Provider } from 'react-redux';
-import store from './store';
+import store, {persistor} from './store';
+import { PersistGate } from 'redux-persist/integration/react';
 
 function App() {
   return (
     <>
     <Provider store={store}>
-        <Routes>
-          <Route exact path="/" element={<Navigate to="/home" />} />
-          <Route path='/home' element={<Home />} />
-          <Route exact path='/signin' element={<Signin />} />
-          <Route path='/signup' element={<Signup />} />
-          <Route path='/profile/:id' element={<Profile />} />
-          <Route path='/profile/' element={<Profile />} />
-          <Route path='/chat/' element={<Chat />} />
-          <Route path='/chat/:id' element={<Conversation />} />
-          <Route path='settings'>
-            <Route index element={<Settings />} />
-            <Route path="blockedUsers" element={<BlockedUsers />} />
-            <Route path="matchedUsers" element={<MatchedUsers />} />
-            <Route path="likedUsers" element={<LikedUsers />} />
-            <Route path="password" element={<Password />} />
-          </Route>
-          <Route path='*' element={<Unknown />} />
-        </Routes>
+        {/* <PersistGate persistor={persistor}> */}
+          <Routes>
+            <Route exact path="/" element={<Navigate to="/home" />} />
+            <Route path='/home' element={<Home />} />
+            <Route exact path='/signin' element={<Signin />} />
+            <Route path='/signup' element={<Signup />} />
+            <Route path='/profile/:id' element={<Profile />} />
+            <Route path='/profile/' element={<Profile />} />
+            <Route path='/chat/' element={<Chat />} />
+            <Route path='/chat/:id' element={<Conversation />} />
+            <Route path='settings'>
+              <Route index element={<Settings />} />
+              <Route path="blockedUsers" element={<BlockedUsers />} />
+              <Route path="matchedUsers" element={<MatchedUsers />} />
+              <Route path="likedUsers" element={<LikedUsers />} />
+              <Route path="password" element={<Password />} />
+            </Route>
+            <Route path='*' element={<Unknown />} />
+          </Routes>
+        {/* </PersistGate> */}
     </Provider>
 
     </>

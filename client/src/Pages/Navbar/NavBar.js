@@ -5,6 +5,7 @@ import { Bars3Icon, BellIcon, XMarkIcon, ChatBubbleLeftRightIcon } from '@heroic
 import { useNavigate } from 'react-router-dom';
 // import { socket2 } from './Home';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -13,15 +14,16 @@ function classNames(...classes) {
 function Navbar() {
 
   const [notifications, setNotifications] = useState([]);
+  const user = useSelector((state) => state.user);
 
-  useEffect(() => {
-    // const token = localStorage.getItem('jwt');
-    console.log('send getNotifications event');
-    // socket2.emit('getNotifications', { token: token });
+  // useEffect(() => {
+  //   // const token = localStorage.getItem('jwt');
+  //   console.log('send getNotifications event');
+  //   // socket2.emit('getNotifications', { token: token });
 
-    return () => {
-    };
-  }, []);
+  //   return () => {
+  //   };
+  // }, []);
 
   useEffect(() => {
     //   socket2.on('receiveNotifs', (data) => {
@@ -34,6 +36,10 @@ function Navbar() {
     };
   });
 
+  useEffect(() => {
+    console.log(user.id);
+  }, []);
+
   const logout = (event) => {
     event.preventDefault();
     localStorage.removeItem('jwt');
@@ -42,7 +48,7 @@ function Navbar() {
 
   const gotoprofile = (event) => {
     event.preventDefault();
-    navigate('/profile');
+    navigate(`/profile/${user.id}`);
   }
 
   const gotochat = (event) => {
