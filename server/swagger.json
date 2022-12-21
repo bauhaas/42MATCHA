@@ -95,9 +95,9 @@
         "description": "Update user from the database",
         "parameters": [
           {
-          "name": "id",
-          "in": "path",
-          "type": "int"
+            "name": "id",
+            "in": "path",
+            "type": "int"
           },
           {
             "name": "first_name",
@@ -202,6 +202,42 @@
           },
           "500": {
             "description": "Failed to retrieve notifications from the database"
+          }
+        }
+      },
+      "post": {
+        "description": "Create notification in the database",
+        "parameters": [
+          {
+            "name": "sender_id",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "receiver_id",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "type",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully created the block",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Blocks"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to delete the block from the database"
           }
         }
       }
@@ -465,10 +501,10 @@
         "id": {
           "type": "integer"
         },
-        "user_id": {
+        "sender_id": {
           "type": "integer"
         },
-        "sender_id": {
+        "receiver_id": {
           "type": "integer"
         },
         "type": {

@@ -60,35 +60,6 @@ io.on('connection', (socket) => {
   // const decoded = jwt.decode(socket.handshake.query.token, { complete: true });
   // log.info('[index.js]', 'that socket is linked to user', decoded.payload.id);
   // socketUser.set(socket.id, decoded.payload.id);
-
-
-  //TODO join all the rooms the user is in on connection;
-  // how can I know to which user the socket refers to here ?
-
-  socket.on('disconnect', () => {
-    log.info('[index.js]', `${socket.id} has disconnected`);
-    socketUser.delete(socket.id);
-  });
-
-  socket.on('getNotifications', async (data) => {
-    const decoded = jwt.decode(data.token, { complete: true });
-    try {
-      const client = await pool.connect();
-      const result = await client.query(
-        `
-      SELECT *
-      FROM notifications
-      WHERE user_id = $1
-    `, [decoded.payload.id]
-      );
-      const notifications = result.rows;
-      client.release();
-      socket.emit('receiveNotifs', notifications);
-    } catch (err) {
-      throw err;
-    }
-  });
-
 });
 
 server.listen(port, async () => {

@@ -16,10 +16,10 @@ export async function createNotificationsTable() {
             const result = await client.query(`
             CREATE TABLE notifications (
                 id SERIAL PRIMARY KEY,
-                user_id INT NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES users (id),
-                sender_id INT,
+                sender_id INT NOT NULL,
                 FOREIGN KEY (sender_id) REFERENCES users (id),
+                receiver_id INT,
+                FOREIGN KEY (receiver_id) REFERENCES users (id),
                 type VARCHAR(255),
                 read BOOLEAN,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -55,8 +55,8 @@ export async function seedNotificationsTable() {
 
             const testNotifs = `
           INSERT INTO notifications (
-            user_id,
             sender_id,
+            receiver_id,
             type,
             read
           ) VALUES (
@@ -69,19 +69,19 @@ export async function seedNotificationsTable() {
           await client.query(testNotifs);
 
             for (let i = 0; i < 10; i++) {
-                const user_id = 1;
                 const sender_id = 1;
+                const receiver_id = 1;
                 const type = faker.helpers.arrayElements(['X liked you', 'X blocked you', 'X viewed your profile'],1);
                 const read = faker.datatype.boolean();
                 const query = `
           INSERT INTO notifications (
-            user_id,
             sender_id,
+            receiver_id,
             type,
             read
           ) VALUES (
-            ${user_id},
             ${sender_id},
+            ${receiver_id},
             '${type}',
             ${read}
           );

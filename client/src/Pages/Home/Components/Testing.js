@@ -7,7 +7,7 @@ const Testing = () => {
 
         axios.post('http://localhost:3001/notifications', {
             sender_id: 1,
-            user_id: 1,
+            receiver_id: 1,
             type:"sent via utils buttons",
         })
             .then(response => {

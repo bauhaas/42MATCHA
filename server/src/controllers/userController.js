@@ -149,7 +149,7 @@ function changeUserData(user, update) {
     user.fame_rating = update.fame_rating;
   }
   if (update.report_count) {
-    user.report_count = update.report_count;
+    user.report_count += 1;
   }
 
   return user
@@ -160,11 +160,9 @@ router.put('/:id/update', authenticateToken, async (req, res) => {
   try {
     log.info("id", req.params.id);
     var user = await getUserById(req.params.id);
-    console.log(user);
-    console.log(req.body);
+
     log.info(req.body);
     user = changeUserData(user, req.body);
-    console.log("changed", user);
 
     log.info(user);
     const newUser = await updateUser(user);

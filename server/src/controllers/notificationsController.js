@@ -32,9 +32,9 @@ router.delete('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         log.info('[notifController]', 'body: ', req.body);
-        const { sender_id, user_id, type } = req.body;
+        const { sender_id, receiver_id, type } = req.body;
         log.info('[notifController]', 'enter in insertNotification');
-        const id = await insertNotification(sender_id, user_id, type);
+        const id = await insertNotification(sender_id, receiver_id, type);
         res.send({ id });
     } catch (err) {
             res.status(500).send(err.message);
@@ -68,3 +68,9 @@ router.put('/:id/update_time', async (req, res) => {
 });
 
 export default router
+
+// processus de recrutement (cb d'étapes, et quelles sont-elles ?)
+// recruté sur mission ou profile
+// politique concernant les certifications
+// structure de l'entreprise (Revolve, Innovation, ...)
+// Localisation (bureaux sur Strasbourg?)
