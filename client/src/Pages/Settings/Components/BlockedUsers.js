@@ -4,17 +4,18 @@ import { Cog6ToothIcon,  } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import SettingsHeader from './SettingsHeader';
+import { useSelector } from 'react-redux';
 
 const BlockedUsers = () => {
 
 	const [blockedUsers, setBlockedUsers] = useState([]);
-
+	const currentUser = useSelector((state) => state.user);
 
 	//block a user
 	const blockUser = () => {
         var randomNumber = Math.floor(Math.random() * 20) + 1;
         axios.post('http://localhost:3001/block', {
-            blocker_id: 1,
+			blocker_id: currentUser.id,
             blocked_id: randomNumber
         })
             .then(response => {
@@ -32,7 +33,7 @@ const BlockedUsers = () => {
 		console.log('unblock user', id);
 		axios.delete('http://localhost:3001/block', {
 			data: {
-			  blocker_id: 1,
+				blocker_id: currentUser.id,
 			  blocked_id: id
 			}
 		  })
@@ -46,8 +47,7 @@ const BlockedUsers = () => {
 	}
 
 	const getBlockedUsers = () => {
-		const myId = 1;
-		axios.get(`http://localhost:3001/block/${myId}/users`)
+		axios.get(`http://localhost:3001/block/${currentUser.id}/users`)
             .then(response => {
 				setBlockedUsers(response.data);
             })
