@@ -14,39 +14,22 @@ import LikedUsers from './Pages/Settings/Components/LikedUsers';
 import MatchedUsers from './Pages/Settings/Components/MatchedUsers';
 import BlockedUsers from './Pages/Settings/Components/BlockedUsers';
 import { useEffect } from 'react';
-import { useRef } from 'react';
 import { Provider } from 'react-redux';
 import {store, persistor} from './store';
 import { PersistGate } from 'redux-persist/integration/react';
 
-export const useComponentDidMount = handler => {
-  return useEffect(() => handler(), []);
-};
+import  { successCallback, errorCallback } from './Context/position'
 
-export const useComponentDidUpdate = (handler, deps) => {
-  const isInitialMount = useRef(true);
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-
-      return;
-    }
-
-    return handler();
-  }, deps);
-};
-
+navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
 
 function App() {
     console.log("App");
-
 
     useEffect(() => {
         return () => {
           socket.disconnect();
       }
-  }, [])
+    }, [])
     return (
     <>
     {/* id = cookies.id

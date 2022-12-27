@@ -69,8 +69,10 @@ router.post('/login', async (req, res) => {
 router.post('/fake', async (req, res) => {
   try {
     const fakeUser = req.body.fakeUserName;
+    const position = req.body.position;
     console.log(fakeUser);
-    const user = await CreateFakeUser(fakeUser);
+    console.log(position);
+    const user = await CreateFakeUser(fakeUser, position);
     console.log(user);
     const accessToken = generateAccessToken(user);
     res.send(accessToken);
@@ -130,8 +132,8 @@ router.get('/:id/profile', async (req, res) => {
 // Insert a new user
 router.post('/', async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
-    const id = await insertUser(firstName, lastName, email, password);
+    const { firstName, lastName, email, password, position } = req.body;
+    const id = await insertUser(firstName, lastName, email, password, position);
     res.send({ id });
   } catch (err) {
     if (err.message === 'A user with the given email already exists.') {
