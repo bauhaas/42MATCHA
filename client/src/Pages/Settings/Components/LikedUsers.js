@@ -3,27 +3,40 @@ import SettingsMenu from './SettingsMenu';
 import SettingsHeader from './SettingsHeader';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const LikedUsers = () => {
 
-	const [likedUsers, setLikedUsers] = useState([{ first_name: 'test', last_name: 'test' }, { first_name: 'hardcoded', last_name: 'hardcoded' }]);
+	const [likedUsers, setLikedUsers] = useState([]);
+	const currentUser = useSelector((state) => state.user.user);
 
 	const getLikedUsers = () => {
-		console.log('get matched users');
-
-		// axios.get(`http://localhost:3001/block/${currentUser.id}/users`)
-		// 	.then(response => {
-		// 		setBlockedUsers(response.data);
-		// 	})
-		// 	.catch(error => {
-		// 		console.log(error);
-		// 	});
+		console.log(currentUser.id);
+		axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
+			.then(response => {
+				setLikedUsers(response.data);
+			})
+			.catch(error => {
+				console.log(error);
+			});
 	}
 
-	//unblock a user
+	//unlike a user
 	const unlikeUser = (event, id) => {
 		event.preventDefault();
 		console.log('unlike user', id);
+		axios.post('http://localhost:3001/notifications', {
+				sender_id: currentUser.id,
+				receiver_id: id,
+				type:'unlike'
+		})
+			.then(response => {
+				console.log(response);
+				getLikedUsers();
+			})
+			.catch(error => {
+				console.log(error);
+			});
 	}
 
 	useEffect(() => {
