@@ -50,16 +50,19 @@ global.io = io;
 
 const socketUser = new Map();
 global.socketUser = socketUser;
+var map = new Map();
 
 io.on('connection', (socket) => {
   log.info('[index.js]', `${socket.id} is connected!`);
   var client_id = socket.request._query['id'];
   log.info('[index.js]', `${client_id}`);
 
+  map.set(client_id, socket);
+
   socket.on('disconnect', () => {
     console.log(client_id, "disconnecting");
+    map.delete(client_id, socket);
   });
-  // io.clients[id] = socket;
 
   // console.log(socket.handshake);
   // console.log(socket.handshake.query);
@@ -68,6 +71,7 @@ io.on('connection', (socket) => {
   // log.info('[index.js]', 'that socket is linked to user', decoded.payload.id);
   // socketUser.set(socket.id, decoded.payload.id);
 });
+
 
 server.listen(port, async () => {
   log.info('[index.js]', `Server listening on port ${port}`);
