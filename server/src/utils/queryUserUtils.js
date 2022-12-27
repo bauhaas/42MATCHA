@@ -10,8 +10,8 @@ const GET_USER_BY_ID = `
 `;
 
 const INSERT_USER = `
-  INSERT INTO users (first_name, last_name, email, password)
-  VALUES ($1, $2, $3, $4)
+  INSERT INTO users (first_name, last_name, email, password, last_location)
+  VALUES ($1, $2, $3, $4 POINT($5, $6))
   RETURNING *
 `;
 
@@ -29,9 +29,9 @@ export const DBgetUserById = (id) => ({
   values: [id]
 });
 
-export const DBinsertUser = (firstName, lastName, email, password) => ({
+export const DBinsertUser = (firstName, lastName, email, password, position) => ({
   text: INSERT_USER,
-  values: [firstName, lastName, email, password]
+  values: [firstName, lastName, email, password, position]
 });
 
 

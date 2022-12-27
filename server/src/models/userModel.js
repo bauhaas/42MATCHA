@@ -91,14 +91,16 @@ export async function seedUsersTable() {
             email,
             password,
             fame_rating,
-            photos
+            photos,
+            last_location
           ) VALUES (
             'Baudoin',
             'Haas',
             'a@a.com',
             '${hash}',
             '0',
-            'https://randomuser.me/api/portraits/men/17.jpg'
+            'https://randomuser.me/api/portraits/men/17.jpg',
+            POINT(2.318641,48.896561)
           );
         `;
       await client.query(testUser);
@@ -128,7 +130,8 @@ export async function seedUsersTable() {
             country,
             fame_rating,
             photos,
-            bio
+            bio,
+            last_location
           ) VALUES (
             '${first_name}',
             '${last_name}',
@@ -140,7 +143,8 @@ export async function seedUsersTable() {
             '${country}',
             '0',
             '${photos}',
-            '${bio}'
+            '${bio}',
+            POINT(${2.318641 - 0.1 + (0.2*Math.random())}, ${48.896561 - 0.1 + (0.2*Math.random())})
           );
         `;
         await client.query(query);

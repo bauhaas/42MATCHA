@@ -145,7 +145,7 @@ export const sendConfirmationEmail = async (email, firstName, lastName, accessTo
 
 
 // Insert a new user into the database
-export const insertUser = async (firstName, lastName, email, password) => {
+export const insertUser = async (firstName, lastName, email, password, position) => {
   try {
     const client = await pool.connect();
 
@@ -163,7 +163,7 @@ export const insertUser = async (firstName, lastName, email, password) => {
     var hash = bcrypt.hashSync(password, salt);
 
     log.info('[userService]', 'gonna insert the user');
-    const result = await client.query(DBinsertUser(firstName, lastName, email, hash));
+    const result = await client.query(DBinsertUser(firstName, lastName, email, hash, position.longitude, position.latitude));
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));
     const id = result.rows[0].id;
 
@@ -259,10 +259,9 @@ export const updateUser = async (data) => {
 };
 
 // Insert a new user into the database
-export const CreateFakeUser = async (fakeUser) => {
+export const CreateFakeUser = async (fakeUser, position) => {
   try {
     const client = await pool.connect();
-
 
     var salt = bcrypt.genSaltSync(10);
     var fakeHash = bcrypt.hashSync(fakeUser, salt);
@@ -270,10 +269,10 @@ export const CreateFakeUser = async (fakeUser) => {
     log.info('[userService]', 'gonna insert the fake user');
     const fakeMail = fakeUser + "@" + fakeUser + ".com" ;
     const result = await client.query(`
-    INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+    INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count, last_location)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, POINT($16, $17))
     RETURNING *;
-  `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "man", "hetero", "Paris", "France", "test_interets", "", fakeUser, true, 0, 0]);
+  `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "man", "hetero", "Paris", "France", "test_interets", "", fakeUser, true, 0, 0, position.longitude, position.latitude]);
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));
 
     client.release();

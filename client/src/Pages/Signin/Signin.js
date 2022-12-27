@@ -8,6 +8,8 @@ import { useDispatch } from 'react-redux';
 import jwt_decode from "jwt-decode";
 import { setUser } from "../../userSlice";
 
+import position from '../../Context/position'
+
 function Signin() {
 
   const [fakeUserName, setFakeUserName] = useState("");
@@ -80,8 +82,10 @@ function Signin() {
     event.preventDefault();
 
     console.log(fakeUserName);
+    console.log(position)
     axios.post('http://localhost:3001/users/fake', {
-      fakeUserName: fakeUserName
+      fakeUserName: fakeUserName,
+      position: position
     })
       .then(response => {
         console.log(response);
