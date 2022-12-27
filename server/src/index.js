@@ -53,9 +53,16 @@ global.socketUser = socketUser;
 
 io.on('connection', (socket) => {
   log.info('[index.js]', `${socket.id} is connected!`);
+  var client_id = socket.request._query['id'];
+  log.info('[index.js]', `${client_id}`);
 
-  console.log(socket.handshake);
-  console.log(socket.handshake.query);
+  socket.on('disconnect', () => {
+    console.log(client_id, "disconnecting");
+  });
+  // io.clients[id] = socket;
+
+  // console.log(socket.handshake);
+  // console.log(socket.handshake.query);
 
   // const decoded = jwt.decode(socket.handshake.query.token, { complete: true });
   // log.info('[index.js]', 'that socket is linked to user', decoded.payload.id);

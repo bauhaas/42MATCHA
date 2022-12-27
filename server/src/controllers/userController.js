@@ -82,6 +82,9 @@ function authenticateToken(req, res, next) {
 // Get a user by their ID
 router.get('/:id', async (req, res) => {
   try {
+    if (req.params.id === null) {
+      throw 'get /users/:id id undefined'
+    }
     const user = await getUserById(req.params.id);
     res.send(user);
   } catch (err) {
