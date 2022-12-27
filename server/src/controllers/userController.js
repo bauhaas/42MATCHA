@@ -115,9 +115,6 @@ function changeUserData(user, update) {
   if (update.email) {
     user.email = update.email;
   }
-  if (update.password) {
-    user.password = update.password;
-  }
   if (update.age) {
     user.age = update.age;
   }
