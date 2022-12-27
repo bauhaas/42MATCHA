@@ -90,12 +90,14 @@ export async function seedUsersTable() {
             last_name,
             email,
             password,
+            fame_rating,
             photos
           ) VALUES (
             'Baudoin',
             'Haas',
             'a@a.com',
             '${hash}',
+            '0',
             'https://randomuser.me/api/portraits/men/17.jpg'
           );
         `;
@@ -124,6 +126,7 @@ export async function seedUsersTable() {
             sex,
             city,
             country,
+            fame_rating,
             photos,
             bio
           ) VALUES (
@@ -135,6 +138,7 @@ export async function seedUsersTable() {
             '${sex}',
             '${city}',
             '${country}',
+            '0',
             '${photos}',
             '${bio}'
           );

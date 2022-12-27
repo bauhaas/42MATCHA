@@ -179,6 +179,34 @@ export const insertUser = async (firstName, lastName, email, password) => {
   }
 };
 
+export const updateUserFameRating = async (id, bool) => {try {
+  const client = await pool.connect();
+  const user = await getUserById(id);
+  var newFame = user.fame_rating;
+  if (bool === true) {
+    newFame++
+  } else {
+    newFame--;
+  }
+  log.info('[userService]', 'gonna update the fame_rating user');
+  const result = await client.query(`
+  UPDATE users SET
+  fame_rating = $1
+  WHERE id = $2
+  RETURNING *;`, [
+    newFame,
+    id
+  ]);
+  const newUser = result.rows[0];
+  console.log(newUser);
+  client.release();
+  return newUser;
+} catch (err) {
+  log.error('[userService]', err);
+  throw err;
+}
+};
+
 // Update user in db
 export const updateUser = async (data) => {
   try {
@@ -201,9 +229,8 @@ export const updateUser = async (data) => {
     photos = $11,
     bio = $12,
     active = $13,
-    fame_rating = $14,
-    report_count = $15
-    WHERE id = $16
+    report_count = $14
+    WHERE id = $15
     RETURNING *;`, [
       data.first_name,
       data.last_name,
@@ -218,7 +245,6 @@ export const updateUser = async (data) => {
       data.photos,
       data.bio,
       data.active,
-      data.fame_rating,
       data.report_count,
       data.id
     ]);

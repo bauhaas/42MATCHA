@@ -1,41 +1,18 @@
 import pool from '../config/db.js';
 import log from '../config/log.js';
 
+import { updateUserFameRating } from './userService.js'
+
 const createNotification = async (sender_id, receiver_id, type) => {
     const client = await pool.connect();
     
     const notif = await client.query(`
     INSERT INTO notifications(sender_id, receiver_id, type, read)
     VALUES($1, $2, $3, $4)
-    RETURNING id
+    RETURNING *
     `, [sender_id, receiver_id, type, false]);
-
     client.release();
     return notif.rows[0];
-}
-
-const handleVisitAndMessageNotif = async (sender_id, receiver_id, type) => {
-    const client = await pool.connect();
-    const notif = await client.query(`
-        SELECT * FROM notifications
-        WHERE sender_id = $1
-        AND receiver_id = $2
-        AND type = $3
-    `, [sender_id, receiver_id, type]);
-    console.log(notif);
-    var id = 0;
-    if (notif.rowCount == 0) {
-        id = await createNotification(sender_id, receiver_id, type);
-    } else {
-        id = notif.rows[0].id
-        if (notif.read === true) {
-            await updateReadNotification(id)
-        }
-        await updateTimeNotification(id)
-    }
-
-    client.release();
-    return id;
 }
 
 
@@ -69,7 +46,32 @@ export const getSenderNotifications = async (id) => {
     return null;
 }
 
-const likeNotif = async (sender_id, receiver_id) => {
+
+const handleVisitAndMessageNotif = async (sender_id, receiver_id, type) => {
+    const client = await pool.connect();
+    const notif = await client.query(`
+        SELECT * FROM notifications
+        WHERE sender_id = $1
+        AND receiver_id = $2
+        AND type = $3
+    `, [sender_id, receiver_id, type]);
+    console.log(notif);
+    var id = 0;
+    if (notif.rowCount == 0) {
+        return await createNotification(sender_id, receiver_id, type);
+    }
+
+    id = notif.rows[0].id
+    if (notif.read === true) {
+        await updateReadNotification(id)
+    }
+    await updateTimeNotification(id)
+
+    client.release();
+    return id;
+}
+
+const handlelikeNotif = async (sender_id, receiver_id) => {
     const alreadyLiked = await getNotification(sender_id, receiver_id, "like");
     if (alreadyLiked) {
         return alreadyLiked;
@@ -85,11 +87,13 @@ const likeNotif = async (sender_id, receiver_id) => {
         await deleteNotification(unliked.id);
     }
 
-    const liked = await getNotification(receiver_id, sender_id, type);
+    const liked = await getNotification(receiver_id, sender_id, "like");
     if (liked === null) {
-        return await createNotification(sender_id, receiver_id, type);
+        return await createNotification(sender_id, receiver_id, "like");
     }
-
+    
+    await updateUserFameRating(sender_id, true);
+    await updateUserFameRating(receiver_id, true);
     await deleteNotification(liked.id);
     await createNotification(sender_id, receiver_id, "match");
     return await createNotification(receiver_id, sender_id, "match");
@@ -109,7 +113,7 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
         }
         
         if (type == "like") {
-            return await likeNotif(sender_id, receiver_id);
+            return await handlelikeNotif(sender_id, receiver_id);
         }
 
         const likeNotif = await getNotification(sender_id, receiver_id, "like");
@@ -119,6 +123,8 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
 
         const match = await getNotification(receiver_id, sender_id, "match");
         if (match) {
+            await updateUserFameRating(sender_id, false);
+            await updateUserFameRating(receiver_id, false);
             const reverse = await getNotification(sender_id, receiver_id, "match");
             await deleteNotification(match.id);
             await deleteNotification(reverse.id);
