@@ -50,10 +50,25 @@ export const getNotification = async (sender_id, receiver_id, type) => {
 
     client.release();
     if (notif.rowCount > 0) {
-        return notif.rows[0]
+        return notif.rows
     }
     return null;
 }
+
+export const getSenderNotifications = async (id) => {
+    const client = await pool.connect();
+    const notif = await client.query(`
+    SELECT * FROM notifications
+    WHERE sender_id = $1
+    `, [id]);
+
+    client.release();
+    if (notif.rowCount > 0) {
+        return notif.rows
+    }
+    return null;
+}
+
 
 // Insert a new notification into the database
 export const insertNotification = async (sender_id, receiver_id, type) => {

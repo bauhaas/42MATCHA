@@ -90,6 +90,60 @@
         }
       }
     },
+    "/users/{id}/liked": {
+      "get": {
+        "description": "Get a user by their ID from the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "Failed to find user with the specified ID"
+          },
+          "500": {
+            "description": "Failed to retrieve user from the database"
+          }
+        }
+      }
+    },
+    "/users/{id}/matched": {
+      "get": {
+        "description": "Get a user by their ID from the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "Failed to find user with the specified ID"
+          },
+          "500": {
+            "description": "Failed to retrieve user from the database"
+          }
+        }
+      }
+    },
     "/users/{id}/update": {
       "put": {
         "description": "Update user from the database",
@@ -238,6 +292,33 @@
           },
           "500": {
             "description": "Failed to delete the block from the database"
+          }
+        }
+      }
+    },
+    "/notifications/{id}/sender": {
+      "get": {
+        "description": "Get notifications where id is sender",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved notifications",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notifications"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve notifications from the database"
           }
         }
       }

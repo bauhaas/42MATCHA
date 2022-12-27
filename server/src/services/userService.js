@@ -294,3 +294,40 @@ export const updateStatusUser = async (id, status) => {
     throw err;
   }
 };
+
+export const getLikedUsers = async (id) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query(`
+      SELECT * FROM users
+      WHERE id IN (
+        SELECT receiver_id FROM notifications
+        WHERE sender_id = $1 AND type = 'like'
+      )
+    `, [id]);
+    const users = result.rows;
+    client.release();
+    return users;
+  } catch (err) {
+    throw err;
+  }
+}
+  
+export const getMatchedUsers = async (id) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query(`
+      SELECT * FROM users
+      WHERE id IN (
+        SELECT receiver_id FROM notifications
+        WHERE sender_id = $1 AND type = 'match'
+      )
+    `, [id]);
+    const users = result.rows;
+    client.release();
+    return users;
+  } catch (err) {
+    throw err;
+  }
+}
+  

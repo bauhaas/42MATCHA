@@ -62,30 +62,30 @@ export async function seedNotificationsTable() {
           ) VALUES (
             1,
             1,
-            'welcome',
+            'test',
             false
           );
         `;
           await client.query(testNotifs);
 
-            for (let i = 0; i < 10; i++) {
-                const sender_id = 1;
-                const receiver_id = 1;
-                const type = faker.helpers.arrayElements(['X liked you', 'X blocked you', 'X viewed your profile'],1);
+            for (let i = 0; i < 300; i++) {
+                const sender_id = Math.floor(Math.random() * 10) + 1;
+                const receiver_id = Math.floor(Math.random() * 10) + 1;
+                const type = faker.helpers.arrayElements(['like', 'visit', 'match'],1);
                 const read = faker.datatype.boolean();
                 const query = `
-          INSERT INTO notifications (
-            sender_id,
-            receiver_id,
-            type,
-            read
-          ) VALUES (
-            ${sender_id},
-            ${receiver_id},
-            '${type}',
-            ${read}
-          );
-        `;
+                INSERT INTO notifications (
+                  sender_id,
+                  receiver_id,
+                  type,
+                  read
+                ) VALUES (
+                  ${sender_id},
+                  ${receiver_id},
+                  '${type}',
+                  ${read}
+                );
+              `;
                 await client.query(query);
             }
         }

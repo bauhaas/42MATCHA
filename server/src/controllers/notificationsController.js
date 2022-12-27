@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import express from 'express';
-import { getAllNotifications, deleteNotification, insertNotification, updateReadNotification, updateTimeNotification } from '../services/notificationsService.js';
+import { getAllNotifications, getSenderNotifications, deleteNotification, insertNotification, updateReadNotification, updateTimeNotification } from '../services/notificationsService.js';
 import log from '../config/log.js';
 
 const router = express.Router();
@@ -10,6 +10,18 @@ router.get('/', async (req, res) => {
     try {
         log.info('[notifController]', 'enter in getAllNotifications');
         const notifications = await getAllNotifications();
+        res.send(notifications);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+// Get notifs where user is sender
+router.get('/:id/sender', async (req, res) => {
+    try {
+        const id = req.params.id;
+        log.info('[notifController]', 'enter in getSenderNotifications');
+        const notifications = await getSenderNotifications(id);
         res.send(notifications);
     } catch (err) {
         res.status(500).send(err.message);

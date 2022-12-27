@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword } from '../services/userService.js';
+import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers } from '../services/userService.js';
 import jwt from 'jsonwebtoken';
 import log from '../config/log.js';
 
@@ -10,6 +10,28 @@ router.get('/', async (req, res) => {
   try {
     const users = await getAllUsers();
     res.send(users);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Get liked users
+router.get('/:id/liked', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const likedUsers = await getLikedUsers(id);
+    res.send(likedUsers);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Get matched users
+router.get('/:id/matched', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const likedUsers = await getMatchedUsers(id);
+    res.send(likedUsers);
   } catch (err) {
     res.status(500).send(err.message);
   }
