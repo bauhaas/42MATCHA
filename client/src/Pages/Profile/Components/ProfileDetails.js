@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { HeartIcon as HeartOutlineIcon, NoSymbolIcon} from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
+import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
+//TODO when match happend, add animation
+//TODO when match happend, atm, it's removed from liked. So need more update to have hearfillicon
 const ProfileDetails = ({id}) => {
 
     const [user, setUser] = useState({});
     const [blocked, setBlocked] = useState(false);
     const currentUser = useSelector((state) => state.user.user);
 
+    const [isMatched, setIsMatched] = useState(false);
     const [filled, setFilled] = useState(false);
 
+    const navigate = useNavigate();
 
     useEffect(() => {
         console.log('get user ', id);
@@ -37,6 +42,26 @@ const ProfileDetails = ({id}) => {
                 });
         }
         isUserLiked();
+
+
+        const isUserMatched = async () => {
+            console.log(currentUser.id);
+            axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
+                .then(response => {
+                    const matchedUsers = response.data;
+                    const isMatch = matchedUsers.find(matchedUser => matchedUser.id == id);
+                    if (isMatch)
+                    {
+                        setIsMatched(true);
+                        console.log('you have a match with it');
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+        isUserMatched();
+
 
         const currentUserIsBlocked = async () => {
             console.log(currentUser.id);
@@ -80,6 +105,11 @@ const ProfileDetails = ({id}) => {
         console.log(result);
     }
 
+    const gotochat = async (event) => {
+       console.log(`/chat/`);
+        // navigate(`/chat/${convName}`);
+        //TODO post a conv
+    }
 
     return (
         <>
@@ -106,6 +136,9 @@ const ProfileDetails = ({id}) => {
                             )}
                             <div className="tooltip" data-tip="Report">
                                 <ExclamationCircleIcon className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
+                            </div>
+                            <div className="tooltip" data-tip="Start chatting">
+                                <ChatBubbleLeftIcon onClick={(event) => gotochat(event)} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
                             </div>
                     </>
                     }

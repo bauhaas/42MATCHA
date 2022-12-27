@@ -1,9 +1,11 @@
 import ActiveConversations from './Components/ActiveConversations';
 import NavBar from '../Navbar/NavBar';
 import Testing from './Components/Testing';
-import {io, Manager} from 'socket.io-client';
+import socket from '../../Context/socket'
 import CardsMap from './Components/CardsMap';
+import { useEffect } from 'react';
 
+import { useSelector } from 'react-redux';
 
 //TODO socket file
 // export const socket2 = io('http://localhost:3001', {  autoConnect:false });
@@ -14,7 +16,7 @@ import CardsMap from './Components/CardsMap';
 
 const Home = () => {
 	// let navigate = useNavigate();
-
+	const user = useSelector((state) => state.user.user);
 	// const socket = socketIO.connect('http://localhost:3001', { query: `token=${localStorage.getItem('jwt')}` });
 
 	// const manager = new Manager("http://localhost:3001", { autoConnect: false, query: `token=${localStorage.getItem('jwt')}` });
@@ -34,6 +36,11 @@ const Home = () => {
 		// });
 		// socket.connect();
 	// 	manager.connect();
+
+	useEffect(() => {
+		socket.connect(user.id);
+
+	}, []);
 
 	return(
 		<>

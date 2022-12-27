@@ -5,6 +5,7 @@ import { BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import  socket  from '../../Context/socket'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -23,6 +24,7 @@ function Navbar() {
   const logout = (event) => {
     event.preventDefault();
     localStorage.removeItem('jwt');
+    socket.disconnect();
     navigate('/signin');
   }
 

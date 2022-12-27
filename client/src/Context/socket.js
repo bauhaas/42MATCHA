@@ -9,6 +9,7 @@ socket.connect = (id) => {
 }
 
 socket.disconnect = () =>{
+    console.log('socket disconnect');
     socket.client.disconnect();
 };
 
