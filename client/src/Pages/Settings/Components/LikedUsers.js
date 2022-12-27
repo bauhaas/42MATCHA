@@ -65,7 +65,7 @@ const LikedUsers = () => {
 													{user.first_name} {user.last_name}
 												</td>
 												<td className="text-right">
-													<button onClick={(event) => unlikeUser(event, user.blocked_id)}>Unlike</button>
+													<button onClick={(event) => unlikeUser(event, user.id)}>Unlike</button>
 												</td>
 											</tr>
 										))}

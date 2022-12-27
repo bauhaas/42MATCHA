@@ -17,9 +17,9 @@ const ProfileDetails = ({id}) => {
 
     const [filled, setFilled] = useState(false);
 
-    const toggleFilled = () => {
-        setFilled(!filled);
-    }
+    // const toggleFilled = () => {
+    //     setFilled(!filled);
+    // }
 
     useEffect(() => {
         console.log('get user ', id);
@@ -37,10 +37,16 @@ const ProfileDetails = ({id}) => {
        console.log(result);
     }
 
-    const likeUser = async () => {
+    const likeUser = async (event) => {
         console.log(currentUser.id, user.id);
         const result = await likeUserById(currentUser.id, user.id);
         console.log(result);
+    }
+
+    const unlikeUser = async (event) => {
+        console.log(currentUser.id, user.id);
+        // const result = await likeUserById(currentUser.id, user.id);
+        // console.log(result);
     }
 
     console.log(filled);
@@ -55,12 +61,12 @@ const ProfileDetails = ({id}) => {
                     </div>
                             {filled ? (
                             <div className="tooltip" data-tip="Unlike">
-                                <HeartSolidIcon onClick={toggleFilled} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
+                            <HeartSolidIcon onClick={(event) => unlikeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
                              </div>
 
                             ) : (
                                 <div className="tooltip" data-tip="Like">
-                                    <HeartOutlineIcon onClick={toggleFilled} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
+                                <HeartOutlineIcon onClick={(event) => likeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
                                 </div>
                             )}
                 </div>
