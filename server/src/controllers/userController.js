@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers } from '../services/userService.js';
+import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile } from '../services/userService.js';
 import jwt from 'jsonwebtoken';
 import log from '../config/log.js';
 
@@ -108,6 +108,19 @@ router.get('/:id', async (req, res) => {
       throw 'get /users/:id id undefined'
     }
     const user = await getUserById(req.params.id);
+    res.send(user);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Get a user by their ID w/o pemail and passwor
+router.get('/:id/profile', async (req, res) => {
+  try {
+    if (req.params.id === null) {
+      throw 'get /users/:id/profile id undefined'
+    }
+    const user = await getUserByIdProfile(req.params.id);
     res.send(user);
   } catch (err) {
     res.status(500).send(err.message);

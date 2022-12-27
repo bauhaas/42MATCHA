@@ -66,6 +66,22 @@ export const getUserById = async (id) => {
   }
 };
 
+// Get a user by their ID from the database
+export const getUserByIdProfile = async (id) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query(DBgetUserById(id));
+    const user = result.rows[0];
+    delete(user.email);
+    delete(user.password);
+    delete(user.report_count);
+    client.release();
+    return user;
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const resetPassword = async (oldPassword, newPassword, user) => {
   try {
     log.info('[userService]', 'resetPassword');

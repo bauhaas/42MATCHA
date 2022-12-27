@@ -90,6 +90,33 @@
         }
       }
     },
+    "/users/{id}/profile": {
+      "get": {
+        "description": "Get a user by their ID from the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "Failed to find user with the specified ID"
+          },
+          "500": {
+            "description": "Failed to retrieve user from the database"
+          }
+        }
+      }
+    },
     "/users/{id}/liked": {
       "get": {
         "description": "Get a user by their ID from the database",
