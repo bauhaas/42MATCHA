@@ -323,6 +323,32 @@
         }
       }
     },
+    "/notifications/{id}": {
+      "delete": {
+        "description": "delete notif the database",
+        "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the notif",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notifications"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to delete the notif from the database"
+          }
+        }
+      }
+    },
     "/notifications/{id}/sender": {
       "get": {
         "description": "Get notifications where id is sender",
