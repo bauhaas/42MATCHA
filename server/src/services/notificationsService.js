@@ -3,7 +3,7 @@ import log from '../config/log.js';
 
 const createNotification = async (sender_id, receiver_id, type) => {
     const client = await pool.connect();
-    
+
     const notif = await client.query(`
     INSERT INTO notifications(sender_id, receiver_id, type, read)
     VALUES($1, $2, $3, $4)
@@ -82,9 +82,9 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
         if (type === "visit" || type === "message") {
             return handleVisitAndMessage(sender_id, receiver_id, type)
         }
-        
+
         if (type == "like") {
-            
+
             const liked = await getNotification(receiver_id, sender_id, type);
             if (liked === null) {
                 return await createNotification(sender_id, receiver_id, type);
