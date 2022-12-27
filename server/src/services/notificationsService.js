@@ -58,6 +58,11 @@ export const getNotification = async (sender_id, receiver_id, type) => {
 // Insert a new notification into the database
 export const insertNotification = async (sender_id, receiver_id, type) => {
     try {
+        const validTypes = ["visit", "message", "like", "unlike"];
+
+        if (validTypes.includes(type) === false) {
+            throw 'insertNotification: wrong type';
+        }
         var id = 0;
         if (type === "visit" || type === "message") {
             return handleVisitAndMessage(sender_id, receiver_id, type)
