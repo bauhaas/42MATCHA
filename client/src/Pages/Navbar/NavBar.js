@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react"
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
+import { BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom';
-// import { socket2 } from './Home';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
@@ -16,26 +15,6 @@ function Navbar() {
   const [notifications, setNotifications] = useState([]);
   const user = useSelector((state) => state.user.user);
   let navigate = useNavigate();
-
-  // useEffect(() => {
-  //   // const token = localStorage.getItem('jwt');
-  //   console.log('send getNotifications event');
-  //   // socket2.emit('getNotifications', { token: token });
-
-  //   return () => {
-  //   };
-  // }, []);
-
-  useEffect(() => {
-    //   socket2.on('receiveNotifs', (data) => {
-    //   console.log('reveiceNotif event');
-    //   setNotifications(data);
-    // });
-
-    return () => {
-      // socket2.off('receiveNotifs');
-    };
-  });
 
   useEffect(() => {
     console.log('redux user:', user);
@@ -50,6 +29,11 @@ function Navbar() {
   const gotoprofile = (event) => {
     event.preventDefault();
     navigate(`/profile/${user.id}`);
+  }
+
+  const gotomenu = (event) => {
+    event.preventDefault();
+    navigate(`/home`);
   }
 
   const gotochat = (event) => {
@@ -123,7 +107,7 @@ return (
       <>
         <div className="px-8">
           <div className="relative flex h-16 items-center justify-between">
-            <img className="block h-8 w-auto" src="../logo.png" alt="logo"/>
+            <img onClick={(event) => gotomenu(event)} className="block h-8 w-auto" src="../logo.png" alt="logo"/>
             <div id="navbarRightButtons" className="flex items-center gap-4">
               <Menu as="div">
                 <Menu.Button onClick={gotochat} className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
