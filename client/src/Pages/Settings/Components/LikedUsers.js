@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const LikedUsers = () => {
 
-	const [likeUsers, setLikedUsers] = useState([{ first_name: 'test', last_name: 'test' }, { first_name: 'hardcoded', last_name: 'hardcoded' }]);
+	const [likedUsers, setLikedUsers] = useState([{ first_name: 'test', last_name: 'test' }, { first_name: 'hardcoded', last_name: 'hardcoded' }]);
 
 	const getLikedUsers = () => {
 		console.log('get matched users');
@@ -46,7 +46,7 @@ const LikedUsers = () => {
 							<div className="pt-2">
 								<table className="text-white w-full text-left">
 									<tbody>
-										{likeUsers.map((user, index) => (
+										{likedUsers.map((user, index) => (
 											<tr className="border-b border-chess-bar text-xs">
 												<td>
 													{user.first_name} {user.last_name}

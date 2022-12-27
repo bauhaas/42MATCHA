@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 const BlockedUsers = () => {
 
 	const [blockedUsers, setBlockedUsers] = useState([]);
-	const currentUser = useSelector((state) => state.user);
+	const currentUser = useSelector((state) => state.user.user);
 
 	//block a user
 	const blockUser = () => {
@@ -46,6 +46,7 @@ const BlockedUsers = () => {
 	}
 
 	const getBlockedUsers = () => {
+		console.log(currentUser.id);
 		axios.get(`http://localhost:3001/block/${currentUser.id}/users`)
             .then(response => {
 				setBlockedUsers(response.data);
