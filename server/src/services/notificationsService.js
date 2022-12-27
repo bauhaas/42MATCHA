@@ -79,7 +79,7 @@ const likeNotif = async (sender_id, receiver_id) => {
     if (alreadyMatched) {
         return alreadyMatched;
     }
-    
+
     const unliked = await getNotification(sender_id, receiver_id, "unlike");
     if (unliked) {
         await deleteNotification(unliked.id);
@@ -109,9 +109,6 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
         }
 
         if (type == "like") {
-<<<<<<< HEAD
-            return await likeNotif(sender_id, receiver_id);
-=======
 
             const liked = await getNotification(receiver_id, sender_id, type);
             if (liked === null) {
@@ -121,7 +118,6 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
             await deleteNotification(liked.id);
             await createNotification(sender_id, receiver_id, "match");
             return await createNotification(receiver_id, sender_id, "match");
->>>>>>> bahaas
         }
 
         const likeNotif = await getNotification(sender_id, receiver_id, "like");
