@@ -5,7 +5,7 @@ import { updateUserFameRating } from './userService.js'
 
 const createNotification = async (sender_id, receiver_id, type) => {
     const client = await pool.connect();
-    
+
     const notif = await client.query(`
     INSERT INTO notifications(sender_id, receiver_id, type, read)
     VALUES($1, $2, $3, $4)
@@ -81,7 +81,7 @@ const handlelikeNotif = async (sender_id, receiver_id) => {
     if (alreadyMatched) {
         return alreadyMatched;
     }
-    
+
     const unliked = await getNotification(sender_id, receiver_id, "unlike");
     if (unliked) {
         await deleteNotification(unliked.id);
@@ -111,7 +111,7 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
         if (type === "visit" || type === "message") {
             return handleVisitAndMessageNotif(sender_id, receiver_id, type)
         }
-        
+
         if (type == "like") {
             return await handlelikeNotif(sender_id, receiver_id);
         }
