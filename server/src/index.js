@@ -17,6 +17,7 @@ import jwt from 'jsonwebtoken';
 import pool from './config/db.js';
 import log from './config/log.js';
 import { Server } from 'socket.io';
+import { updateStatusUser } from './services/userService.js';
 
 
 const app = express();
@@ -54,14 +55,16 @@ var map = new Map();
 
 io.on('connection', (socket) => {
   log.info('[index.js]', `${socket.id} is connected!`);
-  var client_id = socket.request._query['id'];
-  log.info('[index.js]', `${client_id}`);
+  var user_id = socket.request._query['id'];
+  log.info('[index.js]', `${user_id}`);
 
-  map.set(client_id, socket);
+  updateStatusUser(user_id, true)
+  map.set(user_id, socket);
 
   socket.on('disconnect', () => {
-    console.log(client_id, "disconnecting");
-    map.delete(client_id, socket);
+    console.log(user_id, "disconnecting");
+    map.delete(user_id, socket);
+    updateStatusUser(user_id, false)
   });
 
   // console.log(socket.handshake);

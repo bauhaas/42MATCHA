@@ -54,7 +54,8 @@ export async function createUsersTable() {
         active BOOLEAN,
         last_location POINT,
         fame_rating INT,
-        report_count INT
+        report_count INT,
+        status TIMESTAMPTZ NULL DEFAULT NOW()
       );
     `);
       log.info('[userModel.js]', result, 'user table have been created');}

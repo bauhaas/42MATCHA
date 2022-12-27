@@ -163,7 +163,7 @@ export const insertUser = async (firstName, lastName, email, password) => {
   }
 };
 
-// Insert a new user into the database
+// Update user in db
 export const updateUser = async (data) => {
   try {
     const client = await pool.connect();
@@ -249,6 +249,48 @@ export const deleteUser = async (id) => {
     await client.query(DBdeleteUser(id));
     client.release();
   } catch (err) {
+    throw err;
+  }
+};
+
+
+// update status in user
+export const updateStatusUser = async (id, status) => {
+  try {
+    const client = await pool.connect();
+
+    log.info(id, status);
+    log.info('[userService]', 'gonna update user status/time connected');
+    if (status === false) {
+      log.info("set to now()");
+      const result = await client.query(`
+        UPDATE users SET
+        status = NOW()
+        WHERE id = $1
+        RETURNING *;`, [
+          id
+      ]);
+      const user = result.rows[0];
+
+      client.release();
+      return user;
+    } else if (status === true) {
+      log.info("set to null");
+      const result = await client.query(`
+      UPDATE users SET
+      status = NULL
+      WHERE id = $1
+      RETURNING *;`, [
+        id
+    ]);
+    const user = result.rows[0];
+
+    client.release();
+    return user;
+  }
+    throw new Error("wrong value for status");;
+  } catch (err) {
+    log.error('[userService]', err);
     throw err;
   }
 };
