@@ -82,6 +82,7 @@ function Signin() {
     event.preventDefault();
 
     console.log(fakeUserName);
+    console.log(position)
     axios.post('http://localhost:3001/users/fake', {
       fakeUserName: fakeUserName,
       position: position

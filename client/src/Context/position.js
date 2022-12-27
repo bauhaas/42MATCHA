@@ -1,8 +1,8 @@
 const position = {};
 
-export const successCallback = (position) => {
-    position.longitude = position.coords.longitude;
-    position.latitude = position.coords.latitude;
+export const successCallback = (pos) => {
+    position.longitude = pos.coords.longitude;
+    position.latitude = pos.coords.latitude;
 };
 
 async function doGPSFetch() {
