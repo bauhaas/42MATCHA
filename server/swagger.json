@@ -8,6 +8,8 @@
   "paths": {
     "/users": {
       "get": {
+        "tags": ["users"],
+        "summary": "Get all users",
         "description": "Get all users from the database",
         "parameters": [],
         "responses": {
@@ -26,6 +28,10 @@
         }
       },
       "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Insert new user",
           "description": "Insert a new user into the database",
           "parameters": [
             {
@@ -64,7 +70,12 @@
         }
     },
     "/users/{id}": {
+
       "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get a user by his id",
         "description": "Get a user by their ID from the database",
         "parameters": [
           {
@@ -92,6 +103,10 @@
     },
     "/users/{id}/profile": {
       "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "???",
         "description": "Get a user by their ID from the database",
         "parameters": [
           {
@@ -119,6 +134,10 @@
     },
     "/users/{id}/liked": {
       "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get a list of liked users by logged in user",
         "description": "Get a user by their ID from the database",
         "parameters": [
           {
@@ -146,6 +165,10 @@
     },
     "/users/{id}/matched": {
       "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get a list of matched users by logged in user",
         "description": "Get a user by their ID from the database",
         "parameters": [
           {
@@ -173,6 +196,10 @@
     },
     "/users/{id}/update": {
       "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Update anything in a user",
         "description": "Update user from the database",
         "parameters": [
           {
@@ -269,6 +296,10 @@
     },
     "/notifications": {
       "get": {
+        "tags": [
+          "notifications"
+        ],
+        "summary": "Get all notifications",
         "description": "Get all notifications from the database",
         "parameters": [],
         "responses": {
@@ -287,6 +318,10 @@
         }
       },
       "post": {
+                "tags": [
+                  "notifications"
+                ],
+        "summary": "Insert a new notification",
         "description": "Create notification in the database",
         "parameters": [
           {
@@ -325,6 +360,10 @@
     },
     "/notifications/{id}": {
       "delete": {
+                "tags": [
+                  "notifications"
+                ],
+                "summary": "Delete a notification by it's id",
         "description": "delete notif the database",
         "parameters": [
         {
@@ -351,6 +390,10 @@
     },
     "/notifications/{id}/sender": {
       "get": {
+                "tags": [
+                  "notifications"
+                ],
+        "summary": "Get all notification of a user",
         "description": "Get notifications where id is sender",
         "parameters": [
           {
@@ -378,6 +421,10 @@
     },
     "/notifications/{id}/update_read": {
       "put": {
+                "tags": [
+                  "notifications"
+                ],
+        "summary": "Set a notification as read",
         "description": "Update notification id's read status in the database",
         "parameters": [
           {
@@ -404,6 +451,10 @@
     },
     "/block/{blocker_id}": {
       "get": {
+                "tags": [
+                  "block"
+                ],
+        "summary": "Get blocked users list of logged in user",
         "description": "get blocks in the database",
         "parameters": [
           {
@@ -430,6 +481,10 @@
     },
     "/block": {
       "post": {
+                        "tags": [
+                          "block"
+                        ],
+                        "summary": "block a user",
         "description": "Create block in the database",
         "parameters": [
           {
@@ -460,6 +515,10 @@
         }
       },
       "delete": {
+                        "tags": [
+                          "block"
+                        ],
+        "summary": "unblock a user",
         "description": "Update notification id's updated_at in the database",
         "parameters": [
           {
@@ -491,6 +550,10 @@
       }
     },"/messages/{sender_id}/{receiver_id}": {
       "get": {
+                        "tags": [
+                          "messages"
+                        ],
+        "summary": "retrieve message histry between 2 users",
         "description": "get messages of conversation between sender and receiver",
         "parameters": [
           {
@@ -523,6 +586,10 @@
     },
     "/messages": {
       "post": {
+                                "tags": [
+                                  "messages"
+                                ],
+        "summary": "send a message to a user",
         "description": "Create message in the database",
         "parameters": [
           {
@@ -559,6 +626,10 @@
         }
       },
       "delete": {
+                                "tags": [
+                                  "messages"
+                                ],
+        "summary": "delete a conversation",
         "description": "Delete conversation",
         "parameters": [
           {

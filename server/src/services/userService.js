@@ -301,10 +301,10 @@ export const updateStatusUser = async (id, status) => {
   try {
     const client = await pool.connect();
 
-    log.info(id, status);
+    log.info('[userService]', id, status);
     log.info('[userService]', 'gonna update user status/time connected');
     if (status === false) {
-      log.info("set to now()");
+      log.info('[userService]', "set to now()");
       const result = await client.query(`
         UPDATE users SET
         status = NOW()
@@ -317,7 +317,7 @@ export const updateStatusUser = async (id, status) => {
       client.release();
       return user;
     } else if (status === true) {
-      log.info("set to null");
+      log.info('[userService]', "set to null");
       const result = await client.query(`
       UPDATE users SET
       status = NULL
@@ -354,7 +354,7 @@ export const getLikedUsers = async (id) => {
     throw err;
   }
 }
-  
+
 export const getMatchedUsers = async (id) => {
   try {
     const client = await pool.connect();
@@ -372,4 +372,3 @@ export const getMatchedUsers = async (id) => {
     throw err;
   }
 }
-  

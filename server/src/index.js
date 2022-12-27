@@ -67,12 +67,7 @@ io.on('connection', (socket) => {
     updateStatusUser(user_id, false)
   });
 
-  // console.log(socket.handshake);
-  // console.log(socket.handshake.query);
-
-  // const decoded = jwt.decode(socket.handshake.query.token, { complete: true });
-  // log.info('[index.js]', 'that socket is linked to user', decoded.payload.id);
-  // socketUser.set(socket.id, decoded.payload.id);
+  log.info('[index.js]', 'total sockets connected:',map.size);
 });
 
 
@@ -88,7 +83,7 @@ server.listen(port, async () => {
   await createMessagesTable();
 });
 
-// Set up the routes
+// Set up the routesd
 app.use('/users', userController);
 app.use('/notifications', notificationsController);
 app.use('/block', blockController);
