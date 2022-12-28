@@ -19,7 +19,7 @@ services:
     restart: always
 
   db:
-    image: postgres
+    image: postgis/postgis:15-3.3
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password

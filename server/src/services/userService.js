@@ -18,6 +18,29 @@ export const getAllUsers = async () => {
   }
 };
 
+// Get all users from the database
+export const getBachelors = async (id, page) => {
+  try {
+
+    const client = await pool.connect();
+    const me = await getUserById(id);
+    console.log("me", me)
+    const result = await client.query(`
+      SELECT *, ABS($1 - ST_X(last_location::geometry)) + ABS($2 - ST_Y(last_location::geometry)) as distance
+      FROM users
+      WHERE ABS($1 - ST_X(last_location::geometry)) + ABS($2 - ST_Y(last_location::geometry)) <= 1
+    `, [me.last_location.x , me.last_location.y]);
+
+    const closeUsers = result.rows;
+    console.log("length", closeUsers.length);
+
+    client.release();
+    return closeUsers;
+  } catch (err) {
+    throw err;
+  }
+};
+
 // Get user from database where email match the paramater
 export const getLogin = async (email, password) => {
   try {

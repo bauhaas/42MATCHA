@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile } from '../services/userService.js';
+import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors } from '../services/userService.js';
 import jwt from 'jsonwebtoken';
 import log from '../config/log.js';
 
@@ -9,6 +9,19 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const users = await getAllUsers();
+    res.send(users);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+// Get all users
+router.get('/:id/bachelors/:page', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const page = req.params.page;
+    const users = await getBachelors(id, page);
     res.send(users);
   } catch (err) {
     res.status(500).send(err.message);

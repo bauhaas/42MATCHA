@@ -1,13 +1,15 @@
 import ProfileCard from './ProfileCard';
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 
 const CardsMap = () => {
     const [users, setUsers] = useState([]);
+	const user = useSelector((state) => state.user.user);
 
     // Fetch the users data from the backend when the component mounts
     useEffect(() => {
-        axios.get('http://localhost:3001/users')
+        axios.get(`http://localhost:3001/users/${user.id}/bachelors/1`)
             .then(response => {
                 // Set the users state variable to the data from the response
                 setUsers(response.data);

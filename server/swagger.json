@@ -191,12 +191,50 @@
         }
       }
     },
+    "/users/{id}/bachelors/:page": {
+
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get bachelors for user and paginate them",
+        "description": "Get bachelors for the user with id = ID from the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved bachelors",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "404": {
+            "description": "Failed to find bachelors with the specified ID"
+          },
+          "500": {
+            "description": "Failed to retrieve bachelors from the database"
+          }
+        }
+      }
+    },
     "/users/{id}/profile": {
       "get": {
         "tags": [
           "users"
         ],
-        "summary": "???",
+        "summary": "Get user without sensitive data",
         "description": "Get a user by their ID from the database",
         "parameters": [
           {

@@ -100,12 +100,12 @@ export async function seedUsersTable() {
             '${hash}',
             '0',
             'https://randomuser.me/api/portraits/men/17.jpg',
-            POINT(2.318641,48.896561)
+            POINT(2.318641, 48.896561)
           );
         `;
       await client.query(testUser);
 
-      for (let i = 0; i < 40; i++) {
+      for (let i = 0; i < 500; i++) {
         const sex = faker.name.sex();
         const first_name = faker.name.firstName(sex).replace('\'', '');
         const last_name = faker.name.lastName(sex).replace('\'', '');
@@ -114,6 +114,7 @@ export async function seedUsersTable() {
         const age = faker.datatype.number({ min: 18, max: 80})
         const city = faker.address.cityName().replace('\'', '');
         const country = faker.address.country().replace('\'', '');
+        const fame_rating = Math.floor(Math.random() * 20);
         // const birthdate = faker.date.birthdate({refDate: Date});
         // const interests = faker.helpers.arrayElement(interestsAndHobbies, 3)
         const photos = faker.image.avatar();
@@ -141,10 +142,10 @@ export async function seedUsersTable() {
             '${sex}',
             '${city}',
             '${country}',
-            '0',
+            '${fame_rating}',
             '${photos}',
             '${bio}',
-            POINT(${2.318641 - 0.1 + (0.2*Math.random())}, ${48.896561 - 0.1 + (0.2*Math.random())})
+            POINT(${2.318641 - 2 + (4*Math.random())}, ${48.896561 - 2 + (4*Math.random())})
           );
         `;
         await client.query(query);
