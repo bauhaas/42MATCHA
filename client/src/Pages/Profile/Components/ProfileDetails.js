@@ -1,27 +1,24 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useSelector } from 'react-redux';
+
 import { HeartIcon as HeartOutlineIcon, NoSymbolIcon} from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
+
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 //TODO when match happend, add animation
 //TODO when match happend, atm, it's removed from liked. So need more update to have hearfillicon
 const ProfileDetails = ({id}) => {
 
-    const [user, setUser] = useState({});
-    const [blocked, setBlocked] = useState(false);
     const currentUser = useSelector((state) => state.user.user);
 
     const [isMatched, setIsMatched] = useState(false);
+    const [blocked, setBlocked] = useState(false);
     const [filled, setFilled] = useState(false);
-
-    const navigate = useNavigate();
+    const [user, setUser] = useState({});
 
     useEffect(() => {
-        console.log('get user ', id);
-
         const getUser= async() => {
             const response = await getUserById(id);
             setUser(response);
@@ -43,7 +40,6 @@ const ProfileDetails = ({id}) => {
         }
         isUserLiked();
 
-
         const isUserMatched = async () => {
             console.log(currentUser.id);
             axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
@@ -63,7 +59,6 @@ const ProfileDetails = ({id}) => {
                 });
         }
         isUserMatched();
-
 
         const currentUserIsBlocked = async () => {
             console.log(currentUser.id);
@@ -88,32 +83,24 @@ const ProfileDetails = ({id}) => {
     }, [id]);
 
     const blockUser = async () => {
-        console.log(currentUser.id, user.id);
-       const result = await blockUserById(currentUser.id, user.id);
-       console.log(result);
+       await blockUserById(currentUser.id, user.id);
     }
 
     const likeUser = async (event) => {
-        console.log(currentUser.id, user.id);
-        const result = await likeUserById(currentUser.id, user.id);
+        await likeUserById(currentUser.id, user.id);
         setFilled(true);
-        console.log(result);
     }
 
     const unlikeUser = async (event) => {
-        console.log(currentUser.id, user.id);
-        const result = await unlikeUserById(currentUser.id, user.id);
+        await unlikeUserById(currentUser.id, user.id);
         setFilled(false);
-        console.log(result);
     }
 
     const gotochat = async (event) => {
-       console.log(`/chat/`);
-
        axios.post('http://localhost:3001/conversations', {
-        sender_id: currentUser.id,
-        receiver_id: user.id
-    })
+            userId1: currentUser.id,
+            userId2: user.id
+        })
         .then(response => {
             console.log(response.data);
         })
@@ -121,7 +108,6 @@ const ProfileDetails = ({id}) => {
             console.log(error);
         });
         // navigate(`/chat/${convName}`);
-        //TODO post a conv
     }
 
     return (

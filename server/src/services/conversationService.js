@@ -19,14 +19,14 @@ export const deleteConversation = async (id) => {
 
 
 // Insert a conv in the database
-export const insertConversation = async (sender_id, receiver_id) => {
+export const insertConversation = async (userId1, userId2) => {
     try {
         const client = await pool.connect();
         log.info('[conversationService]', 'insert');
         const result = await client.query(`
-            INSERT INTO conversation (sender_id, receiver_id, message_history)
+            INSERT INTO conversation (userId1, userId2, message_history)
             VALUES ($1, $2, '{}') RETURNING id;`,
-            [sender_id, receiver_id]);
+            [userId1, userId2]);
         const conversationId = result.rows[0].id;
         client.release();
         return conversationId;
@@ -34,6 +34,21 @@ export const insertConversation = async (sender_id, receiver_id) => {
         throw err;
     }
 };
+
+
+// // Patch a conv in the database
+// export const patchConversation = async (id, unread) => {
+//     try {
+//         const client = await pool.connect();
+//         log.info('[conversationService]', 'patch', id, unread);
+//         const result = await client.query('UPDATE conversation SET unread = false WHERE id = $1;', [id]);
+//         log.info('[conversationService]', 'patch done');
+//         client.release();
+//     } catch (err) {
+//         throw err;
+//     }
+// };
+
 
 // Get all conv in the database from a user
 export const getConversations = async (id) => {
@@ -43,13 +58,14 @@ export const getConversations = async (id) => {
 
         //chat gpted (si tu need des details je peux te filer les logs du chat)
         const result = await client.query(`
-          SELECT conversation.id, conversation.sender_id, conversation.receiver_id, conversation.message_history,
-            (CASE WHEN conversation.sender_id = $1 THEN sender.first_name || ' ' || sender.last_name ELSE users.first_name || ' ' || users.last_name END) as you_talk_to,
-            (SELECT message FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message
+          SELECT conversation.id, conversation.userId1, conversation.userId2,
+            (CASE WHEN conversation.userId1 = $1 THEN sender.first_name || ' ' || sender.last_name ELSE users.first_name || ' ' || users.last_name END) as you_talk_to,
+            (SELECT message FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message,
+            (SELECT unread FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_unread
           FROM conversation
-          JOIN users ON users.id = (CASE WHEN conversation.sender_id = $1 THEN conversation.receiver_id ELSE conversation.sender_id END)
-          JOIN users as sender ON sender.id = (CASE WHEN conversation.sender_id = $1 THEN conversation.sender_id ELSE conversation.receiver_id END)
-          WHERE conversation.sender_id = $1 OR conversation.receiver_id = $1;`,
+          JOIN users ON users.id = (CASE WHEN conversation.userId1 = $1 THEN conversation.userId2 ELSE conversation.userId1 END)
+          JOIN users as sender ON sender.id = (CASE WHEN conversation.userId1 = $1 THEN conversation.userId1 ELSE conversation.userId2 END)
+          WHERE conversation.userId1 = $1 OR conversation.userId2 = $1;`,
           [id]
         );
         const conversations = result.rows;

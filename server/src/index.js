@@ -21,7 +21,7 @@ import { Server } from 'socket.io';
 import { updateStatusUser } from './services/userService.js';
 import { createConversationTable } from './models/conversationModel.js';
 import { insertMessage2 } from './services/messageService.js';
-
+import { getConversations } from './services/conversationService.js';
 
 const app = express();
 
@@ -63,6 +63,7 @@ io.on('connection', (socket) => {
 
   updateStatusUser(user_id, true)
   map.set(user_id, socket);
+  log.info('[index.js]', 'total sockets connected:', map.size);
 
   socket.on('disconnect', () => {
     console.log(user_id, "disconnecting");
@@ -74,14 +75,10 @@ io.on('connection', (socket) => {
     log.info('[index.js]', 'receive sendMessage event');
     log.info('[index.js]', 'payload:', messagePayload);
 
-    //TODO
     const messageHistory = await insertMessage2(messagePayload);
-    //create message instance in db
-    //update message history of specific conv
-
-    //emit message history back to both user
     const fromSocket = map.get(String(messagePayload.from));
     const toSocket = map.get(String(messagePayload.to));
+
     if (fromSocket)
     {
       log.info('[index.js]', 'send messageHistory to the message author');
@@ -91,16 +88,15 @@ io.on('connection', (socket) => {
     {
       log.info('[index.js]', 'send messageHistory to the receiver');
       io.to(toSocket.id).emit('messageHistory', messageHistory);
+
+      const conversation = await getConversations(messagePayload.to);
+      io.to(toSocket.id).emit('convUpdate', conversation);
     }
   });
-
-  log.info('[index.js]', 'total sockets connected:',map.size);
 });
-
 
 server.listen(port, async () => {
   log.info('[index.js]', `Server listening on port ${port}`);
-  // Create the table in the database and seed it with fake data
   await createUsersTable();
   await seedUsersTable();
   await createNotificationsTable();
@@ -108,12 +104,8 @@ server.listen(port, async () => {
   await createBlocksTable();
   await createConversationTable();
   await createMessagesTable();
-
-  log.info('[index.js]', 'total sockets connected:',map.size);
-
 });
 
-// Set up the routesd
 app.use('/users', userController);
 app.use('/notifications', notificationsController);
 app.use('/block', blockController);

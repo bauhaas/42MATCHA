@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from "react"
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
+import { useState, useEffect, Fragment } from "react"
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useSelector } from 'react-redux';
+
+import { BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
+import { Disclosure, Menu, Transition } from '@headlessui/react'
+
 import  socket  from '../../Context/socket'
+import axios from 'axios';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-function Navbar() {
+const Navbar = () => {
+
+  const user = useSelector((state) => state.user.user);
+  const navigate = useNavigate();
+
+  const [notifications, setNotifications] = useState([]);
+  const [convlist, setConvList] = useState([]);
 
 	useEffect(() => {
 		if (socket.client === undefined) {
@@ -19,13 +26,15 @@ function Navbar() {
 		}
 	}, []);
 
-  const [notifications, setNotifications] = useState([]);
-  const user = useSelector((state) => state.user.user);
-  let navigate = useNavigate();
-
-  // useEffect(() => {
-  //   console.log('redux user:', user);
-  // }, []);
+  useEffect(() => {
+    socket.client.on('convUpdate', (data) => {
+      console.log('receive message history event in chat page', data)
+      setConvList(data);
+    })
+    return () => {
+      socket.client.off('convUpdate');
+    };
+  }, []);
 
   const logout = (event) => {
     event.preventDefault();
@@ -56,7 +65,6 @@ function Navbar() {
     navigate('/settings');
   }
 
-
   const deleteNotifs = (event, notifToRemove) => {
     event.preventDefault(); //do not delete, allow to not autoclose the notifications dropdown on a single suppresion
     console.log('delete notifs with id:', notifToRemove.id);
@@ -73,7 +81,6 @@ function Navbar() {
         console.log(error.response.data);
       });
     }
-
 
   const setNotifRead = (event, notifToUpdate) => {
     console.log('update notif with id:', notifToUpdate.id);
@@ -110,7 +117,6 @@ function Navbar() {
 
   }
 
-
 return (
   <Disclosure as="nav" className="bg-chess-dark fixed top-0 min-w-full z-40">
     {({ open }) => (
@@ -123,7 +129,7 @@ return (
               <Menu as="div">
                 <Menu.Button onClick={gotochat} className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                   <ChatBubbleLeftRightIcon className={`h-8 w-8`} aria-hidden="true" />
-                  <div id="chat" className={`${notifications.filter(notif => notif.read === false).length === 0 ? 'hidden' : ''} absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{notifications.filter(notif => notif.read === false).length}</div>
+                  <div id="chat" className={`${convlist.filter(conv => conv.last_message_unread === true).length !== 0 ? '' : 'hidden'} absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{convlist.filter(conv => conv.last_message_unread === true).length}</div>
                 </Menu.Button>
               </Menu >
               <Menu as="div">

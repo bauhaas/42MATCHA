@@ -7,15 +7,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'chess-hover': '#21201d',
+        'chess-dark': '#272522',
         'chess-default':'#312e2b',
-        'chess-dark':'#272522',
-        'chess-bar':'#939291',
-        'chess-text':'#ffffff',
-        'chess-hover':'#21201d',
+        'chess-button': '#363432',
         'chess-placeholder':'#3d3b39',
+        'chess-bar': '#939291',
         'chess-place-text':'#9e9d9c',
-        'chess-button':'#363432'
-
+        'chess-text': '#ffffff'
       },
       aspectRatio: {
         '4/3': '4 / 3',

@@ -1,20 +1,18 @@
 import pool from '../config/db.js';
 import log from '../config/log.js';
 
-
 // Insert a message into the database and link it to the appropriate conversation
 export const insertMessage2 = async (payload) => {
     try {
         const client = await pool.connect();
-        log.info('[messageService]', 'insert message with', payload);
+        log.info('[messageService]', 'insert message with:', payload);
 
         // Check if a conversation already exists between the two user ids
         const conversationResult = await client.query(`
-          SELECT id FROM conversation WHERE (sender_id = $1 AND receiver_id = $2) OR (sender_id = $2 AND receiver_id = $1);`,
+          SELECT id FROM conversation WHERE (userId1 = $1 AND userId2 = $2) OR (userId1 = $2 AND userId2 = $1);`,
           [payload.from, payload.to]
         );
 
-        log.info('[messageService]', conversationResult);
         // If a conversation does exist, retrieve the id of the existing conversation
         const conversationId = conversationResult.rows[0].id;
 
@@ -35,6 +33,43 @@ export const insertMessage2 = async (payload) => {
         client.release();
         return messageHistory;
 
+    } catch (err) {
+        throw err;
+    }
+};
+
+// Patch messages in the database
+export const patchMessages = async (id) => {
+    try {
+        const client = await pool.connect();
+        log.info('[messageService]', 'patch', id);
+        const result = await client.query(`
+        UPDATE messages
+        SET unread = false
+        WHERE conversation_id = $1;`,
+                [id]
+        );
+        log.info('[messageService]', 'patch done');
+        client.release();
+    } catch (err) {
+        throw err;
+    }
+};
+
+// Get the message history for a conversation
+export const getMessageHistory = async (conversationId) => {
+    try {
+        const client = await pool.connect();
+        log.info('[messageService]', 'get history');
+
+        const result = await client.query(`
+          SELECT * FROM messages WHERE conversation_id = $1 ORDER BY created_at ASC;`,
+            [conversationId]
+        );
+        const messages = result.rows;
+
+        client.release();
+        return messages;
     } catch (err) {
         throw err;
     }

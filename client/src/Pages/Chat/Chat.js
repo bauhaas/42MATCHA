@@ -1,21 +1,23 @@
-import { useState, useEffect } from 'react';
-import NavBar from '../Navbar/NavBar';
 import { useNavigate } from 'react-router-dom';
-import ConvCard from './Components/ConvCard';
-import Conversation from './Components/Conversation';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+
+import socket from '../../Context/socket';
 import axios from 'axios';
+
+import ConvCard from './Components/ConvCard';
+import NavBar from '../Navbar/NavBar';
+
 
 const Chat = () => {
 
+    const currentUser = useSelector((state) => state.user.user);
+    const navigate = useNavigate();
+
     const [convlist, setConvList] = useState([]);
 
-    const navigate = useNavigate();
-    const currentUser = useSelector((state) => state.user.user);
-
-    function gotoConv(event, conv) {
+    const gotoConv = async (event, conv) => {
         event.preventDefault();
-        console.log('go to conv', conv.id)
         navigate(`/chat/${conv.id}`, {
             state: {
               conv: conv,
@@ -39,8 +41,16 @@ const Chat = () => {
                 });
         }
         getConversations();
+    }, []);
 
-
+    useEffect(() => {
+        socket.client.on('convUpdate', (data) => {
+            console.log('receive message history event in chat page', data)
+            setConvList(data);
+        })
+        return () => {
+            socket.client.off('convUpdate');
+        };
     }, []);
 
     return (

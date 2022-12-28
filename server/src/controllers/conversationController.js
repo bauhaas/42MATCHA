@@ -20,9 +20,9 @@ router.delete('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         log.info('[conversationController]', 'body: ', req.body);
-        const { sender_id, receiver_id } = req.body;
+        const { userId1, userId2 } = req.body;
         log.info('[conversationController]', 'enter in insertConv');
-        const id = await insertConversation(sender_id, receiver_id);
+        const id = await insertConversation(userId1, userId2);
         res.send({ id });
     } catch (err) {
             res.status(500).send(err.message);
@@ -41,5 +41,20 @@ router.get('/:userId', async (req, res) => {
             res.status(500).send(err.message);
     }
 });
+
+
+// // Patch conv of a user
+// router.patch('/:id', async (req, res) => {
+//     try {
+//         const id = req.params.id;
+//         const { unread } = req.body;
+//         log.info('[conversationController]', 'enter in patchConv', id, unread);
+//         const conversation = await patchConversation(id, unread);
+//         log.info('[conversationController]', conversation);
+//         res.sendStatus(200);
+//     } catch (err) {
+//         res.status(500).send(err.message);
+//     }
+// });
 
 export default router

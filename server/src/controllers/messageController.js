@@ -1,38 +1,35 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import log from '../config/log.js';
-import { deleteConversation, getMessagesOfConversation, insertMessage } from '../services/messageService.js';
+import { deleteConversation, getMessageHistory, patchMessages } from '../services/messageService.js';
 
 const router = express.Router();
 
-// Get all messages between sender_id and receiver_id
-router.get('/:sender_id/:receiver_id', async (req, res) => {
+// Get the message history for a conversation
+router.get('/history/:conversationId', async (req, res) => {
   try {
-    const sender_id = req.params.sender_id;
-    const receiver_id = req.params.receiver_id;
-    const messages = await getMessagesOfConversation(sender_id, receiver_id);
+    console.log('lol');
+    const conversationId = req.params.conversationId;
+    log.info('[messageController]', 'enter in getHistory');
+    const messages = await getMessageHistory(conversationId);
     res.send(messages);
   } catch (err) {
     res.status(500).send(err.message);
   }
 });
 
-// Create new message
-router.post('/', async (req, res) => {
-  try {
-    const { sender_id, receiver_id, message } = req.body;
-    const messageCreated = await insertMessage(sender_id, receiver_id, message);
 
-    res.send(messageCreated);
-  } catch (err) {
-    if (err.message === 'Invalid email or password.') {
-      res.status(401).send(err.message);
-    } else {
-      res.status(500).send(err.message);
+// Patch conv of a user
+router.patch('/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        log.info('[messageController]', 'enter in patchMessages of conv:', id);
+        const messages = await patchMessages(id);
+        res.sendStatus(200);
+    } catch (err) {
+        res.status(500).send(err.message);
     }
-  }
 });
-
 
 // Delete a conversation
 router.delete('/', async (req, res) => {

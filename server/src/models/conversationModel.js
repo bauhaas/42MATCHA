@@ -16,10 +16,10 @@ export async function createConversationTable() {
             const result = await client.query(`
             CREATE TABLE conversation (
                 id SERIAL PRIMARY KEY,
-                sender_id INT NOT NULL,
-                FOREIGN KEY (sender_id) REFERENCES users (id),
-                receiver_id INT NOT NULL,
-                FOREIGN KEY (receiver_id) REFERENCES users (id),
+                userId1 INT NOT NULL,
+                FOREIGN KEY (userId1) REFERENCES users (id),
+                userId2 INT NOT NULL,
+                FOREIGN KEY (userId2) REFERENCES users (id),
                 message_history INT[]
               );
             `);
