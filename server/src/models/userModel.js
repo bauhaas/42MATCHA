@@ -88,6 +88,8 @@ export async function seedUsersTable() {
           INSERT INTO users (
             first_name,
             last_name,
+            sex,
+            sex_orientation,
             email,
             password,
             fame_rating,
@@ -96,6 +98,8 @@ export async function seedUsersTable() {
           ) VALUES (
             'Baudoin',
             'Haas',
+            'male',
+            'hetero',
             'a@a.com',
             '${hash}',
             '0',
@@ -111,7 +115,8 @@ export async function seedUsersTable() {
         const last_name = faker.name.lastName(sex).replace('\'', '');
         const email = faker.internet.email(first_name, last_name);
         const password = faker.internet.password();
-        const age = faker.datatype.number({ min: 18, max: 80})
+        const age = faker.datatype.number({ min: 18, max: 80});
+        const sex_orientation = faker.helpers.arrayElements(['hetero', 'homo', 'bi'],1);
         const city = faker.address.cityName().replace('\'', '');
         const country = faker.address.country().replace('\'', '');
         const fame_rating = Math.floor(Math.random() * 20);
@@ -127,6 +132,7 @@ export async function seedUsersTable() {
             password,
             age,
             sex,
+            sex_orientation,
             city,
             country,
             fame_rating,
@@ -140,6 +146,7 @@ export async function seedUsersTable() {
             '${password}',
             ${age},
             '${sex}',
+            '${sex_orientation}',
             '${city}',
             '${country}',
             '${fame_rating}',

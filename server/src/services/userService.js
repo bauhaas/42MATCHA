@@ -24,15 +24,24 @@ export const getBachelors = async (id, page) => {
 
     const client = await pool.connect();
     const me = await getUserById(id);
-    console.log("me", me)
     const result = await client.query(`
       SELECT *, ABS($1 - ST_X(last_location::geometry)) + ABS($2 - ST_Y(last_location::geometry)) as distance
       FROM users
       WHERE ABS($1 - ST_X(last_location::geometry)) + ABS($2 - ST_Y(last_location::geometry)) <= 1
     `, [me.last_location.x , me.last_location.y]);
 
-    const closeUsers = result.rows;
-    console.log("length", closeUsers.length);
+    var closeUsers = result.rows;
+    
+    if (["hetero", "homo"].includes(me.sex_orientation)) {
+      const homo = me.sex_orientation == "homo";
+      closeUsers = closeUsers.filter((user) => (homo ? user.sex === me.sex : user.sex !== me.sex) && user.sex_orientation === me.sex_orientation);
+    } else {
+      console.log("bi")
+      closeUsers = closeUsers.filter((user) => user.sex === me.sex ? user.sex_orientation !== "hetero" : user.sex_orientation !== "homo");
+    }
+
+    // console.log("closeUsers", closeUsers);
+    console.log("me", me)
 
     client.release();
     return closeUsers;
@@ -95,6 +104,7 @@ export const getUserByIdProfile = async (id) => {
     const client = await pool.connect();
     const result = await client.query(DBgetUserById(id));
     const user = result.rows[0];
+    console.log(user);
     delete(user.email);
     delete(user.password);
     delete(user.report_count);
