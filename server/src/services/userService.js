@@ -24,15 +24,45 @@ export const getBachelors = async (id, page) => {
 
     const client = await pool.connect();
     const me = await getUserById(id);
-    console.log("me", me)
     const result = await client.query(`
       SELECT *, ABS($1 - ST_X(last_location::geometry)) + ABS($2 - ST_Y(last_location::geometry)) as distance
       FROM users
       WHERE ABS($1 - ST_X(last_location::geometry)) + ABS($2 - ST_Y(last_location::geometry)) <= 1
     `, [me.last_location.x , me.last_location.y]);
 
-    const closeUsers = result.rows;
+    var closeUsers = result.rows;
+    
+    if (["hetero", "homo"].includes(me.sex_orientation)) {
+      const homo = me.sex_orientation == "homo";
+      closeUsers = closeUsers.filter((user) => (homo ? user.sex === me.sex : user.sex !== me.sex) && user.sex_orientation === me.sex_orientation);
+    } else {
+      closeUsers = closeUsers.filter((user) => user.sex === me.sex ? user.sex_orientation !== "hetero" : user.sex_orientation !== "homo");
+    }
+
+    closeUsers.map(function (user) {
+        const fameFactor = Math.max(1 - (0.01 * user.fame_rating), 0.5);
+
+        const commonInterests = me.interests.filter(value => user.interests.includes(value));
+        const tagsFactor = Math.max(1 - (0.1 * commonInterests.length), 0.5);
+
+        const ageFactor = 1 + (Math.abs(me.age - user.age) / 100);
+        // console.log(ageFactor);
+
+        console.log(user.first_name);
+        console.log(user.distance);
+        user.distance = user.distance * fameFactor * tagsFactor * ageFactor;
+        console.log(user.distance);
+        console.log();
+
+        return user;
+    });
+
+    console.log("closeUser", closeUsers[5]);
     console.log("length", closeUsers.length);
+    console.log("me", me);
+
+    // sort by increasing distance
+    closeUsers.sort((a, b) => a.distance < b.distance);
 
     client.release();
     return closeUsers;
@@ -95,6 +125,7 @@ export const getUserByIdProfile = async (id) => {
     const client = await pool.connect();
     const result = await client.query(DBgetUserById(id));
     const user = result.rows[0];
+    console.log(user);
     delete(user.email);
     delete(user.password);
     delete(user.report_count);
