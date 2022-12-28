@@ -48,7 +48,7 @@ export async function createUsersTable() {
         sex_orientation VARCHAR(255),
         city VARCHAR(255),
         country TEXT,
-        interests TEXT,
+        interests JSON,
         photos TEXT,
         bio TEXT,
         active BOOLEAN,
@@ -94,6 +94,7 @@ export async function seedUsersTable() {
             password,
             fame_rating,
             photos,
+            interests,
             last_location
           ) VALUES (
             'Baudoin',
@@ -104,6 +105,7 @@ export async function seedUsersTable() {
             '${hash}',
             '0',
             'https://randomuser.me/api/portraits/men/17.jpg',
+            '["je suis un hobby"]',
             POINT(2.318641, 48.896561)
           );
         `;
@@ -117,11 +119,20 @@ export async function seedUsersTable() {
         const password = faker.internet.password();
         const age = faker.datatype.number({ min: 18, max: 80});
         const sex_orientation = faker.helpers.arrayElements(['hetero', 'homo', 'bi'],1);
-        const city = faker.address.cityName().replace('\'', '');
-        const country = faker.address.country().replace('\'', '');
+        let city = faker.address.cityName().replace('\'', '');
+        city = city.replace('\'', '');
+        let country = faker.address.country().replace('\'', '');
+        country = country.replace('\'', '');
         const fame_rating = Math.floor(Math.random() * 20);
         // const birthdate = faker.date.birthdate({refDate: Date});
-        // const interests = faker.helpers.arrayElement(interestsAndHobbies, 3)
+        const hobbies = ["sport", "bagarre", "flute", "contrebasse", "trompette", "aviation", "chanter", "danser", "courgette", "livre", "je suis un interet", "je suis un hobby"];
+        var interestsStr = "[";
+        for (let i = 0; i < 1 + Math.floor(Math.random() * hobbies.length); i++) {
+          var j = Math.floor(Math.random() * hobbies.length);
+          interestsStr += "\"" + hobbies[j] + "\",";
+        }
+        interestsStr = interestsStr.slice(0, -1);
+        interestsStr += "]";
         const photos = faker.image.avatar();
         const bio = faker.lorem.lines(3).replace('\'', '');
         const query = `
@@ -138,6 +149,7 @@ export async function seedUsersTable() {
             fame_rating,
             photos,
             bio,
+            interests,
             last_location
           ) VALUES (
             '${first_name}',
@@ -152,6 +164,7 @@ export async function seedUsersTable() {
             '${fame_rating}',
             '${photos}',
             '${bio}',
+            '${interestsStr}',
             POINT(${2.318641 - 2 + (4*Math.random())}, ${48.896561 - 2 + (4*Math.random())})
           );
         `;

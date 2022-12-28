@@ -36,12 +36,33 @@ export const getBachelors = async (id, page) => {
       const homo = me.sex_orientation == "homo";
       closeUsers = closeUsers.filter((user) => (homo ? user.sex === me.sex : user.sex !== me.sex) && user.sex_orientation === me.sex_orientation);
     } else {
-      console.log("bi")
       closeUsers = closeUsers.filter((user) => user.sex === me.sex ? user.sex_orientation !== "hetero" : user.sex_orientation !== "homo");
     }
 
-    // console.log("closeUsers", closeUsers);
-    console.log("me", me)
+    closeUsers.map(function (user) {
+        const fameFactor = Math.max(1 - (0.01 * user.fame_rating), 0.5);
+
+        const commonInterests = me.interests.filter(value => user.interests.includes(value));
+        const tagsFactor = Math.max(1 - (0.1 * commonInterests.length), 0.5);
+
+        const ageFactor = 1 + (Math.abs(me.age - user.age) / 100);
+        // console.log(ageFactor);
+
+        console.log(user.first_name);
+        console.log(user.distance);
+        user.distance = user.distance * fameFactor * tagsFactor * ageFactor;
+        console.log(user.distance);
+        console.log();
+
+        return user;
+    });
+
+    console.log("closeUser", closeUsers[5]);
+    console.log("length", closeUsers.length);
+    console.log("me", me);
+
+    // sort by increasing distance
+    closeUsers.sort((a, b) => a.distance < b.distance);
 
     client.release();
     return closeUsers;
