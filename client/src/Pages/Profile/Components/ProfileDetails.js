@@ -107,6 +107,7 @@ const ProfileDetails = ({id}) => {
         .catch(error => {
             console.log(error);
         });
+        //TODO
         // navigate(`/chat/${convName}`);
     }
 
@@ -114,40 +115,41 @@ const ProfileDetails = ({id}) => {
         <>
             <div className='mx-2 pt-16 h-full'>
                 <div className='mx-4 my-2 rounded-lg bg-chess-dark text-white'>
-                    {blocked ?
-                        <div>
-                           You have been blocked by that user
-                        </div>
-                    :
-                    <>
-                            <p>Profile of {user.first_name} {user.last_name}</p>
-                            <div className="tooltip" data-tip="Block">
-                                <NoSymbolIcon onClick={blockUser} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
-                            </div>
-                            {filled ? (
-                                <div className="tooltip" data-tip="Unlike">
-                                    <HeartSolidIcon onClick={(event) => unlikeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
-                                </div>
-                            ) : (
-                                <div className="tooltip" data-tip="Like">
-                                    <HeartOutlineIcon onClick={(event) => likeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
-                                </div>
-                            )}
-                            <div className="tooltip" data-tip="Report">
-                                <ExclamationCircleIcon className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
-                            </div>
-                            {
-                                isMatched ?
-                                <div className="tooltip" data-tip="Start chatting">
-                                    <ChatBubbleLeftIcon onClick={(event) => gotochat(event)} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
-                                </div>
-                                :
-                                null
-                            }
-
-                    </>
+                    {
+                        blocked
+                        ?
+                            <div>You have been blocked by that user</div>
+                        :
+                            <>
+                                    <p>Profile of {user.first_name} {user.last_name}</p>
+                                    <div className="tooltip" data-tip="Block">
+                                        <NoSymbolIcon onClick={blockUser} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
+                                    </div>
+                                    {
+                                        filled
+                                        ?
+                                            <div className="tooltip" data-tip="Unlike">
+                                                <HeartSolidIcon onClick={(event) => unlikeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
+                                            </div>
+                                        :
+                                            <div className="tooltip" data-tip="Like">
+                                                <HeartOutlineIcon onClick={(event) => likeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
+                                            </div>
+                                    }
+                                    <div className="tooltip" data-tip="Report">
+                                        <ExclamationCircleIcon className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
+                                    </div>
+                                    {
+                                        isMatched
+                                        ?
+                                            <div className="tooltip" data-tip="Start chatting">
+                                                <ChatBubbleLeftIcon onClick={(event) => gotochat(event)} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
+                                            </div>
+                                        :
+                                            null
+                                    }
+                            </>
                     }
-
                 </div>
             </div>
         </>

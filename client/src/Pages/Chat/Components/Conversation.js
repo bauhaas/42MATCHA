@@ -6,6 +6,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import socket from '../../../Context/socket';
 import axios from 'axios';
 
+import Avatar from '../../../SharedComponents/Avatar';
 import MessageBubble from './MessageBubble';
 import NavBar from '../../Navbar/NavBar';
 
@@ -77,6 +78,7 @@ const Conversation = () => {
         messagesRef.current.scrollTo(0, messagesRef.current.scrollHeight);
     }, []);
 
+
     return (
         <>
             <div className="bg-chess-default min-h-screen">
@@ -91,11 +93,7 @@ const Conversation = () => {
                                     </svg>
                                 </button>
                                 <p>{otherUser}</p>
-                                <div className="avatar">
-                                    <div className="w-10 rounded-full m-1">
-                                        <img src="https://placeimg.com/192/192/people" />
-                                    </div>
-                                </div>
+                                <Avatar width={10} attribute={'avatar'}/>
                             </div>
                         </div>
                         {

@@ -26,15 +26,10 @@ const Chat = () => {
     }
 
     useEffect(() => {
-        console.log('chat useEffect');
-
         const getConversations = async () => {
-            console.log(currentUser.id);
             axios.get(`http://localhost:3001/conversations/${currentUser.id}`)
                 .then(response => {
-                    const conversations = response.data;
-                    setConvList(conversations);
-                    console.log(conversations);
+                    setConvList(response.data);
                 })
                 .catch(error => {
                     console.log(error);
@@ -45,33 +40,35 @@ const Chat = () => {
 
     useEffect(() => {
         socket.client.on('convUpdate', (data) => {
-            console.log('receive message history event in chat page', data)
+            console.log('receive convUpdate event', data)
             setConvList(data);
         })
+
         return () => {
             socket.client.off('convUpdate');
         };
     }, []);
 
+    //TODO size box
     return (
         <>
             <div className="bg-chess-default min-h-screen">
                 <NavBar />
-                <div className='flex gap-2 mx-2 pt-16 h-screen text-white'>
-                    <div id="convList" className='grow rounded-lg pt-2 scrollbar overflow-auto sm:px-80'>
+                <div className='gap-2 pt-16 h-screen text-white'>
                         {
-                            convlist.length > 0 ?
-                                <ul className='flex flex-col gap-2 pr-2'>
+                            convlist.length > 0
+                            ?
+                                <div id = "convList" className = 'flex flex-col items-center gap-2 mx-4 rounded-lg pt-2 scrollbar overflow-auto'>
                                     {convlist.map((conv, index) => (
-                                        <div onClick={(event) => gotoConv(event, conv)} key={`${conv}-${index}`} >
+                                        <div className="min-w-full" onClick={(event) => gotoConv(event, conv)} key={`${conv}-${index}`} >
                                             <ConvCard conv={conv} />
                                         </div>
                                     ))}
-                                </ul>
+                                </div>
                             :
                                 <div className='text-center font-bold text-2xl'>No conversations</div>
                         }
-                    </div>
+
                 </div>
             </div>
         </>
