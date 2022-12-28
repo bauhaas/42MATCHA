@@ -49,7 +49,9 @@ const ProfileDetails = ({id}) => {
             axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
                 .then(response => {
                     const matchedUsers = response.data;
+                    console.log(matchedUsers);
                     const isMatch = matchedUsers.find(matchedUser => matchedUser.id == id);
+
                     if (isMatch)
                     {
                         setIsMatched(true);
@@ -109,8 +111,8 @@ const ProfileDetails = ({id}) => {
        console.log(`/chat/`);
 
        axios.post('http://localhost:3001/conversations', {
-        sender_id: sender_id,
-        receiver_id: receiver_id
+        sender_id: currentUser.id,
+        receiver_id: user.id
     })
         .then(response => {
             console.log(response.data);

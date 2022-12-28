@@ -13,6 +13,12 @@ function classNames(...classes) {
 
 function Navbar() {
 
+	useEffect(() => {
+		if (socket.client === undefined) {
+			socket.connect(user.id);
+		}
+	}, []);
+
   const [notifications, setNotifications] = useState([]);
   const user = useSelector((state) => state.user.user);
   let navigate = useNavigate();
@@ -24,7 +30,9 @@ function Navbar() {
   const logout = (event) => {
     event.preventDefault();
     localStorage.removeItem('jwt');
-    socket.disconnect();
+    if (socket.client.connected === true) {
+      socket.disconnect();
+    }
     navigate('/signin');
   }
 

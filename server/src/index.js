@@ -80,17 +80,17 @@ io.on('connection', (socket) => {
     //update message history of specific conv
 
     //emit message history back to both user
-    const fromSocketId = map.get(String(messagePayload.from)).id;
-    const toSocketId = map.get(String(messagePayload.to)).id;
-    if(fromSocketId)
+    const fromSocket = map.get(String(messagePayload.from));
+    const toSocket = map.get(String(messagePayload.to));
+    if (fromSocket)
     {
       log.info('[index.js]', 'send messageHistory to the message author');
-      io.to(fromSocketId).emit('messageHistory', messageHistory);
+      io.to(fromSocket.id).emit('messageHistory', messageHistory);
     }
-    if(toSocketId)
+    if (toSocket)
     {
       log.info('[index.js]', 'send messageHistory to the receiver');
-      io.to(toSocketId).emit('messageHistory', messageHistory);
+      io.to(toSocket.id).emit('messageHistory', messageHistory);
     }
   });
 

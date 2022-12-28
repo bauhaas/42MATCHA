@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 // export const socket = manager.socket("/");
 
 const Home = () => {
+	console.log("Home");
 	// let navigate = useNavigate();
 	const user = useSelector((state) => state.user.user);
 	// const socket = socketIO.connect('http://localhost:3001', { query: `token=${localStorage.getItem('jwt')}` });
@@ -36,11 +37,6 @@ const Home = () => {
 		// });
 		// socket.connect();
 	// 	manager.connect();
-
-	useEffect(() => {
-		socket.connect(user.id);
-
-	}, []);
 
 	return(
 		<>

@@ -1,3 +1,5 @@
+import Navbar from './Pages/Navbar/NavBar';
+
 import Home from './Pages/Home/Home';
 import Signin from './Pages/Signin/Signin';
 import Signup from './Pages/Signup/Signup';
@@ -27,7 +29,9 @@ function App() {
 
     useEffect(() => {
         return () => {
-          socket.disconnect();
+          if (socket.client.connected === true) {
+            socket.disconnect();
+          }
       }
     }, [])
     return (
@@ -37,10 +41,10 @@ function App() {
     <Provider store={store}>
         <PersistGate persistor={persistor}>
           <Routes>
-            <Route exact path="/" element={<Navigate to="/home" />} />
-            <Route path='/home' element={<Home />} />
             <Route exact path='/signin' element={<Signin />} />
-            <Route path='/signup' element={<Signup />} />
+            <Route exact path='/signup' element={<Signup />} />
+            <Route index element={<Navigate to="/home" />} />
+            <Route path='/home' element={<Home />} />
             <Route path='/profile/:id' element={<Profile />} />
             <Route path='/profile/' element={<Profile />} />
             <Route path='/chat/' element={<Chat />} />
