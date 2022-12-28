@@ -107,6 +107,17 @@ const ProfileDetails = ({id}) => {
 
     const gotochat = async (event) => {
        console.log(`/chat/`);
+
+       axios.post('http://localhost:3001/conversations', {
+        sender_id: sender_id,
+        receiver_id: receiver_id
+    })
+        .then(response => {
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.log(error);
+        });
         // navigate(`/chat/${convName}`);
         //TODO post a conv
     }
@@ -137,9 +148,15 @@ const ProfileDetails = ({id}) => {
                             <div className="tooltip" data-tip="Report">
                                 <ExclamationCircleIcon className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
                             </div>
-                            <div className="tooltip" data-tip="Start chatting">
-                                <ChatBubbleLeftIcon onClick={(event) => gotochat(event)} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
-                            </div>
+                            {
+                                isMatched ?
+                                <div className="tooltip" data-tip="Start chatting">
+                                    <ChatBubbleLeftIcon onClick={(event) => gotochat(event)} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
+                                </div>
+                                :
+                                null
+                            }
+
                     </>
                     }
 

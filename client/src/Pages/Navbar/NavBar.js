@@ -17,9 +17,9 @@ function Navbar() {
   const user = useSelector((state) => state.user.user);
   let navigate = useNavigate();
 
-  useEffect(() => {
-    console.log('redux user:', user);
-  }, []);
+  // useEffect(() => {
+  //   console.log('redux user:', user);
+  // }, []);
 
   const logout = (event) => {
     event.preventDefault();
@@ -110,6 +110,7 @@ return (
         <div className="px-8">
           <div className="relative flex h-16 items-center justify-between">
             <img onClick={(event) => gotomenu(event)} className="block h-8 w-auto" src="../logo.png" alt="logo"/>
+            <div id="TODELETELATER" className="border-2 border-red-500 text-white">id:{user.id}, name:{user.first_name} {user.last_name}</div>
             <div id="navbarRightButtons" className="flex items-center gap-4">
               <Menu as="div">
                 <Menu.Button onClick={gotochat} className="relative rounded-ful pt-2 text-gray-400 hover:text-white">

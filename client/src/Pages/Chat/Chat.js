@@ -1,20 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NavBar from '../Navbar/NavBar';
 import { useNavigate } from 'react-router-dom';
 import ConvCard from './Components/ConvCard';
 import Conversation from './Components/Conversation';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 const Chat = () => {
 
-    const [convlist, setConvList] = useState(['Obiwan', 'Anakin', 'Foo', 'Anakin', 'Foo', 'Anakin', 'Foo', 'Anakin', 'Foo', 'Anakin', 'Foo']);
+    const [convlist, setConvList] = useState([]);
 
     const navigate = useNavigate();
+    const currentUser = useSelector((state) => state.user.user);
 
-    function gotoConv(event, convName) {
+    function gotoConv(event, conv) {
         event.preventDefault();
-        console.log('go to conv', convName)
-        navigate(`/chat/${convName}`);
+        console.log('go to conv', conv.id)
+        navigate(`/chat/${conv.id}`, {
+            state: {
+              conv: conv,
+            }
+          });
     }
+
+    useEffect(() => {
+        console.log('chat useEffect');
+
+        const getConversations = async () => {
+            console.log(currentUser.id);
+            axios.get(`http://localhost:3001/conversations/${currentUser.id}`)
+                .then(response => {
+                    const conversations = response.data;
+                    setConvList(conversations);
+                    console.log(conversations);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+        getConversations();
+
+
+    }, []);
 
     return (
         <>

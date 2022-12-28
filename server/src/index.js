@@ -5,6 +5,7 @@ import { createBlocksTable } from './models/blockModel.js';
 import { createMessagesTable } from './models/messageModel.js';
 import messageController from './controllers/messageController.js';
 import userController from './controllers/userController.js';
+import conversationController from './controllers/conversationController.js';
 import blockController from './controllers/blockController.js';
 import notificationsController from './controllers/notificationsController.js';
 import swaggerUi from 'swagger-ui-express';
@@ -18,6 +19,8 @@ import pool from './config/db.js';
 import log from './config/log.js';
 import { Server } from 'socket.io';
 import { updateStatusUser } from './services/userService.js';
+import { createConversationTable } from './models/conversationModel.js';
+import { insertMessage2 } from './services/messageService.js';
 
 
 const app = express();
@@ -56,7 +59,7 @@ var map = new Map();
 io.on('connection', (socket) => {
   log.info('[index.js]', `${socket.id} is connected!`);
   var user_id = socket.request._query['id'];
-  log.info('[index.js]', `${user_id}`);
+  log.info('[index.js]', user_id, typeof(user_id));
 
   updateStatusUser(user_id, true)
   map.set(user_id, socket);
@@ -67,20 +70,47 @@ io.on('connection', (socket) => {
     updateStatusUser(user_id, false)
   });
 
+  socket.on('sendMessage', async (messagePayload) => {
+    log.info('[index.js]', 'receive sendMessage event');
+    log.info('[index.js]', 'payload:', messagePayload);
+
+    //TODO
+    const messageHistory = await insertMessage2(messagePayload);
+    //create message instance in db
+    //update message history of specific conv
+
+    //emit message history back to both user
+    const fromSocketId = map.get(String(messagePayload.from)).id;
+    const toSocketId = map.get(String(messagePayload.to)).id;
+    if(fromSocketId)
+    {
+      log.info('[index.js]', 'send messageHistory to the message author');
+      io.to(fromSocketId).emit('messageHistory', messageHistory);
+    }
+    if(toSocketId)
+    {
+      log.info('[index.js]', 'send messageHistory to the receiver');
+      io.to(toSocketId).emit('messageHistory', messageHistory);
+    }
+  });
+
   log.info('[index.js]', 'total sockets connected:',map.size);
 });
 
 
 server.listen(port, async () => {
   log.info('[index.js]', `Server listening on port ${port}`);
-
   // Create the table in the database and seed it with fake data
   await createUsersTable();
   await seedUsersTable();
   await createNotificationsTable();
   await seedNotificationsTable();
   await createBlocksTable();
+  await createConversationTable();
   await createMessagesTable();
+
+  log.info('[index.js]', 'total sockets connected:',map.size);
+
 });
 
 // Set up the routesd
@@ -88,6 +118,6 @@ app.use('/users', userController);
 app.use('/notifications', notificationsController);
 app.use('/block', blockController);
 app.use('/messages', messageController);
-
+app.use('/conversations', conversationController)
 
 export default server;

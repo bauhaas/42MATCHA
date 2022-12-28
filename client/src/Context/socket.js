@@ -13,4 +13,10 @@ socket.disconnect = () =>{
     socket.client.disconnect();
 };
 
+socket.emit = (eventName, params) =>
+{
+    console.log("socket emit", eventName);
+    socket.client.emit(eventName, params);
+}
+
 export default socket;

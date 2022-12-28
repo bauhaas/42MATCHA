@@ -13,8 +13,13 @@ const ConvCard = ({conv}) => {
                     </div>
                 </div>
                 <div>
-                    <p className='font-bold'>{conv}</p>
-                    <p className='line-clamp-1'>This is the last message I sent you lol, it needs to be a long one</p>
+                    <p className='font-bold'>{conv.you_talk_to}</p>
+                    {
+                        conv.last_message ?
+                        <p className='line-clamp-1'>{conv.last_message}</p>
+                        :
+                        <p>No messages yet</p>
+                    }
                 </div>
             </div>
         </>

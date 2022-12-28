@@ -1,18 +1,54 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import NavBar from '../../Navbar/NavBar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import socket from '../../../Context/socket';
+import { useSelector } from 'react-redux';
 
 
 const Conversation = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const conversation = location.state.conv;
+    const currentUser = useSelector((state) => state.user.user);
+
+    const [otherUser, setOtherUser] = useState("");
+    const [messages, setMessages] = useState([]);
+    const [messageToSend, setMessageToSend] = useState("");
+    const [messagePayload, setMessagePayLoad] = useState({});
+
+    useEffect(() => {
+        console.log('dm useEffect', conversation);
+        setMessages(conversation.messages);
+        setOtherUser(conversation.you_talk_to);
+    }, []);
 
     function gobacktoconv(event)
     {
         event.preventDefault();
         navigate('/chat');
     }
+
+    const sendMessage = (event, message) => {
+        console.log("send message:", message);
+        const otherUserId = currentUser.id === conversation.receiver_id ? conversation.sender_id : conversation.receiver_id
+        setMessagePayLoad({from:currentUser.id, to:otherUserId, content:message});
+        console.log(messagePayload);
+        const test =  {from:currentUser.id, to:otherUserId, content:message}
+        socket.emit('sendMessage',test);
+    }
+
+    useEffect(() => {
+        socket.client.on('messageHistory', (data) => {
+            console.log('received messageHistory event');
+        })
+        return () => {
+            socket.client.off('messageHistory');
+        };
+    }, []);
+
 
     return (
         <>
@@ -27,7 +63,7 @@ const Conversation = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75" />
                                     </svg>
                                 </button>
-                                <p>Obi-Wan Kenobi</p>
+                                <p>{otherUser}</p>
                                 <div className="avatar">
                                     <div className="w-10 rounded-full m-1">
                                         <img src="https://placeimg.com/192/192/people" />
@@ -63,8 +99,8 @@ const Conversation = () => {
                             </div>
                         </div>
                         <div className='flex absolute bottom-0 items-center gap-2 w-full p-2'>
-                            <input type="text" placeholder="Type here" className="input text-black grow" />
-                            <PaperAirplaneIcon className={`h-8 w-8 text-white`} aria-hidden="true" />
+                            <input onChange={(event) => setMessageToSend(event.target.value)} type="text" placeholder="Type here" className="input text-black grow" />
+                            <PaperAirplaneIcon onClick={(event)=>{sendMessage(event, messageToSend)}}className={`h-8 w-8 text-white`} aria-hidden="true" />
                         </div>
                     </div>
                 </div>

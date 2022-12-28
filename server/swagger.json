@@ -6,6 +6,96 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/conversations": {
+      "post": {
+        "tags": ["conversations"],
+        "summary": "Create a new conversation",
+        "description": "Create a conv after 2 user matched",
+        "parameters": [
+          {
+            "name": "sender_id",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "receiver_id",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully createad a conversation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/Conversations"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve conversation from the database"
+          }
+        }
+      }
+    },
+    "/conversations/{id}": {
+      "delete": {
+        "tags": ["conversations"],
+        "summary": "Delete a conversation",
+        "description": "Delete a conversation and all the messages linked to it",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the conversation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/Conversations"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to delete conversation from the database"
+          }
+        }
+      }
+    },
+    "/conversations/{userId}": {
+      "get": {
+        "tags": ["conversations"],
+        "summary": "Get all conversation of a user",
+        "description": "Get all the conversations",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully gotten the conversations",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/Conversations"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get conversations from the database"
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "tags": ["users"],
@@ -764,6 +854,30 @@
         "created_at": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "Conversations": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "The unique identifier for the conversation"
+        },
+        "sender_id": {
+          "type": "integer",
+          "description": "The id of the user who sent the first message in the conversation"
+        },
+        "receiver_id": {
+          "type": "integer",
+          "description": "The id of the user who received the first message in the conversation"
+        },
+        "message_history": {
+          "type": "array",
+          "description": "An array of message ids from the messages table, representing the message history for this conversation",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     }
