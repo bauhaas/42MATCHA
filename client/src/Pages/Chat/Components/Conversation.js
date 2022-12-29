@@ -18,8 +18,8 @@ const Conversation = () => {
     const currentUser = useSelector((state) => state.user.user);
     const conversation = location.state.conv;
 
+    const [convPartner, setConvPartner] = useState('');
     const [messageToSend, setMessageToSend] = useState("");
-    const [otherUser, setOtherUser] = useState("");
     const [messages, setMessages] = useState([]);
     const messagesRef = useRef(null);
 
@@ -33,7 +33,8 @@ const Conversation = () => {
         socket.emit('sendMessage', { from: currentUser.id, to: otherUserId, content: message });
     }
 
-    const patchMessagesAsRead =  () => {
+    const patchMessagesAsRead = (conversation) => {
+        console.log('patchMessagesAsRead')
         axios.patch(`http://localhost:3001/messages/${conversation.id}`)
             .then(response => {
                 console.log('success patch messages');
@@ -44,18 +45,15 @@ const Conversation = () => {
     }
 
     useEffect(() => {
-        console.log('dm useEffect', conversation);
-        setOtherUser(conversation.you_talk_to);
+        if (conversation.userid2 === currentUser.id)
+            setConvPartner(conversation.user1_name);
+        else
+            setConvPartner(conversation.user2_name);
 
         const getMessageHistory = async () => {
             axios.get(`http://localhost:3001/messages/history/${conversation.id}`)
                 .then(response => {
-                    const updatedMessages = response.data.map((message) => ({
-                        ...message,
-                        unread: false,
-                    }));
-                    setMessages(updatedMessages);
-                    patchMessagesAsRead();
+                    setMessages(response.data);
                 })
                 .catch(error => {
                     console.log(error);
@@ -67,6 +65,7 @@ const Conversation = () => {
     useEffect(() => {
         socket.client.on('messageHistory', (data) => {
             setMessages(data);
+            patchMessagesAsRead(conversation);
         })
         return () => {
             socket.client.off('messageHistory');
@@ -74,10 +73,8 @@ const Conversation = () => {
     }, []);
 
     useEffect(() => {
-        // Scroll to the bottom of the chat messages
         messagesRef.current.scrollTo(0, messagesRef.current.scrollHeight);
-    }, []);
-
+    }, [messages]);
 
     return (
         <>
@@ -92,8 +89,8 @@ const Conversation = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75" />
                                     </svg>
                                 </button>
-                                <p>{otherUser}</p>
-                                <Avatar width={10} attribute={'avatar'}/>
+                                <p>{convPartner}</p>
+                                <Avatar width={8} attribute={'avatar'}/>
                             </div>
                         </div>
                         {
@@ -116,10 +113,11 @@ const Conversation = () => {
                             onKeyDown={(event) => {
                                 if (event.keyCode === 13) {
                                     sendMessage(event, messageToSend);
+                                    event.target.value = '';
                                 }
                             }}
                             type="text" placeholder="Type here" className="input text-black grow" />
-                            <PaperAirplaneIcon onClick={(event)=>{sendMessage(event, messageToSend)}}className={`h-8 w-8 text-white`} aria-hidden="true" />
+                            <PaperAirplaneIcon onClick={(event) => { sendMessage(event, messageToSend); document.querySelector('.input').value = ''; }}className={`h-8 w-8 text-white`} aria-hidden="true" />
                         </div>
                     </div>
                 </div>

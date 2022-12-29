@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -12,11 +13,13 @@ import axios from 'axios';
 const ProfileDetails = ({id}) => {
 
     const currentUser = useSelector((state) => state.user.user);
+    const navigate = useNavigate();
 
     const [isMatched, setIsMatched] = useState(false);
     const [blocked, setBlocked] = useState(false);
     const [filled, setFilled] = useState(false);
     const [user, setUser] = useState({});
+    const [conversation, setConversation] = useState({});
 
     useEffect(() => {
         const getUser= async() => {
@@ -26,7 +29,6 @@ const ProfileDetails = ({id}) => {
         getUser();
 
         const isUserLiked = async () => {
-            console.log(currentUser.id);
             axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
                 .then(response => {
                     const likedUsers = response.data;
@@ -41,13 +43,10 @@ const ProfileDetails = ({id}) => {
         isUserLiked();
 
         const isUserMatched = async () => {
-            console.log(currentUser.id);
             axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
                 .then(response => {
                     const matchedUsers = response.data;
-                    console.log(matchedUsers);
                     const isMatch = matchedUsers.find(matchedUser => matchedUser.id == id);
-
                     if (isMatch)
                     {
                         setIsMatched(true);
@@ -61,7 +60,6 @@ const ProfileDetails = ({id}) => {
         isUserMatched();
 
         const currentUserIsBlocked = async () => {
-            console.log(currentUser.id);
             axios.get(`http://localhost:3001/block/${id}`)
                 .then(response => {
                     const blockedUsers = response.data;
@@ -103,12 +101,16 @@ const ProfileDetails = ({id}) => {
         })
         .then(response => {
             console.log(response.data);
+            navigate(`/chat/${response.data.id}`, {
+                state: {
+                    conv: response.data,
+                }
+            });
         })
         .catch(error => {
             console.log(error);
         });
-        //TODO
-        // navigate(`/chat/${convName}`);
+
     }
 
     return (

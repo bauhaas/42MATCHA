@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from "react"
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
@@ -8,6 +8,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import  socket  from '../../Context/socket'
 import axios from 'axios';
 import Avatar from "../../SharedComponents/Avatar";
+import { setConvs } from "../../convSlice";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -16,8 +17,9 @@ function classNames(...classes) {
 const Navbar = () => {
 
   const user = useSelector((state) => state.user.user);
+  const convs = useSelector((state) => state.convs.convs);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const [notifications, setNotifications] = useState([]);
   const [convlist, setConvList] = useState([]);
 
@@ -29,13 +31,26 @@ const Navbar = () => {
 
   useEffect(() => {
     socket.client.on('convUpdate', (data) => {
-      console.log('receive message history event in chat page', data)
-      setConvList(data);
+      console.log('receive message history event in navbar page', data)
+
+      //to detect if the user is currently chatting with the other. in that case don't notice him
+      const pathParts = window.location.pathname.split('/');
+      const urlEnd = pathParts[pathParts.length - 1];
+      const conversation = data.find(conv => conv.id === Number(urlEnd));
+      if (!conversation || Number(urlEnd) !== conversation.id) {
+        console.log('redux save convs', data);
+        dispatch(setConvs(data));
+      }
     })
     return () => {
       socket.client.off('convUpdate');
     };
   }, []);
+
+  useEffect(() => {
+    console.log('redux convs value:', convs);
+    setConvList(convs);
+  }, [convs]);
 
   const logout = (event) => {
     event.preventDefault();
@@ -130,7 +145,7 @@ return (
               <Menu as="div">
                 <Menu.Button onClick={gotochat} className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                   <ChatBubbleLeftRightIcon className={`h-8 w-8`} aria-hidden="true" />
-                  <div id="chat" className={`${convlist.filter(conv => conv.last_message_unread === true).length !== 0 ? '' : 'hidden'} absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{convlist.filter(conv => conv.last_message_unread === true).length}</div>
+                  <div id="chat" className={`${convlist && convlist.filter(conv => conv.last_message_unread === true).length !== 0 ? '' : 'hidden'} absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{convlist && convlist.filter(conv => conv.last_message_unread === true).length}</div>
                 </Menu.Button>
               </Menu >
               <Menu as="div">

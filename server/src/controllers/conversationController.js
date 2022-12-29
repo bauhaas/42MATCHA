@@ -22,8 +22,8 @@ router.post('/', async (req, res) => {
         log.info('[conversationController]', 'body: ', req.body);
         const { userId1, userId2 } = req.body;
         log.info('[conversationController]', 'enter in insertConv');
-        const id = await insertConversation(userId1, userId2);
-        res.send({ id });
+        const conversation = await insertConversation(userId1, userId2);
+        res.send(conversation);
     } catch (err) {
             res.status(500).send(err.message);
     }

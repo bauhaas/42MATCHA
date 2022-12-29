@@ -10,11 +10,17 @@ const MessageBubble = ({message}) => {
     return (
         <>
             <div className={`chat ${message.sender_id === currentUser.id ?"chat-end": "chat-start"}`}>
-                <Avatar width={10} attribute={'chat-image avatar m-1'}/>
+                {
+                    message.sender_id === currentUser.id
+                    ?
+                        null
+                    :
+                        <Avatar width={8} attribute={'chat-image avatar m-1'} />
+                    }
                 <div className="chat-header">
                     <time className="text-xs opacity-50">{date.getHours()}:{date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()}</time>
                 </div>
-                <div className="chat-bubble bg-chess-placeholder">{message.message}</div>
+                <div className={`chat-bubble  ${message.sender_id === currentUser.id ? "bg-red-400" : "bg-chess-placeholder"}`}>{message.message}</div>
             </div>
         </>
     )

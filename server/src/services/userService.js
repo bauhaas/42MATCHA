@@ -322,7 +322,7 @@ export const CreateFakeUser = async (fakeUser, position) => {
     INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count, last_location)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, POINT($16, $17))
     RETURNING *;
-  `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "man", "hetero", "Paris", "France", "test_interets", "", fakeUser, true, 0, 0, position.longitude, position.latitude]);
+  `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "man", "hetero", "Paris", "France", '["test_interets"]', "", fakeUser, true, 0, 0, position.longitude, position.latitude]);
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));
 
     client.release();
