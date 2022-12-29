@@ -6,10 +6,10 @@ import { HeartIcon as HeartOutlineIcon, NoSymbolIcon} from '@heroicons/react/24/
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
 
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
+import socket from '../../../Context/socket'
 import axios from 'axios';
 
 //TODO when match happend, add animation
-//TODO when match happend, atm, it's removed from liked. So need more update to have hearfillicon
 const ProfileDetails = ({id}) => {
 
     const currentUser = useSelector((state) => state.user.user);
@@ -19,7 +19,6 @@ const ProfileDetails = ({id}) => {
     const [blocked, setBlocked] = useState(false);
     const [filledIcon, setFilledIcon] = useState(false);
     const [user, setUser] = useState({});
-    const [conversation, setConversation] = useState({});
 
     const blockUser = async () => {
         await blockUserById(currentUser.id, user.id);
@@ -107,18 +106,95 @@ const ProfileDetails = ({id}) => {
             isUserLiked();
             isUserMatched();
             currentUserIsBlocked();
+
+            console.log('check if user exist before send a notif');
+            if (user && user.id) {
+                console.log('send a visit notif to:', user.id, ' from:', currentUser.id);
+                sendVisitNotification(currentUser.id, user.id);
+            }
         }
     }, [user]);
 
+
+    const sendVisitNotification = async () => {
+            await axios.post('http://localhost:3001/notifications', {
+                sender_id: currentUser.id,
+                receiver_id: user.id,
+                type: 'visit'
+            })
+                .then(response => {
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+    }
+
     useEffect(() => {
-        console.log('first useEffect');
         const getUser = async () => {
+            console.log('getuser');
             const response = await getUserById(id);
             setUser(response);
         }
         getUser();
+
+        // console.log('check if user exist before send a notif');
+        // if (user && user.id) {
+        //     console.log('send a visit notif to:', user.id, ' from:', currentUser.id);
+        //     sendVisitNotification(currentUser.id, user.id);
+        // }
     }, []);
 
+
+    // useEffect(() => {
+    //     console.log('check if user exist before send a notif');
+    //     if (user && user.id) {
+    //         console.log('send a visit notif to:', user.id, ' from:', currentUser.id);
+    //         sendVisitNotification(currentUser.id, user.id);
+    //     }
+    // }, [user]);
+
+    // useEffect(() => {
+    //     console.log('check if user exist before send a notif');
+    //     if(user)
+    //     {
+    //         console.log('send a visit notif to:', user.id,' from:', currentUser.id);
+
+    //         axios.post('http://localhost:3001/notifications', {
+    //             sender_id: currentUser.id,
+    //             receiver_id: user.id,
+    //             type: 'visit'
+    //         })
+    //             .then(response => {
+    //                 console.log(response.data);
+    //             })
+    //             .catch(error => {
+    //                 console.log(error);
+    //             });
+    //     }
+    // }, [user]);
+
+
+    // useEffect(() => {
+    //     socket.client.on('isMatched', (data) => {
+    //         console.log(data);
+    //     })
+
+    //     return () => {
+    //         socket.client.off('isMatched');
+    //     };
+    // }, []);
+
+
+    //     useEffect(() => {
+    //     socket.client.on('isMatched', (data) => {
+    //         console.log(data);
+    //     })
+
+    //     return () => {
+    //         socket.client.off('isMatched');
+    //     };
+    // }, []);
     return (
         <>
             <div className='mx-2 pt-16 h-full'>

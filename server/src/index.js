@@ -52,9 +52,10 @@ const io = new Server(server, {
 
 global.io = io;
 
-const socketUser = new Map();
-global.socketUser = socketUser;
+// const socketUser = new Map();
+// global.socketUser = socketUser;
 var map = new Map();
+global.map = map;
 
 io.on('connection', (socket) => {
   log.info('[index.js]', `${socket.id} is connected!`);
