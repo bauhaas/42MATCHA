@@ -1,43 +1,14 @@
-import pool from '../config/db.js';
 import { faker } from '@faker-js/faker';
 import bcrypt from "bcryptjs";
+
+import pool from '../config/db.js';
 import log from '../config/log.js';
 
-const interestsAndHobbies = [
-  'skiing',
-  'hiking',
-  'reading',
-  'cooking',
-  'painting',
-  'gardening',
-  'yoga',
-  'meditation',
-  'traveling',
-  'fitness',
-  'music',
-  'movies',
-  'dancing',
-  'photography',
-  'swimming',
-  'camping'
-];
-
-
-// Create the users table
 export async function createUsersTable() {
   try {
     const client = await pool.connect();
-
-    const tableExists = await client.query(`
-      SELECT *
-      FROM information_schema.tables
-      WHERE table_name = 'users';
-    `);
-
-    //TODO replace IF NOT EXIST INSTEAD OF tableExists
-    if (tableExists.rowCount === 0) {
-    const result = await client.query(`
-      CREATE TABLE users (
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         first_name VARCHAR(255),
         last_name VARCHAR(255),
@@ -58,17 +29,13 @@ export async function createUsersTable() {
         status TIMESTAMPTZ NULL DEFAULT NOW()
       );
     `);
-      log.info('[userModel.js]', result, 'user table have been created');}
-    else {
-      log.info('[userModel.js]', 'user table already exists - no need to create it');
-    }
+    log.info('[userModel.js]', 'user table have been created');
     client.release();
   } catch (err) {
     log.error('[userModel.js - create user table]', err);
   }
 }
 
-// Seed the users table with fake data
 export async function seedUsersTable() {
   try {
     const client = await pool.connect();

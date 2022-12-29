@@ -1,36 +1,24 @@
-import pool from '../config/db.js';
 import { faker } from '@faker-js/faker';
+
+import pool from '../config/db.js';
 import log from '../config/log.js';
 
-// Create the notifications table
 export async function createNotificationsTable() {
     try {
         const client = await pool.connect();
-
-        const tableExists = await client.query(`
-      SELECT *
-      FROM information_schema.tables
-      WHERE table_name = 'notifications';
-    `);
-        if (tableExists.rowCount === 0) {
-            const result = await client.query(`
-            CREATE TABLE notifications (
-                id SERIAL PRIMARY KEY,
-                sender_id INT NOT NULL,
-                FOREIGN KEY (sender_id) REFERENCES users (id),
-                receiver_id INT,
-                FOREIGN KEY (receiver_id) REFERENCES users (id),
-                type VARCHAR(255),
-                read BOOLEAN,
-                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-            );
-            `);
-          log.info('[notifModel.js]', result, 'notifications table have been created');
-        }
-        else {
-          log.info('[notifModel.js]', 'notifications table already exists - no need to create it');
-        }
+        await client.query(`
+          CREATE TABLE IF NOT EXISTS notifications (
+            id SERIAL PRIMARY KEY,
+            sender_id INT NOT NULL,
+            FOREIGN KEY (sender_id) REFERENCES users (id),
+            receiver_id INT,
+            FOREIGN KEY (receiver_id) REFERENCES users (id),
+            type VARCHAR(255),
+            read BOOLEAN,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+          );`);
+        log.info('[notifModel.js]', 'notifications table have been created');
         client.release();
     } catch (err) {
       log.error('[notifModel.js]', err);
