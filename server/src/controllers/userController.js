@@ -1,6 +1,8 @@
 import express from 'express';
-import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors } from '../services/userService.js';
 import jwt from 'jsonwebtoken';
+
+import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors } from '../services/userService.js';
+import { authenticateToken } from '../middleware/authMiddleware.js'
 import log from '../config/log.js';
 
 const router = express.Router();
@@ -16,7 +18,6 @@ router.get('/', async (req, res) => {
 });
 
 
-// Get all users
 router.get('/:id/bachelors/:page', async (req, res) => {
   try {
     const id = req.params.id;
@@ -54,13 +55,11 @@ function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
 }
 
-//TODO
 function generateRefreshToken(user) {
   return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1y'});
 }
 
 
-// TODO maybe create an auth controller/sevice ?
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -77,8 +76,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
-// TODO maybe create an auth controller/sevice ?
 router.post('/fake', async (req, res) => {
   try {
     const fakeUser = req.body.fakeUserName;
@@ -99,23 +96,6 @@ router.post('/fake', async (req, res) => {
 });
 
 
-//TODO move to middleware file
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-
-  if (token == null)
-    return res.sendStatus(401)
-
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      return res.sendStatus(401)
-    }
-    req.user = user;
-    next();
-  });
-}
-
 // Get a user by their ID
 router.get('/:id', async (req, res) => {
   try {
@@ -129,7 +109,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Get a user by their ID w/o pemail and passwor
+// Get a user by their ID w/o pemail and password
 router.get('/:id/profile', async (req, res) => {
   try {
     if (req.params.id === null) {
@@ -201,7 +181,6 @@ function changeUserData(user, update) {
   if (update.report_count) {
     user.report_count += 1;
   }
-
   return user
 }
 
@@ -227,7 +206,6 @@ router.put('/:id/update', authenticateToken, async (req, res) => {
   }
 });
 
-
 // Update user
 router.put('/resetpassword', async (req, res) => {
   try {
@@ -247,7 +225,6 @@ router.put('/resetpassword', async (req, res) => {
     }
   }
 });
-
 
 // Delete a user by their ID
 router.delete('/:id', async (req, res) => {

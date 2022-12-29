@@ -31,7 +31,7 @@ export const getBachelors = async (id, page) => {
     `, [me.last_location.x , me.last_location.y]);
 
     var closeUsers = result.rows;
-    
+
     if (["hetero", "homo"].includes(me.sex_orientation)) {
       const homo = me.sex_orientation == "homo";
       closeUsers = closeUsers.filter((user) => (homo ? user.sex === me.sex : user.sex !== me.sex) && user.sex_orientation === me.sex_orientation);
@@ -170,31 +170,27 @@ function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
 }
 
-
-// Send a confirmation email to the given email address
 export const sendConfirmationEmail = async (email, firstName, lastName, accessToken) => {
-
-  // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport(
+  const transporter = nodemailer.createTransport(
     {
       service: 'gmail',
       auth: {
-        user: 'baudoin.haas@gmail.com', //that too
-        pass: 'pzigpoonkihuymeq' //TODO woopsy move to .env
+        user: process.env.NODEMAILER_USER,
+        pass: process.env.NODEMAILER_PASS
       }
     }
   );
 
   // send mail with defined transport object
-  let info = await transporter.sendMail({
-    from: '"Matcha" <matcha@noreply.com>', // sender address
-    to: email, // list of receivers
-    subject: "Confirm your Matcha account", // Subject line
-    text: "Hi " + firstName + " " + lastName + `,\n\nIn order to get full access to Matcha features, you need to confirm your email address by following the link below.\nhttp://localhost:3000/profile?token=${accessToken}\n— Matcha`, // plain text body
+  await transporter.sendMail({
+    from: '"Matcha" <matcha@noreply.com>',
+    to: email,
+    subject: "Confirm your Matcha account",
+    text: "Hi " + firstName + " " + lastName + `,\n\nIn order to get full access to Matcha features, you need to confirm your email address by following the link below.\nhttp://localhost:3000/profile?token=${accessToken}\n— Matcha`,
     // html: "<b>Hello world?</b>", // html body
   });
 
-  log.info('[userService]', "Message sent: %s", info.messageId);
+  log.info('[userService]', "Email sent to ", email);
 };
 
 
