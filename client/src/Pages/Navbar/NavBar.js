@@ -186,7 +186,7 @@ return (
               <Menu as="div" className="relative ml-3">
                 <div>
                   <Menu.Button className="flex rounded-full bg-gray-800 text-sm">
-                    <Avatar width={8} attribute={'avatar'}/>
+                    <Avatar imageAttribute={'rounded-full w-10'} attribute={'avatar'}/>
                   </Menu.Button>
                 </div>
                 <Transition

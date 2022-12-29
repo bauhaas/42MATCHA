@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-
+import { RiSendPlaneFill } from 'react-icons/ri'
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import socket from '../../../Context/socket';
 import axios from 'axios';
@@ -90,12 +90,12 @@ const Conversation = () => {
                                     </svg>
                                 </button>
                                 <p>{convPartner}</p>
-                                <Avatar width={8} attribute={'avatar'}/>
+                                <Avatar imageAttribute={'rounded-full w-10'} attribute={'avatar'}/>
                             </div>
                         </div>
                         {
                             messages ?
-                                <div className='overflow-y-scroll h-full w-full' ref={messagesRef}>
+                                <div className='overflow-y-auto scrollbar-hide h-full w-full' ref={messagesRef}>
                                     {
                                         messages.map((message, index) => (
                                             <div>
@@ -117,7 +117,7 @@ const Conversation = () => {
                                 }
                             }}
                             type="text" placeholder="Type here" className="input text-black grow" />
-                            <PaperAirplaneIcon onClick={(event) => { sendMessage(event, messageToSend); document.querySelector('.input').value = ''; }}className={`h-8 w-8 text-white`} aria-hidden="true" />
+                            <RiSendPlaneFill onClick={(event) => { sendMessage(event, messageToSend); document.querySelector('.input').value = ''; }}className={`h-8 w-8 text-white`} aria-hidden="true" />
                         </div>
                     </div>
                 </div>
