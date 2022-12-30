@@ -101,10 +101,6 @@ function Signin() {
       });
   }
 
-  useEffect(() => {
-    console.log('useEffect test lol');
-  }, [test]);
-
   return (
     <>
     <div className="h-screen flex flex-col md:flex-row-reverse items-center content-start">
@@ -144,7 +140,7 @@ function Signin() {
             </button>
             <label className="mt-2 self-start text-sm font-small text-gray-900 dark:text-gray-300">Not registered ? <a href="/signup" onClick={handleSignUpClick} className="text-blue-600 dark:text-blue-500 hover:underline">Create an account</a></label>
 
-            <input  className="shadow appearance-none border rounded w-full mb-4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="fakeUserSetter"
+            <input  className="shadow appearance-none border rounded w-full mb-4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="fakeusername" type="text" placeholder="fakeUserSetter"
                     value={fakeUserName}
                     onChange={(event) => setFakeUserName(event.target.value)} />
           <button onClick={fakeUser} className="h-10 w-full items-center justify-center  gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
