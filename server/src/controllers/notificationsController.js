@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken';
 import express from 'express';
 import { getNotifById, getAllNotifications, getReceivedNotifications, deleteNotification, insertNotification, updateReadNotification, updateTimeNotification } from '../services/notificationsService.js';
+import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
+
 
 const router = express.Router();
 

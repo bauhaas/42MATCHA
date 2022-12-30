@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import { getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
+import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
 
 const router = express.Router();
@@ -121,16 +122,25 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Get a user by their ID w/o pemail and password
+// Get a user by their ID w/o email and password
 router.get('/:id/profile', async (req, res) => {
   try {
     if (req.params.id === null) {
       throw 'get /users/:id/profile id undefined'
     }
+    const { sender_id } = req.body;
+    const blocked = await isBlocked(id, sender_id);
+    if (blocked) {
+      throw 'You are blocked';
+    }
     const user = await getUserByIdProfile(req.params.id);
     res.send(user);
   } catch (err) {
-    res.status(500).send(err.message);
+    if (err.message === 'You are blocked') {
+      res.status(404).send(err.message);
+    } else {
+      res.status(500).send(err.message);
+    }
   }
 });
 

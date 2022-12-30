@@ -82,7 +82,7 @@ router.post('/', async (req, res) => {
   try {
     const { sender_id, receiver_id, type } = req.body;
 
-    const blocked = await isBlocked(sender_id, receiver_id);
+    const blocked = await isBlocked(receiver_id, sender_id);
     if (blocked) {
       throw 'You are blocked';
     }
