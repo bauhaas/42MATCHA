@@ -78,6 +78,7 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
         if (validTypes.includes(type) === false) {
             throw 'insertNotification: wrong type' + type;
         }
+        const client = await pool.connect();
         const notif = await client.query(`
             SELECT * FROM notifications
             WHERE sender_id = $1
@@ -89,17 +90,17 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
             log.info('[notificationService]', 'createNotification and return');
             return await createNotification(sender_id, receiver_id, type);
         }
-    
+
         const id = notif.rows[0].id
         if (notif.read === true) {
             log.info('[notificationService]', 'updateReadotifcation');
             await updateReadNotification(id)
         }
         log.info('[notificationService]', 'updateTimeNotification');
-    
+
         await updateTimeNotification(id)
         log.info('[notificationService]', sender_id, receiver_id);
-    
+
         const socket = global.map.get(String(receiver_id));
         if (socket) {
             socket.emit('hasVisitNotif', notif.rows[0]);

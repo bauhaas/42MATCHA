@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-export const blockUserById = async (blocker_id, blocked_id) => {
-    return axios.post('http://localhost:3001/block', {
-        blocker_id: blocker_id,
-        blocked_id: blocked_id
+export const blockUserById = async (sender_id, receiver_id) => {
+    return axios.post('http://localhost:3001/relations', {
+        sender_id: sender_id,
+        receiver_id: receiver_id,
+        type: 'block'
     })
         .then(response => response.data)
         .catch(error => {
@@ -11,8 +12,9 @@ export const blockUserById = async (blocker_id, blocked_id) => {
         });
 }
 
+
 export const likeUserById = async (sender_id, receiver_id) => {
-    return axios.post('http://localhost:3001/notifications', {
+    return axios.post('http://localhost:3001/relations', {
         sender_id: sender_id,
         receiver_id: receiver_id,
         type:'like'
@@ -24,7 +26,7 @@ export const likeUserById = async (sender_id, receiver_id) => {
 }
 
 export const unlikeUserById = async (sender_id, receiver_id) => {
-    return axios.post('http://localhost:3001/notifications', {
+    return axios.post('http://localhost:3001/relations', {
         sender_id: sender_id,
         receiver_id: receiver_id,
         type: 'unlike'

@@ -38,7 +38,7 @@ const Navbar = () => {
 
       console.log('axios get notif')
 
-      axios.get(`http://localhost:3001/notifications/${user.id}/received`, {
+      axios.get(`http://localhost:3001/notifications/${user.id}/receiver`, {
         id: user.id
       })
         .then(response => {

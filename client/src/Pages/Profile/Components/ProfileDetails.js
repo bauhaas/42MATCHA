@@ -54,12 +54,15 @@ const ProfileDetails = ({id}) => {
 
     useEffect(() => {
         const isUserLiked = async () => {
-            axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
+            axios.get(`http://localhost:3001/relations/${currentUser.id}/liked`)
                 .then(response => {
                     const likedUsers = response.data;
-                    const userExists = likedUsers.find(likedUser => likedUser.id == id);
+                    const userExists = likedUsers.find(likedUser => likedUser.receiver_id == id);
                     if (userExists)
+                    {
+                        console.log('i like him');
                         setFilledIcon(true);
+                    }
                 })
                 .catch(error => {
                     console.log(error);
@@ -67,10 +70,10 @@ const ProfileDetails = ({id}) => {
         }
 
         const isUserMatched = async () => {
-            axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
+            axios.get(`http://localhost:3001/relations/${currentUser.id}/matched`)
                 .then(response => {
                     const matchedUsers = response.data;
-                    const isMatch = matchedUsers.find(matchedUser => matchedUser.id == id);
+                    const isMatch = matchedUsers.find(matchedUser => matchedUser.receiver_id == id);
                     if (isMatch)
                     {
                         setIsMatched(true);
@@ -84,7 +87,7 @@ const ProfileDetails = ({id}) => {
         }
 
         const currentUserIsBlocked = async () => {
-            axios.get(`http://localhost:3001/block/${id}`)
+            axios.get(`http://localhost:3001/relations/${id}/blocked`)
                 .then(response => {
                     const blockedUsers = response.data;
                     const userExists = blockedUsers.find(user => user.blocked_id == currentUser.id);
@@ -145,7 +148,7 @@ const ProfileDetails = ({id}) => {
         // }
     }, []);
 
-
+console.log(user);
     // useEffect(() => {
     //     console.log('check if user exist before send a notif');
     //     if (user && user.id) {
