@@ -1,7 +1,7 @@
 import pool from '../config/db.js';
 import log from '../config/log.js';
 
-import { createNotification, deleteNotification, getNotification, deleteAllNotificationsOfPair } from './notificationsService.js';
+import { createNotification, deleteAllNotificationsOfPair } from './notificationsService.js';
 import { deleteConversationOfPair} from './conversationService.js';
 
 import { updateUserFameRating } from './userService.js'
@@ -175,11 +175,6 @@ const createLikeRelation = async (sender_id, receiver_id) => {
     const alreadyLiked = await getRelation(sender_id, receiver_id, "like");
     if (alreadyLiked) {
         return alreadyLiked;
-    }
-
-    const unliked = await getNotification(sender_id, receiver_id, "unlike");
-    if (unliked) {
-        await deleteNotification(unliked.id);
     }
 
     const liked = await getRelation(receiver_id, sender_id, "like");
