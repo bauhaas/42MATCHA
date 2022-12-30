@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 
-import { getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors } from '../services/userService.js';
+import { getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import log from '../config/log.js';
 
@@ -23,6 +23,18 @@ router.get('/:id/bachelors/:page', async (req, res) => {
     const id = req.params.id;
     const page = req.params.page;
     const users = await getBachelors(id, page);
+    res.send(users);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+router.post('/:id/filteredBachelors/:page', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const page = req.params.page;
+
+    const users = await getFilteredBachelors(id, req.body, page);
     res.send(users);
   } catch (err) {
     res.status(500).send(err.message);

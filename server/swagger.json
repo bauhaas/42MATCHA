@@ -229,6 +229,93 @@
         }
       }
     },
+    "/users/{id}/filteredBachelors/:page": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get bachelors for user and paginate them",
+        "description": "Get bachelors for the user with id = ID from the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "min_distance",
+            "in": "formData",
+            "required": true,
+            "type": "integer",
+            "minimum": 0
+          },
+          {
+            "name": "max_distance",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "min_age",
+            "in": "formData",
+            "required": true,
+            "type": "integer",
+            "minimum": 18
+          },
+          {
+            "name": "max_age",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "min_fame",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "max_fame",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "min_common_interests",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "max_common_interests",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved bachelors",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "404": {
+            "description": "Failed to find bachelors with the specified ID"
+          },
+          "500": {
+            "description": "Failed to retrieve bachelors from the database"
+          }
+        }
+      }
+    },
     "/users/{id}/profile": {
       "get": {
         "tags": [

@@ -18,17 +18,19 @@ export const getAllUsers = async () => {
   }
 };
 
-// Get all users from the database
+// Get bachelors from the database
 export const getBachelors = async (id, page) => {
   try {
 
     const client = await pool.connect();
+
     const me = await getUserById(id);
     const result = await client.query(`
-      SELECT *, ABS($1 - ST_X(last_location::geometry)) + ABS($2 - ST_Y(last_location::geometry)) as distance
+      SELECT *, ABS($2 - ST_X(last_location::geometry)) + ABS($3 - ST_Y(last_location::geometry)) as distance
       FROM users
-      WHERE ABS($1 - ST_X(last_location::geometry)) + ABS($2 - ST_Y(last_location::geometry)) <= 1
-    `, [me.last_location.x , me.last_location.y]);
+      WHERE $1 != id
+      AND ABS($2 - ST_X(last_location::geometry)) + ABS($3 - ST_Y(last_location::geometry)) <= 1
+    `, [me.id, me.last_location.x , me.last_location.y]);
 
     var closeUsers = result.rows;
 
@@ -43,21 +45,15 @@ export const getBachelors = async (id, page) => {
         const fameFactor = Math.max(1 - (0.01 * user.fame_rating), 0.5);
 
         const commonInterests = me.interests.filter(value => user.interests.includes(value));
-        const tagsFactor = Math.max(1 - (0.1 * commonInterests.length), 0.5);
+        const interestsFactor = Math.max(1 - (0.1 * commonInterests.length), 0.5);
 
         const ageFactor = 1 + (Math.abs(me.age - user.age) / 100);
-        // console.log(ageFactor);
 
-        console.log(user.first_name);
-        console.log(user.distance);
-        user.distance = user.distance * fameFactor * tagsFactor * ageFactor;
-        console.log(user.distance);
-        console.log();
+        user.distance = user.distance * fameFactor * interestsFactor * ageFactor;
 
         return user;
     });
 
-    console.log("closeUser", closeUsers[5]);
     console.log("length", closeUsers.length);
     console.log("me", me);
 
@@ -66,6 +62,55 @@ export const getBachelors = async (id, page) => {
 
     client.release();
     return closeUsers;
+  } catch (err) {
+    throw err;
+  }
+};
+
+// Get bachelors with filters from the database
+export const getFilteredBachelors = async (id, filters) => {
+  try {
+
+    const client = await pool.connect();
+
+    const me = await getUserById(id);
+    const result = await client.query(`
+      SELECT *, ABS($2 - ST_X(last_location::geometry)) + ABS($3 - ST_Y(last_location::geometry)) as distance
+      FROM users
+      WHERE $1 != id
+      AND (ABS($2 - ST_X(last_location::geometry)) * ABS($2 - ST_X(last_location::geometry))) + (ABS($3 - ST_Y(last_location::geometry)) *ABS($3 - ST_Y(last_location::geometry))) >= $4
+      AND (ABS($2 - ST_X(last_location::geometry)) * ABS($2 - ST_X(last_location::geometry))) + (ABS($3 - ST_Y(last_location::geometry)) *ABS($3 - ST_Y(last_location::geometry))) <= $5
+      AND age >= $6
+      AND age <= $7
+      AND fame_rating >= $8
+      AND fame_rating <= $9
+    `, [me.id, me.last_location.x , me.last_location.y, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame, filters.max_fame]);
+
+    var filteredUsers = result.rows;
+    
+    if (["hetero", "homo"].includes(me.sex_orientation)) {
+      const homo = me.sex_orientation === "homo";
+      filteredUsers = filteredUsers.filter((user) => (homo ? user.sex === me.sex : user.sex !== me.sex) && user.sex_orientation === me.sex_orientation);
+    } else {
+      filteredUsers = filteredUsers.filter((user) => user.sex === me.sex ? user.sex_orientation !== "hetero" : user.sex_orientation !== "homo");
+    }
+
+    filteredUsers = filteredUsers.filter(function (user) {
+        const commonInterests = me.interests.filter(value => user.interests.includes(value));
+        if (commonInterests.length >= filters.min_common_interests && commonInterests.length <= filters.max_common_interests) {
+          return true;
+        }
+        return false;
+    });
+
+    console.log("length", filteredUsers.length);
+    console.log("me", me);
+
+    // sort by increasing distance
+    filteredUsers.sort((a, b) => a.distance < b.distance);
+
+    client.release();
+    return filteredUsers;
   } catch (err) {
     throw err;
   }
