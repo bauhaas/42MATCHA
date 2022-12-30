@@ -40,8 +40,7 @@ export async function seedNotificationsTable() {
         `);
 
         if (tableIsEmpty.rowCount === 0) {
-
-            const testNotifs = `
+          const testNotifs = `
           INSERT INTO notifications (
             sender_id,
             receiver_id,
@@ -53,29 +52,30 @@ export async function seedNotificationsTable() {
             'test',
             false
           );
-        `;
+          `;
           await client.query(testNotifs);
 
-            for (let i = 0; i < 300; i++) {
-                const sender_id = Math.floor(Math.random() * 10) + 1;
-                const receiver_id = Math.floor(Math.random() * 10) + 1;
-                const type = faker.helpers.arrayElements(['like', 'visit', 'match'],1);
-                const read = faker.datatype.boolean();
-                const query = `
-                INSERT INTO notifications (
-                  sender_id,
-                  receiver_id,
-                  type,
-                  read
-                ) VALUES (
-                  ${sender_id},
-                  ${receiver_id},
-                  '${type}',
-                  ${read}
-                );
-              `;
-                await client.query(query);
-            }
+          for (let i = 0; i < 300; i++) {
+              const sender_id = Math.floor(Math.random() * 10) + 1;
+              const receiver_id = Math.floor(Math.random() * 10) + 1;
+              const type = faker.helpers.arrayElements(['like', 'visit', 'match'],1);
+              const read = faker.datatype.boolean();
+              const query = `
+              INSERT INTO notifications (
+                sender_id,
+                receiver_id,
+                type,
+                read
+              ) VALUES (
+                ${sender_id},
+                ${receiver_id},
+                '${type}',
+                ${read}
+              );
+            `;
+              await client.query(query);
+          }
+          log.info('[notifModel.js]', 'notifs table seeded');
         }
         else {
           log.info('[notifModel.js]', 'notifs table already seeded - no need to seed');
