@@ -1,10 +1,10 @@
 import pool from '../config/db.js';
 import log from '../config/log.js';
 
-import { createNotification, deleteAllNotificationsOfPair } from './notificationsService.js';
-import { deleteConversationOfPair} from './conversationService.js';
-
 import { updateUserFameRating } from './userService.js'
+import { deleteConversationOfPair} from './conversationService.js';
+import { createNotification, deleteAllNotificationsOfPair } from './notificationsService.js';
+
 
 const createRelation = async (sender_id, receiver_id, type) => {
     try {
@@ -56,54 +56,6 @@ export const getRelation = async (sender_id, receiver_id, type) => {
 }
 
 
-// Get all Blocks of sender_id from the database
-export const getBlockedUsersBySenderId = async (sender_id) => {
-    try {
-        log.info('[relationService]', "getBlockedUsersBySenderId");
-        const client = await pool.connect();
-
-        // This query performs an inner join between the relations and users tables on the
-        // receiver_id column of the relations table and the id column of the users table.
-        // It selects the id, first_name, and last_name columns from the users table for each blocked user,
-        // and filters the results by the sender_id column of the relations table.
-        const result = await client.query(`
-        SELECT r.id, r.receiver_id, u.first_name, u.last_name
-        FROM relations r
-        INNER JOIN users u ON r.receiver_id = u.id
-        WHERE r.sender_id = $1
-        AND r.type = $2
-      `, [sender_id, "block"]);
-        client.release();
-        return result.rows;
-    } catch (err) {
-        throw err;
-    }
-};
-
-// Get all liked users of sender_id from the database
-export const getLikedUsersBySenderId = async (sender_id) => {
-    try {
-        log.info('[relationService]', "getLikedUsersBySenderId");
-        const client = await pool.connect();
-
-        // This query performs an inner join between the relations and users tables on the
-        // receiver_id column of the relations table and the id column of the users table.
-        // It selects the id, first_name, and last_name columns from the users table for each blocked user,
-        // and filters the results by the sender_id column of the relations table.
-        const result = await client.query(`
-        SELECT r.id, r.receiver_id, u.first_name, u.last_name
-        FROM relations r
-        INNER JOIN users u ON r.receiver_id = u.id
-        WHERE r.sender_id = $1
-        AND r.type = $2
-        `, [sender_id, "like"]);
-        client.release();
-        return result.rows;
-    } catch (err) {
-        throw err;
-    }
-};
-
 export const getRelationTypeOfUsers = async (sender_id, receiver_id) => {
     try {
         log.info('[relationService]', "getLikedUsersBySenderId");
@@ -129,31 +81,6 @@ export const getRelationTypeOfUsers = async (sender_id, receiver_id) => {
         throw err;
     }
 }
-
-// Get all matched users of sender_id from the database
-export const getMatchedUsersBySenderId = async (sender_id) => {
-    try {
-        log.info('[relationService]', sender_id);
-        const client = await pool.connect();
-
-        // This query performs an inner join between the relations and users tables on the
-        // receiver_id column of the relations table and the id column of the users table.
-        // It selects the id, first_name, and last_name columns from the users table for each blocked user,
-        // and filters the results by the sender_id column of the relations table.
-        const result = await client.query(`
-        SELECT r.id, r.receiver_id, u.first_name, u.last_name
-        FROM relations r
-        INNER JOIN users u ON r.receiver_id = u.id
-        WHERE r.sender_id = $1
-        AND r.type = $2
-        `, [sender_id, "match"]);
-        client.release();
-        return result.rows;
-    } catch (err) {
-        throw err;
-    }
-};
-
 
 export const getRelationsBySenderId = async (id) => {
     try {

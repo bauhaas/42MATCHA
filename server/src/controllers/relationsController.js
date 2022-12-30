@@ -1,5 +1,5 @@
 import express from 'express';
-import { isBlocked, getAllRelations, getRelationsBySenderId, insertRelation, getBlockedUsersBySenderId, getLikedUsersBySenderId, getMatchedUsersBySenderId, deleteRelationByContent, getRelationTypeOfUsers } from '../services/relationsService.js';
+import { isBlocked, getAllRelations, getRelationsBySenderId, insertRelation, deleteRelationByContent, getRelationTypeOfUsers } from '../services/relationsService.js';
 import jwt from 'jsonwebtoken';
 import log from '../config/log.js';
 
@@ -32,64 +32,6 @@ router.get('/:sender_id', async (req, res) => {
     }
     res.status(500).send(err.message);
   }
-});
-
-// get blocked users by sender_id
-router.get('/:sender_id/blocked', async (req, res) => {
-  try {
-    log.info('[relationsController]', 'get all blocked user by sender_id');
-    const sender_id = req.params.sender_id;
-    console.log(sender_id)
-    if (isNaN(sender_id)) {
-        throw '400: sender_id must be a number';
-    }
-    const blocks = await getBlockedUsersBySenderId(sender_id);
-    res.send(blocks);
-  } catch (err) {
-    console.log(typeof(err))
-    console.log(typeof(err) === "string")
-    console.log(err)
-    if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
-    }
-    res.status(500).send(err.message);
-  }
-});
-
-// get liked users by sender_id
-router.get('/:sender_id/liked', async (req, res) => {
-    try {
-      log.info('[relationsController]', 'get all liked user by sender_id');
-      const sender_id = req.params.sender_id;
-      if (isNaN(sender_id)) {
-          throw '400: sender_id must be a number';
-      }
-      const likes = await getLikedUsersBySenderId(sender_id);
-      res.send(likes);
-    } catch (err) {
-      if (typeof(err) === "string" && err.includes('400')) {
-          res.status(400).send(err.message)
-      }
-      res.status(500).send(err.message);
-    }
-  });
-
-// get matched users by sender_id
-router.get('/:sender_id/matched', async (req, res) => {
-    try {
-      log.info('[relationsController]', 'get all matched user by sender_id');
-      const sender_id = req.params.sender_id;
-      if (isNaN(sender_id)) {
-          throw '400: sender_id must be a number';
-      }
-      const matches = await getMatchedUsersBySenderId(sender_id);
-      res.send(matches);
-    } catch (err) {
-      if (typeof(err) === "string" && err.includes('400')) {
-          res.status(400).send(err.message)
-      }
-      res.status(500).send(err.message);
-    }
 });
 
 // get relation type between users

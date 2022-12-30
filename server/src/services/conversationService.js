@@ -6,7 +6,7 @@ import log from '../config/log.js';
 export const deleteConversation = async (id) => {
     try {
         const client = await pool.connect();
-        log.info('[conversationService]', 'delete');
+        log.info('[conversationService]', 'deleteConversation');
 
         await client.query(
             `DELETE FROM conversations
@@ -21,7 +21,7 @@ export const deleteConversation = async (id) => {
 const getConversationCustom = async (id, userId1, userId2) => {
     try {
         const client = await pool.connect();
-        log.info('[conversationService]', 'get conversation');
+        log.info('[conversationService]', 'getConversationCustom');
         const result = await client.query(`
     SELECT conversation.id, conversation.userId1, conversation.userId2,
   user1.first_name || ' ' || user1.last_name as user1_name,
@@ -45,7 +45,7 @@ WHERE conversation.id = $1 AND ((conversation.userId1 = $2 AND conversation.user
 export const insertConversation = async (userId1, userId2) => {
     try {
         const client = await pool.connect();
-        log.info('[conversationService]', 'insert');
+        log.info('[conversationService]', 'insertConversation');
 
         // Check if a conversation already exists between the two users
         const result = await client.query(`
@@ -76,26 +76,11 @@ export const insertConversation = async (userId1, userId2) => {
     }
 };
 
-
-// // Patch a conv in the database
-// export const patchConversation = async (id, unread) => {
-//     try {
-//         const client = await pool.connect();
-//         log.info('[conversationService]', 'patch', id, unread);
-//         const result = await client.query('UPDATE conversation SET unread = false WHERE id = $1;', [id]);
-//         log.info('[conversationService]', 'patch done');
-//         client.release();
-//     } catch (err) {
-//         throw err;
-//     }
-// };
-
-
 // Get all conv in the database from a user
 export const getConversations = async (id) => {
     try {
         const client = await pool.connect();
-        log.info('[conversationService]', 'get');
+        log.info('[conversationService]', 'getConversations');
 
         //chat gpted (si tu need des details je peux te filer les logs du chat)
         const result = await client.query(`
@@ -122,7 +107,7 @@ export const getConversations = async (id) => {
 export const deleteConversationOfPair = async (id1, id2) => {
     try {
         const client = await pool.connect();
-        log.info('[conversationService]', 'get');
+        log.info('[conversationService]', 'deleteConversationOfPair');
 
 
         const convResult = await client.query(`

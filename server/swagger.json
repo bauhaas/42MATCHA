@@ -328,7 +328,7 @@
           "users"
         ],
         "summary": "Get a list of liked users by logged in user",
-        "description": "Get a user by their ID from the database",
+        "description": "Get a list of liked users from the database",
         "parameters": [
           {
             "name": "id",
@@ -339,16 +339,16 @@
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved user",
+            "description": "Successfully gotten list of liked users",
             "schema": {
               "$ref": "#/definitions/User"
             }
           },
           "404": {
-            "description": "Failed to find user with the specified ID"
+            "description": "Failed to get list of users blocked with the specified ID"
           },
           "500": {
-            "description": "Failed to retrieve user from the database"
+            "description": "Failed to get list of users liked from the database"
           }
         }
       }
@@ -359,7 +359,7 @@
           "users"
         ],
         "summary": "Get a list of matched users by logged in user",
-        "description": "Get a user by their ID from the database",
+        "description": "Get a list of matched users from the database",
         "parameters": [
           {
             "name": "id",
@@ -370,16 +370,47 @@
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved user",
+            "description": "Successfully gotten list of matched users",
             "schema": {
               "$ref": "#/definitions/User"
             }
           },
           "404": {
-            "description": "Failed to find user with the specified ID"
+            "description": "Failed to get list of users matched with the specified ID"
           },
           "500": {
-            "description": "Failed to retrieve user from the database"
+            "description": "Failed to get list of users matched from the database"
+          }
+        }
+      }
+    },
+    "/users/{id}/blocked": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get a list of blocked users by logged in user",
+        "description": "Get a list of blocked users from the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved gotten list of blocked users",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "Failed to get list of users blocked"
+          },
+          "500": {
+            "description": "Failed to get list of users blocked from the database"
           }
         }
       }
@@ -605,93 +636,6 @@
           },
           "500": {
             "description": "Failed to retrieve relations from the database"
-          }
-        }
-      }
-    },
-    "/relations/{sender_id}/blocked": {
-      "get": {
-        "tags": ["relations"],
-        "summary": "Get users blocked by sender_id",
-        "description": "Get users blocked by sender_id from the database",
-        "parameters": [
-          {
-          "name": "sender_id",
-          "in": "path",
-          "required": true,
-          "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved all blocked by sender_id",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Relations"
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to retrieve users blocked by sender_id from the database"
-          }
-        }
-      }
-    },
-    "/relations/{sender_id}/liked": {
-      "get": {
-        "tags": ["relations"],
-        "summary": "Get all users liked by sender_id",
-        "description": "Get all users liked by sender_id from the database",
-        "parameters": [
-          {
-          "name": "sender_id",
-          "in": "path",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved all users liked by sender_id",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Relations"
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to retrieve users liked by sender_id from the database"
-          }
-        }
-      }
-    },
-    "/relations/{sender_id}/matched": {
-      "get": {
-        "tags": ["relations"],
-        "summary": "Get all users matched by sender_id",
-        "description": "Get all users matched by sender_id from the database",
-        "parameters": [
-          {
-          "name": "sender_id",
-          "in": "path",
-          "required": true,
-          "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved all users matched by sender_id",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Relations"
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to retrieve users matched by sender_id from the database"
           }
         }
       }
