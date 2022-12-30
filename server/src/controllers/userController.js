@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 
-import { getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors } from '../services/userService.js';
+import { getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
@@ -19,25 +19,35 @@ router.get('/', async (req, res) => {
 });
 
 
-router.get('/:id/bachelors/:page', async (req, res) => {
+router.get('/:id/bachelors/', async (req, res) => {
   try {
     const id = req.params.id;
-    const page = req.params.page;
-    const users = await getBachelors(id, page);
+    if (isNaN(id)) {
+        throw '400: id must be a number';
+    }
+    const users = await getBachelors(id);
     res.send(users);
   } catch (err) {
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message)
+    }
     res.status(500).send(err.message);
   }
 });
 
-router.post('/:id/filteredBachelors/:page', async (req, res) => {
+router.post('/:id/filteredBachelors', async (req, res) => {
   try {
     const id = req.params.id;
-    const page = req.params.page;
+    if (isNaN(id)) {
+        throw '400: id must be a number';
+    }
 
-    const users = await getFilteredBachelors(id, req.body, page);
+    const users = await getFilteredBachelors(id, req.body);
     res.send(users);
   } catch (err) {
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message)
+    }
     res.status(500).send(err.message);
   }
 });
@@ -46,9 +56,16 @@ router.post('/:id/filteredBachelors/:page', async (req, res) => {
 router.get('/:id/liked', async (req, res) => {
   try {
     const id = req.params.id;
+    if (isNaN(id)) {
+        throw '400: id must be a number';
+    }
+
     const likedUsers = await getLikedUsers(id);
     res.send(likedUsers);
   } catch (err) {
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message)
+    }
     res.status(500).send(err.message);
   }
 });
@@ -57,12 +74,36 @@ router.get('/:id/liked', async (req, res) => {
 router.get('/:id/matched', async (req, res) => {
   try {
     const id = req.params.id;
+    if (isNaN(id)) {
+        throw '400: id must be a number';
+    }
     const likedUsers = await getMatchedUsers(id);
     res.send(likedUsers);
   } catch (err) {
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message)
+    }
     res.status(500).send(err.message);
   }
 });
+
+// Get blocked users
+router.get('/:id/blocked', async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (isNaN(id)) {
+        throw '400: id must be a number';
+    }
+    const likedUsers = await getBlockedUsers(id);
+    res.send(likedUsers);
+  } catch (err) {
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message)
+    }
+    res.status(500).send(err.message);
+  }
+});
+
 
 function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
@@ -115,9 +156,16 @@ router.get('/:id', async (req, res) => {
     if (req.params.id === null) {
       throw 'get /users/:id id undefined'
     }
+    if (isNaN(req.params.id)) {
+        throw '400: id must be a number';
+    }
     const user = await getUserById(req.params.id);
     res.send(user);
   } catch (err) {
+    console.log(err)
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message)
+    }
     res.status(500).send(err.message);
   }
 });
@@ -127,6 +175,9 @@ router.get('/:id/profile', async (req, res) => {
   try {
     if (req.params.id === null) {
       throw 'get /users/:id/profile id undefined'
+    }
+    if (isNaN(req.params.id)) {
+        throw '400: id must be a number';
     }
     const { sender_id } = req.body;
     const blocked = await isBlocked(id, sender_id);
@@ -138,9 +189,10 @@ router.get('/:id/profile', async (req, res) => {
   } catch (err) {
     if (err.message === 'You are blocked') {
       res.status(404).send(err.message);
-    } else {
-      res.status(500).send(err.message);
+    } else if (err.message.contains('400')) {
+        res.status(400).send(err.message)
     }
+    res.status(500).send(err.message);
   }
 });
 
@@ -197,9 +249,6 @@ function changeUserData(user, update) {
   if (update.last_location) {
     user.last_location = update.last_location;
   }
-  if (update.fame_rating) {
-    user.fame_rating = update.fame_rating;
-  }
   if (update.report_count) {
     user.report_count += 1;
   }
@@ -209,8 +258,12 @@ function changeUserData(user, update) {
 // Update user
 router.put('/:id/update', authenticateToken, async (req, res) => {
   try {
-    log.info("id", req.params.id);
-    var user = await getUserById(req.params.id);
+    const id = req.params.id;
+    log.info("id", id, "update");
+    if (isNaN(id)) {
+        throw '400: id must be a number';
+    }
+    var user = await getUserById(id);
 
     log.info(req.body);
     user = changeUserData(user, req.body);
@@ -222,9 +275,10 @@ router.put('/:id/update', authenticateToken, async (req, res) => {
   } catch (err) {
     if (err.message === 'A user with the given email already exists.') {
       res.status(403).send(err.message);
-    } else {
-      res.status(500).send(err.message);
+    } else if (err.message.contains('400')) {
+      res.status(400).send(err.message);
     }
+      res.status(500).send(err.message);
   }
 });
 
@@ -234,6 +288,9 @@ router.put('/resetpassword', async (req, res) => {
     log.info('[userController]', 'resetpassword');
     log.info('[userController]', req.body);
     const {currentPassword, newPassword, id} = req.body;
+    if (isNaN(id)) {
+        throw '400: id must be a number';
+    }
     const user = await getUserById(id);
 
     await resetPassword(currentPassword, newPassword, user);
@@ -242,9 +299,10 @@ router.put('/resetpassword', async (req, res) => {
   } catch (err) {
     if (err.message === 'A user with the given email already exists.') {
       res.status(403).send(err.message);
-    } else {
-      res.status(500).send(err.message);
+    } else if (err.message.contains('400')) {
+      res.status(400).send(err.message);
     }
+    res.status(500).send(err.message);
   }
 });
 
@@ -252,9 +310,15 @@ router.put('/resetpassword', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const id = req.params.id;
+    if (isNaN(id)) {
+        throw '400: id must be a number';
+    }
     await deleteUser(id);
     res.send({ id });
   } catch (err) {
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message);
+    }
     res.status(500).send(err.message);
   }
 });

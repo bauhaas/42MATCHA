@@ -22,10 +22,16 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const id = req.params.id;
+        if (isNaN(id)) {
+            throw '400: conversationId must be a number';
+        }
         log.info('[notifController]', 'enter in getNotifById');
         const notifications = await getNotifById(id);
         res.send(notifications);
     } catch (err) {
+        if (err.message.contains('400')) {
+            res.status(400).send(err.message)
+        }
         res.status(500).send(err.message);
     }
 });
@@ -35,10 +41,16 @@ router.get('/:id', async (req, res) => {
 router.get('/:id/receiver', async (req, res) => {
     try {
         const id = req.params.id;
+        if (isNaN(id)) {
+            throw '400: conversationId must be a number';
+        }
         log.info('[notifController]', 'enter in getReceivedNotifications');
         const notifications = await getReceivedNotifications(id);
         res.send(notifications);
     } catch (err) {
+        if (err.message.contains('400')) {
+            res.status(400).send(err.message)
+        }
         res.status(500).send(err.message);
     }
 });
@@ -47,10 +59,16 @@ router.get('/:id/receiver', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
+        if (isNaN(id)) {
+            throw '400: conversationId must be a number';
+        }
         log.info('[notifController]', 'enter in deleteNotifications');
         await deleteNotification(id);
         res.send({id});
     } catch (err) {
+        if (err.message.contains('400')) {
+            res.status(400).send(err.message)
+        }
         res.status(500).send(err.message);
     }
 });
@@ -59,6 +77,9 @@ router.delete('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { sender_id, receiver_id, type } = req.body;
+        if (isNaN(sender_id) || isNaN(receiver_id)) {
+            throw '400: sender_id and receiver_id must be a number';
+        }
 
         const blocked = await isBlocked(receiver_id, sender_id);
         if (blocked) {
@@ -71,9 +92,10 @@ router.post('/', async (req, res) => {
     } catch (err) {
         if (err.message === 'You are blocked') {
           res.status(404).send(err.message);
-        } else {
-          res.status(500).send(err.message);
+        } else if (err.message.contains('400')) {
+            res.status(400).send(err.message)
         }
+        res.status(500).send(err.message);
     }
 });
 
@@ -81,11 +103,17 @@ router.post('/', async (req, res) => {
 router.put('/:id/update_read', async (req, res) => {
     try {
         const id = req.params.id;
-        log.info('[notifController]', req.body);
+        if (isNaN(id)) {
+            throw '400: userId must be a number';
+        }
+
         log.info('[notifController]', 'enter in updateReadNotification');
         await updateReadNotification(id);
         res.send({ id });
     } catch (err) {
+        if (err.message.contains('400')) {
+            res.status(400).send(err.message)
+        }
         res.status(500).send(err.message);
     }
 });

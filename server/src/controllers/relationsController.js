@@ -21,9 +21,15 @@ router.get('/:sender_id', async (req, res) => {
   try {
     log.info('[relationsController]', 'get all relations by sender_id');
     const sender_id = req.params.sender_id;
+    if (isNaN(sender_id)) {
+        throw '400: sender_id must be a number';
+    }
     const blocks = await getRelationsBySenderId(sender_id);
     res.send(blocks);
   } catch (err) {
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message)
+    }
     res.status(500).send(err.message);
   }
 });
@@ -33,9 +39,17 @@ router.get('/:sender_id/blocked', async (req, res) => {
   try {
     log.info('[relationsController]', 'get all blocked user by sender_id');
     const sender_id = req.params.sender_id;
+    console.log(sender_id)
+    if (isNaN(sender_id)) {
+        throw '400: sender_id must be a number';
+    }
     const blocks = await getBlockedUsersBySenderId(sender_id);
     res.send(blocks);
   } catch (err) {
+    console.log(err)
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message)
+    }
     res.status(500).send(err.message);
   }
 });
@@ -45,6 +59,9 @@ router.get('/:sender_id/liked', async (req, res) => {
     try {
       log.info('[relationsController]', 'get all liked user by sender_id');
       const sender_id = req.params.sender_id;
+      if (isNaN(sender_id)) {
+          throw '400: sender_id must be a number';
+      }
       const likes = await getLikedUsersBySenderId(sender_id);
       res.send(likes);
     } catch (err) {
@@ -57,6 +74,9 @@ router.get('/:sender_id/matched', async (req, res) => {
     try {
       log.info('[relationsController]', 'get all matched user by sender_id');
       const sender_id = req.params.sender_id;
+      if (isNaN(sender_id)) {
+          throw '400: sender_id must be a number';
+      }
       const matches = await getMatchedUsersBySenderId(sender_id);
       res.send(matches);
     } catch (err) {
@@ -69,10 +89,16 @@ router.get('/type/:sender_id/:receiver_id', async (req, res) => {
   try {
     const sender_id = req.params.sender_id
     const receiver_id = req.params.receiver_id;
+    if (isNaN(sender_id) || isNaN(receiver_id)) {
+        throw '400: sender_id must be a number';
+    }
     log.info('[relationsController]', 'get relation type between users');
     const type = await getRelationTypeOfUsers(sender_id, receiver_id);
     res.send(type);
   } catch (err) {
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message)
+    }
     res.status(500).send(err.message);
   }
 });
@@ -81,6 +107,9 @@ router.get('/type/:sender_id/:receiver_id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { sender_id, receiver_id, type } = req.body;
+    if (isNaN(sender_id) || isNaN(receiver_id)) {
+        throw '400: sender_id and receiver_id must be a number';
+    }
 
     const blocked = await isBlocked(receiver_id, sender_id);
     if (blocked) {
@@ -105,11 +134,23 @@ router.delete('/', async (req, res) => {
   try {
     console.log(req.body);
     log.info('[relationsController]', 'delete relation');
+
     const { sender_id, receiver_id, type } = req.body;
+    if (isNaN(sender_id) || isNaN(receiver_id)) {
+        throw '400: sender_id and receiver_id must be a number';
+    }
+    const validTypes = ["block", "like", "unlike", "match"];
+    if (validTypes.includes("type")) {
+      throw '400: wrong type' + type;
+    }
+
     await deleteRelationByContent(sender_id, receiver_id, type);
 
     res.send({sender_id});
   } catch (err) {
+    if (err.message.contains('400')) {
+        res.status(400).send(err.message)
+    }
     res.status(500).send(err.message);
   }
 });

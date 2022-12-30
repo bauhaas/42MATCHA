@@ -19,7 +19,7 @@ export const getAllUsers = async () => {
 };
 
 // Get bachelors from the database
-export const getBachelors = async (id, page) => {
+export const getBachelors = async (id) => {
   try {
 
     const client = await pool.connect();
@@ -51,9 +51,6 @@ export const getBachelors = async (id, page) => {
 
         return user;
     });
-
-    console.log("length", closeUsers.length);
-    console.log("me", me);
 
     // sort by increasing distance
     closeUsers.sort((a, b) => a.distance < b.distance);
@@ -453,6 +450,24 @@ export const getMatchedUsers = async (id) => {
       WHERE id IN (
         SELECT receiver_id FROM notifications
         WHERE sender_id = $1 AND type = 'match'
+      )
+    `, [id]);
+    const users = result.rows;
+    client.release();
+    return users;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export const getBlockedUsers = async (id) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query(`
+      SELECT * FROM users
+      WHERE id IN (
+        SELECT receiver_id FROM notifications
+        WHERE sender_id = $1 AND type = 'block'
       )
     `, [id]);
     const users = result.rows;

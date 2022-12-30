@@ -190,7 +190,7 @@
         }
       }
     },
-    "/users/{id}/bachelors/:page": {
+    "/users/{id}/bachelors/": {
 
       "get": {
         "tags": [
@@ -201,12 +201,6 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "name": "page",
             "in": "path",
             "required": true,
             "type": "integer"
@@ -228,7 +222,7 @@
         }
       }
     },
-    "/users/{id}/filteredBachelors/:page": {
+    "/users/{id}/filteredBachelors": {
       "post": {
         "tags": [
           "users"
@@ -238,12 +232,6 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "name": "page",
             "in": "path",
             "required": true,
             "type": "integer"
