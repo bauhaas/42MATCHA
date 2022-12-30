@@ -281,19 +281,7 @@
             "type": "integer"
           },
           {
-            "name": "max_fame",
-            "in": "formData",
-            "required": true,
-            "type": "integer"
-          },
-          {
             "name": "min_common_interests",
-            "in": "formData",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "name": "max_common_interests",
             "in": "formData",
             "required": true,
             "type": "integer"

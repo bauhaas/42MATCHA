@@ -23,13 +23,12 @@ export const getBachelors = async (id, page) => {
   try {
 
     const client = await pool.connect();
-
     const me = await getUserById(id);
     const result = await client.query(`
-      SELECT *, ABS($2 - ST_X(last_location::geometry)) + ABS($3 - ST_Y(last_location::geometry)) as distance
+      SELECT *, SQRT(POWER(73 * ABS($2 - ST_X(last_location::geometry)), 2) + POWER(111 * ABS($3 - ST_Y(last_location::geometry)), 2)) as distance
       FROM users
       WHERE $1 != id
-      AND ABS($2 - ST_X(last_location::geometry)) + ABS($3 - ST_Y(last_location::geometry)) <= 1
+      AND SQRT(POWER(73 * ABS($2 - ST_X(last_location::geometry)), 2) + POWER(111 * ABS($3 - ST_Y(last_location::geometry)), 2)) < 50
     `, [me.id, me.last_location.x , me.last_location.y]);
 
     var closeUsers = result.rows;
@@ -43,7 +42,6 @@ export const getBachelors = async (id, page) => {
 
     closeUsers.map(function (user) {
         const fameFactor = Math.max(1 - (0.01 * user.fame_rating), 0.5);
-
         const commonInterests = me.interests.filter(value => user.interests.includes(value));
         const interestsFactor = Math.max(1 - (0.1 * commonInterests.length), 0.5);
 
@@ -70,7 +68,6 @@ export const getBachelors = async (id, page) => {
 // Get bachelors with filters from the database
 export const getFilteredBachelors = async (id, filters) => {
   try {
-
     const client = await pool.connect();
 
     const me = await getUserById(id);
@@ -78,13 +75,12 @@ export const getFilteredBachelors = async (id, filters) => {
       SELECT *, ABS($2 - ST_X(last_location::geometry)) + ABS($3 - ST_Y(last_location::geometry)) as distance
       FROM users
       WHERE $1 != id
-      AND (ABS($2 - ST_X(last_location::geometry)) * ABS($2 - ST_X(last_location::geometry))) + (ABS($3 - ST_Y(last_location::geometry)) *ABS($3 - ST_Y(last_location::geometry))) >= $4
-      AND (ABS($2 - ST_X(last_location::geometry)) * ABS($2 - ST_X(last_location::geometry))) + (ABS($3 - ST_Y(last_location::geometry)) *ABS($3 - ST_Y(last_location::geometry))) <= $5
+      AND SQRT(POWER(73 * ABS($2 - ST_X(last_location::geometry)), 2) + POWER(111 * ABS($3 - ST_Y(last_location::geometry)), 2)) >= $4
+      AND SQRT(POWER(73 * ABS($2 - ST_X(last_location::geometry)), 2) + POWER(111 * ABS($3 - ST_Y(last_location::geometry)), 2)) <= $5
       AND age >= $6
       AND age <= $7
       AND fame_rating >= $8
-      AND fame_rating <= $9
-    `, [me.id, me.last_location.x , me.last_location.y, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame, filters.max_fame]);
+    `, [me.id, me.last_location.x , me.last_location.y, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
 
     var filteredUsers = result.rows;
     
@@ -97,7 +93,7 @@ export const getFilteredBachelors = async (id, filters) => {
 
     filteredUsers = filteredUsers.filter(function (user) {
         const commonInterests = me.interests.filter(value => user.interests.includes(value));
-        if (commonInterests.length >= filters.min_common_interests && commonInterests.length <= filters.max_common_interests) {
+        if (commonInterests.length >= filters.min_common_interests) {
           return true;
         }
         return false;

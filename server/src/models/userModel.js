@@ -102,6 +102,7 @@ export async function seedUsersTable() {
         interestsStr += "]";
         const photos = faker.image.avatar();
         const bio = faker.lorem.lines(3).replace('\'', '');
+
         const query = `
           INSERT INTO users (
             first_name,
@@ -132,7 +133,7 @@ export async function seedUsersTable() {
             '${photos}',
             '${bio}',
             '${interestsStr}',
-            POINT(${2.318641 - 2 + (4*Math.random())}, ${48.896561 - 2 + (4*Math.random())})
+            POINT(${2.318641 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}, ${48.896561 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())})
           );
         `;
         await client.query(query);
