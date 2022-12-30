@@ -1,13 +1,13 @@
 import express from 'express';
 import { createUsersTable, seedUsersTable } from './models/userModel.js';
 import { createNotificationsTable, seedNotificationsTable } from './models/notificationsModel.js';
-import { createBlocksTable } from './models/blockModel.js';
 import { createMessagesTable } from './models/messageModel.js';
+import { createRelationsTable } from './models/relationsModel.js';
 import messageController from './controllers/messageController.js';
 import userController from './controllers/userController.js';
 import conversationController from './controllers/conversationController.js';
-import blockController from './controllers/blockController.js';
 import notificationsController from './controllers/notificationsController.js';
+import relationsController from './controllers/relationsController.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger.json';
 import bodyParser from 'body-parser';
@@ -100,16 +100,16 @@ server.listen(port, async () => {
   log.info('[index.js]', `Server listening on port ${port}`);
   await createUsersTable();
   await seedUsersTable();
+  await createRelationsTable();
   await createNotificationsTable();
   await seedNotificationsTable();
-  await createBlocksTable();
   await createConversationTable();
   await createMessagesTable();
 });
 
 app.use('/users', userController);
+app.use('/relations', relationsController);
 app.use('/notifications', notificationsController);
-app.use('/block', blockController);
 app.use('/messages', messageController);
 app.use('/conversations', conversationController)
 

@@ -9,7 +9,7 @@ export const deleteConversation = async (id) => {
         log.info('[conversationService]', 'delete');
 
         await client.query(
-            `DELETE FROM conversation
+            `DELETE FROM conversations
             WHERE id = $1;`, [id]);
         client.release();
     } catch (err) {
@@ -99,21 +99,51 @@ export const getConversations = async (id) => {
 
         //chat gpted (si tu need des details je peux te filer les logs du chat)
         const result = await client.query(`
-SELECT conversation.id, conversation.userId1, conversation.userId2,
-  user1.first_name || ' ' || user1.last_name as user1_name,
-  user2.first_name || ' ' || user2.last_name as user2_name,
-  (SELECT message FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message,
-  (SELECT sender_id FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_author_id,
-  (SELECT unread FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_unread
-FROM conversation
-JOIN users as user1 ON user1.id = conversation.userId1
-JOIN users as user2 ON user2.id = conversation.userId2
-WHERE (conversation.userId1 = $1 OR conversation.userId2 = $1);`,
+            SELECT conversation.id, conversation.userId1, conversation.userId2,
+            user1.first_name || ' ' || user1.last_name as user1_name,
+            user2.first_name || ' ' || user2.last_name as user2_name,
+            (SELECT message FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message,
+            (SELECT sender_id FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_author_id,
+            (SELECT unread FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_unread
+            FROM conversation
+            JOIN users as user1 ON user1.id = conversation.userId1
+            JOIN users as user2 ON user2.id = conversation.userId2
+            WHERE (conversation.userId1 = $1 OR conversation.userId2 = $1);`,
           [id]
         );
         const conversations = result.rows;
         client.release();
         return conversations;
+    } catch (err) {
+        throw err;
+    }
+};
+
+export const deleteConversationOfPair = async (id1, id2) => {
+    try {
+        const client = await pool.connect();
+        log.info('[conversationService]', 'get');
+
+
+        const convResult = await client.query(`
+        SELECT id FROM conversation
+        WHERE (userId1 = $1 AND userId2 = $1)
+        OR (userId1 = $2 AND userId2 = $1);
+        `
+        , [id1, id2]);
+        const conversation = convResult.rows;
+        console.log(convResult);
+
+        const messagesResult = await client.query(`
+        SELECT id FROM messages
+        WHERE (conversation_id = $1);
+        `, [conversation]);
+
+        const messagesIds = messagesResult.rows;
+        console.log(messagesIds);
+
+        client.release();
+        return messagesIds;
     } catch (err) {
         throw err;
     }

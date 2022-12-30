@@ -160,7 +160,6 @@
         }
     },
     "/users/{id}": {
-
       "get": {
         "tags": [
           "users"
@@ -509,6 +508,214 @@
         }
       }
     },
+    "/relations": {
+      "get": {
+        "tags": ["relations"],
+        "summary": "Get all relations",
+        "description": "Get all relations from the database",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all relations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Relations"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve relations from the database"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "relations"
+        ],
+        "summary": "Insert new relation",
+        "description": "Insert a new relation into the database",
+        "parameters": [
+        {
+          "name": "sender_id",
+          "in": "formData",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "receiver_id",
+          "in": "formData",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "type",
+          "in": "formData",
+          "required": true,
+          "type": "string"
+        }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully inserted user into the database"
+          },
+          "500": {
+            "description": "Failed to insert user into the database"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["relations"],
+        "summary": "Delete a relation",
+        "description": "Delete a relation",
+        "parameters": [
+          {
+            "name": "sender_id",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "receiver_id",
+            "in": "formData",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "type",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the relation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/Relations"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to delete relation from the database"
+          }
+        }
+      }
+    },
+    "/relations/{sender_id}": {
+      "get": {
+        "tags": ["relations"],
+        "summary": "Get all blocked by sender_id",
+        "description": "Get all blocked by sender_id from the database",
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all blocked by sender_id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Relations"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve relations from the database"
+          }
+        }
+      }
+    },
+    "/relations/{sender_id}/blocked": {
+      "get": {
+        "tags": ["relations"],
+        "summary": "Get users blocked by sender_id",
+        "description": "Get users blocked by sender_id from the database",
+        "parameters": [
+          {
+          "name": "sender_id",
+          "in": "formData",
+          "required": true,
+          "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all blocked by sender_id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Relations"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve users blocked by sender_id from the database"
+          }
+        }
+      }
+    },
+    "/relations/{sender_id}/liked": {
+      "get": {
+        "tags": ["relations"],
+        "summary": "Get all users liked by sender_id",
+        "description": "Get all users liked by sender_id from the database",
+        "parameters": [
+          {
+          "name": "sender_id",
+          "in": "formData",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all users liked by sender_id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Relations"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve users liked by sender_id from the database"
+          }
+        }
+      }
+    },
+    "/relations/{sender_id}/matched": {
+      "get": {
+
+        "tags": ["relations"],
+        "summary": "Get all users matched by sender_id",
+        "description": "Get all users matched by sender_id from the database",
+        "parameters": [
+          {
+          "name": "sender_id",
+          "in": "formData",
+          "required": true,
+          "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all users matched by sender_id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Relations"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve users matched by sender_id from the database"
+          }
+        }
+      }
+    },
     "/notifications": {
       "get": {
         "tags": [
@@ -533,9 +740,9 @@
         }
       },
       "post": {
-                "tags": [
-                  "notifications"
-                ],
+        "tags": [
+          "notifications"
+        ],
         "summary": "Insert a new notification",
         "description": "Create notification in the database",
         "parameters": [
@@ -559,7 +766,7 @@
           }],
         "responses": {
           "200": {
-            "description": "Successfully created the block",
+            "description": "Successfully created the notification",
             "schema": {
               "type": "array",
               "items": {
@@ -568,17 +775,45 @@
             }
           },
           "500": {
-            "description": "Failed to delete the block from the database"
+            "description": "Failed to create the notification in the database"
           }
         }
       }
     },
     "/notifications/{id}": {
+      "get": {
+        "tags": [
+          "notifications"
+        ],
+        "summary": "get notifications of user",
+        "description": "get notifications of user",
+        "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }],
+        "responses": {
+          "200": {
+            "description": "Successfully gotten all the notif of user",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notifications"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get the notifs of user_id from the database"
+          }
+        }
+      },
       "delete": {
-                "tags": [
-                  "notifications"
-                ],
-                "summary": "Delete a notification by it's id",
+        "tags": [
+          "notifications"
+        ],
+        "summary": "Delete a notification by it's id",
         "description": "delete notif the database",
         "parameters": [
         {
@@ -603,13 +838,13 @@
         }
       }
     },
-    "/notifications/{id}/sender": {
+    "/notifications/{id}/receiver": {
       "get": {
-                "tags": [
-                  "notifications"
-                ],
+        "tags": [
+          "notifications"
+        ],
         "summary": "Get all notification of a user",
-        "description": "Get notifications where id is sender",
+        "description": "Get notifications where id is receiver",
         "parameters": [
           {
             "name": "id",
@@ -636,9 +871,9 @@
     },
     "/notifications/{id}/update_read": {
       "put": {
-                "tags": [
-                  "notifications"
-                ],
+        "tags": [
+          "notifications"
+        ],
         "summary": "Set a notification as read",
         "description": "Update notification id's read status in the database",
         "parameters": [
@@ -664,146 +899,11 @@
         }
       }
     },
-    "/block/{blocker_id}": {
-      "get": {
-                "tags": [
-                  "block"
-                ],
-        "summary": "Get blocked users list of logged in user",
-        "description": "get blocks in the database",
-        "parameters": [
-          {
-            "name": "blocker_id",
-            "in": "path",
-            "required": true,
-            "type": "integer"
-          }],
-        "responses": {
-          "200": {
-            "description": "Successfully gotten the blocked users",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Blocks"
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to get the blocks from the database"
-          }
-        }
-      }
-    },
-    "/block": {
-      "post": {
-                        "tags": [
-                          "block"
-                        ],
-                        "summary": "block a user",
-        "description": "Create block in the database",
-        "parameters": [
-          {
-            "name": "blocker_id",
-            "in": "formData",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "name": "blocked_id",
-            "in": "formData",
-            "required": true,
-            "type": "integer"
-          }],
-        "responses": {
-          "200": {
-            "description": "Successfully created the block",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Blocks"
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to create the block"
-          }
-        }
-      },
-      "delete": {
-                        "tags": [
-                          "block"
-                        ],
-        "summary": "unblock a user",
-        "description": "Update notification id's updated_at in the database",
-        "parameters": [
-          {
-            "name": "blocker_id",
-            "in": "formData",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "name": "blocked_id",
-            "in": "formData",
-            "required": true,
-            "type": "integer"
-          }],
-        "responses": {
-          "200": {
-            "description": "Successfully deleted the block",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Blocks"
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to delete the block from the database"
-          }
-        }
-      }
-    },"/messages/{sender_id}/{receiver_id}": {
-      "get": {
-                        "tags": [
-                          "messages"
-                        ],
-        "summary": "retrieve message histry between 2 users",
-        "description": "get messages of conversation between sender and receiver",
-        "parameters": [
-          {
-            "name": "sender_id",
-            "in": "path",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "name": "receiver_id",
-            "in": "path",
-            "required": true,
-            "type": "integer"
-          }],
-        "responses": {
-          "200": {
-            "description": "Successfully gotten the conversation",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Messages"
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to retrieve the conversation"
-          }
-        }
-      }
-    },
     "/messages": {
       "post": {
-                                "tags": [
-                                  "messages"
-                                ],
+        "tags": [
+          "messages"
+        ],
         "summary": "send a message to a user",
         "description": "Create message in the database",
         "parameters": [
@@ -841,9 +941,9 @@
         }
       },
       "delete": {
-                                "tags": [
-                                  "messages"
-                                ],
+        "tags": [
+          "messages"
+        ],
         "summary": "delete a conversation",
         "description": "Delete conversation",
         "parameters": [
@@ -943,21 +1043,24 @@
         }
       }
     },
-    "Blocks": {
+    "Relations": {
       "type": "object",
       "properties": {
         "id": {
-          "type": "integer"
+          "type": "integer",
+          "description": "The unique identifier for the conversation"
         },
-        "blocker_id": {
-          "type": "integer"
+        "sender_id": {
+          "type": "integer",
+          "description": "The id of the user who sent the first message in the conversation"
         },
-        "blocked_id": {
-          "type": "integer"
+        "receiver_id": {
+          "type": "integer",
+          "description": "The id of the user who received the first message in the conversation"
         },
-        "created_at": {
+        "type": {
           "type": "string",
-          "format": "date-time"
+          "description": "The string that tells the relationship type, can be block, like or match"
         }
       }
     },
