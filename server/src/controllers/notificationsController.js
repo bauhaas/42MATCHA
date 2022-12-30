@@ -56,13 +56,22 @@ router.delete('/:id', async (req, res) => {
 // Insert a new notif
 router.post('/', async (req, res) => {
     try {
-        log.info('[notifController]', 'body: ', req.body);
         const { sender_id, receiver_id, type } = req.body;
+
+        const blocked = await isBlocked(sender_id, receiver_id);
+        if (blocked) {
+          throw 'You are blocked';
+        }
+
         log.info('[notifController]', 'enter in insertNotification');
         await insertNotification(sender_id, receiver_id, type);
         res.sendStatus(200);
     } catch (err) {
-            res.status(500).send(err.message);
+        if (err.message === 'You are blocked') {
+          res.status(404).send(err.message);
+        } else {
+          res.status(500).send(err.message);
+        }
     }
 });
 

@@ -131,8 +131,11 @@ export const deleteConversationOfPair = async (id1, id2) => {
         OR (userId1 = $2 AND userId2 = $1);
         `
         , [id1, id2]);
-        const conversation = convResult.rows;
-        console.log(convResult);
+        const conversation = convResult.rows[0];
+
+        if (conversation === undefined) {
+            return 0;
+        }
 
         const messagesResult = await client.query(`
         SELECT id FROM messages
@@ -140,8 +143,10 @@ export const deleteConversationOfPair = async (id1, id2) => {
         `, [conversation]);
 
         const messagesIds = messagesResult.rows;
-        console.log(messagesIds);
 
+        for (let i = 0; i < messagesIds.length; i++) {
+            await deleteMessage(messagesIds.id);
+        }
         client.release();
         return messagesIds;
     } catch (err) {

@@ -598,7 +598,12 @@
         "summary": "Get all blocked by sender_id",
         "description": "Get all blocked by sender_id from the database",
         "parameters": [
-          
+        {
+          "name": "sender_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
         ],
         "responses": {
           "200": {
@@ -624,7 +629,7 @@
         "parameters": [
           {
           "name": "sender_id",
-          "in": "formData",
+          "in": "path",
           "required": true,
           "type": "integer"
           }
@@ -653,7 +658,7 @@
         "parameters": [
           {
           "name": "sender_id",
-          "in": "formData",
+          "in": "path",
           "required": true,
           "type": "integer"
         }
@@ -676,14 +681,13 @@
     },
     "/relations/{sender_id}/matched": {
       "get": {
-
         "tags": ["relations"],
         "summary": "Get all users matched by sender_id",
         "description": "Get all users matched by sender_id from the database",
         "parameters": [
           {
           "name": "sender_id",
-          "in": "formData",
+          "in": "path",
           "required": true,
           "type": "integer"
           }
@@ -700,6 +704,40 @@
           },
           "500": {
             "description": "Failed to retrieve users matched by sender_id from the database"
+          }
+        }
+      }
+    },
+    "/relations/type/{sender_id}/{receiver_id}": {
+      "get": {
+        "tags": ["relations"],
+        "summary": "Get relation type between from sender_id to receiver_id",
+        "description": "Get type of relation from sender_id to receiver_id from the database",
+        "parameters": [
+          {
+          "name": "sender_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+          },
+          {"name": "receiver_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved type of relation from sender_id to receiver_id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Relations"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve type of relation from sender_id to receiver_id"
           }
         }
       }
