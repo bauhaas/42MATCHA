@@ -11,6 +11,12 @@ const createNotification = async (sender_id, receiver_id, type) => {
     VALUES($1, $2, $3, $4)
     RETURNING *
     `, [sender_id, receiver_id, type, false]);
+
+    const socket = global.map.get(String(receiver_id));
+    if (socket) {
+        console.log(`has${type}Notif`);
+        socket.emit(`has${type}Notif`, notif.rows[0]);
+    }
     client.release();
     return notif.rows[0];
 }
@@ -32,22 +38,24 @@ export const getNotification = async (sender_id, receiver_id, type) => {
     return null;
 }
 
-export const getSenderNotifications = async (id) => {
+export const getReceivedNotifications = async (id) => {
     const client = await pool.connect();
     const notif = await client.query(`
     SELECT * FROM notifications
-    WHERE sender_id = $1
+    WHERE receiver_id = $1
     `, [id]);
 
     client.release();
     if (notif.rowCount > 0) {
+        log.info('[notificationService]', 'return something');
         return notif.rows
     }
+    log.info('[notificationService]', 'return null');
     return null;
 }
 
 
-const handleVisitAndMessageNotif = async (sender_id, receiver_id, type) => {
+const handleVisitNotif = async (sender_id, receiver_id, type) => {
     const client = await pool.connect();
     const notif = await client.query(`
         SELECT * FROM notifications
@@ -55,18 +63,26 @@ const handleVisitAndMessageNotif = async (sender_id, receiver_id, type) => {
         AND receiver_id = $2
         AND type = $3
     `, [sender_id, receiver_id, type]);
-    console.log(notif);
     var id = 0;
     if (notif.rowCount == 0) {
+        log.info('[notificationService]', 'createNotification and return');
         return await createNotification(sender_id, receiver_id, type);
     }
 
     id = notif.rows[0].id
     if (notif.read === true) {
+        log.info('[notificationService]', 'updateReadotifcation');
         await updateReadNotification(id)
     }
-    await updateTimeNotification(id)
+    log.info('[notificationService]', 'updateTimeNotification');
 
+    await updateTimeNotification(id)
+    log.info('[notificationService]', sender_id, receiver_id);
+
+    const socket = global.map.get(String(receiver_id));
+    if (socket) {
+        socket.emit('hasVisitNotif', notif.rows[0]);
+    }
     client.release();
     return id;
 }
@@ -91,7 +107,7 @@ const handlelikeNotif = async (sender_id, receiver_id) => {
     if (liked === null) {
         return await createNotification(sender_id, receiver_id, "like");
     }
-    
+
     await updateUserFameRating(sender_id, true);
     await updateUserFameRating(receiver_id, true);
     await deleteNotification(liked.id);
@@ -102,14 +118,13 @@ const handlelikeNotif = async (sender_id, receiver_id) => {
 // Insert a new notification into the database
 export const insertNotification = async (sender_id, receiver_id, type) => {
     try {
-        const validTypes = ["visit", "message", "like", "unlike"];
+        const validTypes = ["visit", "like", "unlike"];
 
         if (validTypes.includes(type) === false) {
             throw 'insertNotification: wrong type';
         }
-        var id = 0;
-        if (type === "visit" || type === "message") {
-            return handleVisitAndMessageNotif(sender_id, receiver_id, type)
+        if (type === "visit") {
+            return handleVisitNotif(sender_id, receiver_id, type)
         }
 
         if (type == "like") {
@@ -130,8 +145,6 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
             await deleteNotification(reverse.id);
             return await createNotification(sender_id, receiver_id, type);
         }
-
-        return id;
     } catch (err) {
         log.error('[notifService]', err);
         throw err;

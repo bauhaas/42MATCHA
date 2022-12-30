@@ -15,7 +15,7 @@ const MessageBubble = ({message}) => {
                     ?
                         null
                     :
-                        <Avatar width={8} attribute={'chat-image avatar m-1'} />
+                        <Avatar imageAttribute={'rounded-full w-12'} attribute={'chat-image avatar ml-1'} />
                     }
                 <div className="chat-header">
                     <time className="text-xs opacity-50">{date.getHours()}:{date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()}</time>

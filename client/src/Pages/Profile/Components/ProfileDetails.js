@@ -6,10 +6,10 @@ import { HeartIcon as HeartOutlineIcon, NoSymbolIcon} from '@heroicons/react/24/
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
 
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
+import socket from '../../../Context/socket'
 import axios from 'axios';
 
 //TODO when match happend, add animation
-//TODO when match happend, atm, it's removed from liked. So need more update to have hearfillicon
 const ProfileDetails = ({id}) => {
 
     const currentUser = useSelector((state) => state.user.user);
@@ -17,30 +17,54 @@ const ProfileDetails = ({id}) => {
 
     const [isMatched, setIsMatched] = useState(false);
     const [blocked, setBlocked] = useState(false);
-    const [filled, setFilled] = useState(false);
+    const [filledIcon, setFilledIcon] = useState(false);
     const [user, setUser] = useState({});
-    const [conversation, setConversation] = useState({});
+
+    const blockUser = async () => {
+        await blockUserById(currentUser.id, user.id);
+    }
+
+    const likeUser = async (event) => {
+        await likeUserById(currentUser.id, user.id);
+        setFilledIcon(true);
+    }
+
+    const unlikeUser = async (event) => {
+        await unlikeUserById(currentUser.id, user.id);
+        setFilledIcon(false);
+    }
+
+    const gotochat = async (event) => {
+        axios.post('http://localhost:3001/conversations', {
+            userId1: currentUser.id,
+            userId2: user.id
+        })
+            .then(response => {
+                console.log(response.data);
+                navigate(`/chat/${response.data.id}`, {
+                    state: {
+                        conv: response.data,
+                    }
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
 
     useEffect(() => {
-        const getUser= async() => {
-            const response = await getUserById(id);
-            setUser(response);
-        }
-        getUser();
-
         const isUserLiked = async () => {
             axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
                 .then(response => {
                     const likedUsers = response.data;
                     const userExists = likedUsers.find(likedUser => likedUser.id == id);
                     if (userExists)
-                        setFilled(true);
+                        setFilledIcon(true);
                 })
                 .catch(error => {
                     console.log(error);
                 });
         }
-        isUserLiked();
 
         const isUserMatched = async () => {
             axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
@@ -50,6 +74,7 @@ const ProfileDetails = ({id}) => {
                     if (isMatch)
                     {
                         setIsMatched(true);
+                        setFilledIcon(true);
                         console.log('you have a match with it');
                     }
                 })
@@ -57,13 +82,11 @@ const ProfileDetails = ({id}) => {
                     console.log(error);
                 });
         }
-        isUserMatched();
 
         const currentUserIsBlocked = async () => {
             axios.get(`http://localhost:3001/block/${id}`)
                 .then(response => {
                     const blockedUsers = response.data;
-                    console.log(blockedUsers);
                     const userExists = blockedUsers.find(user => user.blocked_id == currentUser.id);
                     if (userExists)
                     {
@@ -77,42 +100,101 @@ const ProfileDetails = ({id}) => {
                     console.log(error);
                 });
         }
-        currentUserIsBlocked();
-    }, [id]);
 
-    const blockUser = async () => {
-       await blockUserById(currentUser.id, user.id);
+        if(currentUser.id !== Number(id))
+        {
+            isUserLiked();
+            isUserMatched();
+            currentUserIsBlocked();
+
+            console.log('check if user exist before send a notif');
+            if (user && user.id) {
+                console.log('send a visit notif to:', user.id, ' from:', currentUser.id);
+                sendVisitNotification(currentUser.id, user.id);
+            }
+        }
+    }, [user]);
+
+
+    const sendVisitNotification = async () => {
+            await axios.post('http://localhost:3001/notifications', {
+                sender_id: currentUser.id,
+                receiver_id: user.id,
+                type: 'visit'
+            })
+                .then(response => {
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
     }
 
-    const likeUser = async (event) => {
-        await likeUserById(currentUser.id, user.id);
-        setFilled(true);
-    }
+    useEffect(() => {
+        const getUser = async () => {
+            console.log('getuser');
+            const response = await getUserById(id);
+            setUser(response);
+        }
+        getUser();
 
-    const unlikeUser = async (event) => {
-        await unlikeUserById(currentUser.id, user.id);
-        setFilled(false);
-    }
+        // console.log('check if user exist before send a notif');
+        // if (user && user.id) {
+        //     console.log('send a visit notif to:', user.id, ' from:', currentUser.id);
+        //     sendVisitNotification(currentUser.id, user.id);
+        // }
+    }, []);
 
-    const gotochat = async (event) => {
-       axios.post('http://localhost:3001/conversations', {
-            userId1: currentUser.id,
-            userId2: user.id
-        })
-        .then(response => {
-            console.log(response.data);
-            navigate(`/chat/${response.data.id}`, {
-                state: {
-                    conv: response.data,
-                }
-            });
-        })
-        .catch(error => {
-            console.log(error);
-        });
 
-    }
+    // useEffect(() => {
+    //     console.log('check if user exist before send a notif');
+    //     if (user && user.id) {
+    //         console.log('send a visit notif to:', user.id, ' from:', currentUser.id);
+    //         sendVisitNotification(currentUser.id, user.id);
+    //     }
+    // }, [user]);
 
+    // useEffect(() => {
+    //     console.log('check if user exist before send a notif');
+    //     if(user)
+    //     {
+    //         console.log('send a visit notif to:', user.id,' from:', currentUser.id);
+
+    //         axios.post('http://localhost:3001/notifications', {
+    //             sender_id: currentUser.id,
+    //             receiver_id: user.id,
+    //             type: 'visit'
+    //         })
+    //             .then(response => {
+    //                 console.log(response.data);
+    //             })
+    //             .catch(error => {
+    //                 console.log(error);
+    //             });
+    //     }
+    // }, [user]);
+
+
+    // useEffect(() => {
+    //     socket.client.on('isMatched', (data) => {
+    //         console.log(data);
+    //     })
+
+    //     return () => {
+    //         socket.client.off('isMatched');
+    //     };
+    // }, []);
+
+
+    //     useEffect(() => {
+    //     socket.client.on('isMatched', (data) => {
+    //         console.log(data);
+    //     })
+
+    //     return () => {
+    //         socket.client.off('isMatched');
+    //     };
+    // }, []);
     return (
         <>
             <div className='mx-2 pt-16 h-full'>
@@ -124,32 +206,42 @@ const ProfileDetails = ({id}) => {
                         :
                             <>
                                     <p>Profile of {user.first_name} {user.last_name}</p>
-                                    <div className="tooltip" data-tip="Block">
-                                        <NoSymbolIcon onClick={blockUser} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
-                                    </div>
                                     {
-                                        filled
+                                        currentUser.id !== Number(id)
                                         ?
-                                            <div className="tooltip" data-tip="Unlike">
-                                                <HeartSolidIcon onClick={(event) => unlikeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
+                                            <>
+                                                <div className="tooltip" data-tip="Block">
+                                                    <NoSymbolIcon onClick={blockUser} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
+                                                </div>
+                                            {
+                                                filledIcon
+                                                    ?
+                                                    <div className="tooltip" data-tip="Unlike">
+                                                        <HeartSolidIcon onClick={(event) => unlikeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
+                                                    </div>
+                                                    :
+                                                    <div className="tooltip" data-tip="Like">
+                                                        <HeartOutlineIcon onClick={(event) => likeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
+                                                    </div>
+                                            }
+                                            <div className="tooltip" data-tip="Report">
+                                                <ExclamationCircleIcon className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
                                             </div>
+                                            {
+                                                isMatched
+                                                    ?
+                                                    <div className="tooltip" data-tip="Start chatting">
+                                                        <ChatBubbleLeftIcon onClick={(event) => gotochat(event)} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
+                                                    </div>
+                                                    :
+                                                    null
+                                            }
+                                            </>
                                         :
-                                            <div className="tooltip" data-tip="Like">
-                                                <HeartOutlineIcon onClick={(event) => likeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
-                                            </div>
+                                        null
                                     }
-                                    <div className="tooltip" data-tip="Report">
-                                        <ExclamationCircleIcon className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
-                                    </div>
-                                    {
-                                        isMatched
-                                        ?
-                                            <div className="tooltip" data-tip="Start chatting">
-                                                <ChatBubbleLeftIcon onClick={(event) => gotochat(event)} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
-                                            </div>
-                                        :
-                                            null
-                                    }
+
+
                             </>
                     }
                 </div>

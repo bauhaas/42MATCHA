@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import express from 'express';
-import { getAllNotifications, getSenderNotifications, deleteNotification, insertNotification, updateReadNotification, updateTimeNotification } from '../services/notificationsService.js';
+import { getAllNotifications, getReceivedNotifications, deleteNotification, insertNotification, updateReadNotification, updateTimeNotification } from '../services/notificationsService.js';
 import log from '../config/log.js';
 
 const router = express.Router();
@@ -17,11 +17,11 @@ router.get('/', async (req, res) => {
 });
 
 // Get notifs where user is sender
-router.get('/:id/sender', async (req, res) => {
+router.get('/:id/received', async (req, res) => {
     try {
         const id = req.params.id;
-        log.info('[notifController]', 'enter in getSenderNotifications');
-        const notifications = await getSenderNotifications(id);
+        log.info('[notifController]', 'enter in getReceivedNotifications');
+        const notifications = await getReceivedNotifications(id);
         res.send(notifications);
     } catch (err) {
         res.status(500).send(err.message);
@@ -46,8 +46,8 @@ router.post('/', async (req, res) => {
         log.info('[notifController]', 'body: ', req.body);
         const { sender_id, receiver_id, type } = req.body;
         log.info('[notifController]', 'enter in insertNotification');
-        const id = await insertNotification(sender_id, receiver_id, type);
-        res.send({ id });
+        await insertNotification(sender_id, receiver_id, type);
+        res.sendStatus(200);
     } catch (err) {
             res.status(500).send(err.message);
     }
