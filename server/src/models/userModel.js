@@ -94,7 +94,7 @@ export async function seedUsersTable() {
         // const birthdate = faker.date.birthdate({refDate: Date});
         const hobbies = ["sport", "bagarre", "flute", "contrebasse", "trompette", "aviation", "chanter", "danser", "courgette", "livre", "je suis un interet", "je suis un hobby"];
         var interestsStr = "[";
-        for (let i = 0; i < 1 + Math.floor(Math.random() * hobbies.length); i++) {
+        for (let i = 0; i < 3 + Math.floor(Math.random() * 6); i++) {
           var j = Math.floor(Math.random() * hobbies.length);
           interestsStr += "\"" + hobbies[j] + "\",";
         }
