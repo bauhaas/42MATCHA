@@ -15,7 +15,7 @@ router.delete('/:id', async (req, res) => {
         await deleteConversation(id);
         res.send({id});
     } catch (err) {
-        if (err.message.contains('400')) {
+        if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
         }
         res.status(500).send(err.message);
@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
         const conversation = await insertConversation(userId1, userId2);
         res.send(conversation);
     } catch (err) {
-        if (err.message.contains('400')) {
+        if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
         }
         res.status(500).send(err.message);
@@ -53,7 +53,7 @@ router.get('/:userId', async (req, res) => {
         log.info('[conversationController]', conversations);
         res.send(conversations);
     } catch (err) {
-        if (err.message.contains('400')) {
+        if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
         }
         res.status(500).send(err.message);

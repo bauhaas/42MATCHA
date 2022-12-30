@@ -28,7 +28,7 @@ router.get('/:id/bachelors/', async (req, res) => {
     const users = await getBachelors(id);
     res.send(users);
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
@@ -45,7 +45,7 @@ router.post('/:id/filteredBachelors', async (req, res) => {
     const users = await getFilteredBachelors(id, req.body);
     res.send(users);
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
@@ -63,7 +63,7 @@ router.get('/:id/liked', async (req, res) => {
     const likedUsers = await getLikedUsers(id);
     res.send(likedUsers);
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
@@ -80,7 +80,7 @@ router.get('/:id/matched', async (req, res) => {
     const likedUsers = await getMatchedUsers(id);
     res.send(likedUsers);
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
@@ -97,7 +97,7 @@ router.get('/:id/blocked', async (req, res) => {
     const likedUsers = await getBlockedUsers(id);
     res.send(likedUsers);
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
@@ -157,13 +157,14 @@ router.get('/:id', async (req, res) => {
       throw 'get /users/:id id undefined'
     }
     if (isNaN(req.params.id)) {
+      console.log("here");
         throw '400: id must be a number';
     }
     const user = await getUserById(req.params.id);
     res.send(user);
   } catch (err) {
     console.log(err)
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
@@ -189,7 +190,7 @@ router.get('/:id/profile', async (req, res) => {
   } catch (err) {
     if (err.message === 'You are blocked') {
       res.status(404).send(err.message);
-    } else if (err.message.contains('400')) {
+    } else if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
@@ -275,7 +276,7 @@ router.put('/:id/update', authenticateToken, async (req, res) => {
   } catch (err) {
     if (err.message === 'A user with the given email already exists.') {
       res.status(403).send(err.message);
-    } else if (err.message.contains('400')) {
+    } else if (typeof(err) === "string" && err.includes('400')) {
       res.status(400).send(err.message);
     }
       res.status(500).send(err.message);
@@ -299,7 +300,7 @@ router.put('/resetpassword', async (req, res) => {
   } catch (err) {
     if (err.message === 'A user with the given email already exists.') {
       res.status(403).send(err.message);
-    } else if (err.message.contains('400')) {
+    } else if (typeof(err) === "string" && err.includes('400')) {
       res.status(400).send(err.message);
     }
     res.status(500).send(err.message);
@@ -316,7 +317,7 @@ router.delete('/:id', async (req, res) => {
     await deleteUser(id);
     res.send({ id });
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message);
     }
     res.status(500).send(err.message);

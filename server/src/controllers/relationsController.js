@@ -27,7 +27,7 @@ router.get('/:sender_id', async (req, res) => {
     const blocks = await getRelationsBySenderId(sender_id);
     res.send(blocks);
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
@@ -46,8 +46,10 @@ router.get('/:sender_id/blocked', async (req, res) => {
     const blocks = await getBlockedUsersBySenderId(sender_id);
     res.send(blocks);
   } catch (err) {
+    console.log(typeof(err))
+    console.log(typeof(err) === "string")
     console.log(err)
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
@@ -65,6 +67,9 @@ router.get('/:sender_id/liked', async (req, res) => {
       const likes = await getLikedUsersBySenderId(sender_id);
       res.send(likes);
     } catch (err) {
+      if (typeof(err) === "string" && err.includes('400')) {
+          res.status(400).send(err.message)
+      }
       res.status(500).send(err.message);
     }
   });
@@ -80,6 +85,9 @@ router.get('/:sender_id/matched', async (req, res) => {
       const matches = await getMatchedUsersBySenderId(sender_id);
       res.send(matches);
     } catch (err) {
+      if (typeof(err) === "string" && err.includes('400')) {
+          res.status(400).send(err.message)
+      }
       res.status(500).send(err.message);
     }
 });
@@ -96,7 +104,7 @@ router.get('/type/:sender_id/:receiver_id', async (req, res) => {
     const type = await getRelationTypeOfUsers(sender_id, receiver_id);
     res.send(type);
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
@@ -122,9 +130,10 @@ router.post('/', async (req, res) => {
   } catch (err) {
     if (err.message === 'You are blocked') {
       res.status(404).send(err.message);
-    } else {
-      res.status(500).send(err.message);
+    } else if (typeof(err) === "string" && err.includes('400')) {
+        res.status(400).send(err.message)
     }
+    res.status(500).send(err.message);
   }
 });
 
@@ -148,7 +157,7 @@ router.delete('/', async (req, res) => {
 
     res.send({sender_id});
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);

@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
         const notifications = await getNotifById(id);
         res.send(notifications);
     } catch (err) {
-        if (err.message.contains('400')) {
+        if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
         }
         res.status(500).send(err.message);
@@ -48,7 +48,7 @@ router.get('/:id/receiver', async (req, res) => {
         const notifications = await getReceivedNotifications(id);
         res.send(notifications);
     } catch (err) {
-        if (err.message.contains('400')) {
+        if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
         }
         res.status(500).send(err.message);
@@ -66,7 +66,7 @@ router.delete('/:id', async (req, res) => {
         await deleteNotification(id);
         res.send({id});
     } catch (err) {
-        if (err.message.contains('400')) {
+        if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
         }
         res.status(500).send(err.message);
@@ -92,7 +92,7 @@ router.post('/', async (req, res) => {
     } catch (err) {
         if (err.message === 'You are blocked') {
           res.status(404).send(err.message);
-        } else if (err.message.contains('400')) {
+        } else if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
         }
         res.status(500).send(err.message);
@@ -111,7 +111,7 @@ router.put('/:id/update_read', async (req, res) => {
         await updateReadNotification(id);
         res.send({ id });
     } catch (err) {
-        if (err.message.contains('400')) {
+        if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
         }
         res.status(500).send(err.message);

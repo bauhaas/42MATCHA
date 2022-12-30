@@ -16,7 +16,7 @@ router.get('/history/:conversationId', async (req, res) => {
     const messages = await getMessageHistory(conversationId);
     res.send(messages);
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message);
     }
     res.status(500).send(err.message);
@@ -35,7 +35,7 @@ router.patch('/:id', async (req, res) => {
         const messages = await patchMessages(id);
         res.sendStatus(200);
     } catch (err) {
-      if (err.message.contains('400')) {
+      if (typeof(err) === "string" && err.includes('400')) {
           res.status(400).send(err.message);
       }
       res.status(500).send(err.message);
@@ -53,7 +53,7 @@ router.delete('/', async (req, res) => {
 
     res.send(sender_id);
   } catch (err) {
-    if (err.message.contains('400')) {
+    if (typeof(err) === "string" && err.includes('400')) {
         res.status(400).send(err.message)
     }
     res.status(500).send(err.message);
