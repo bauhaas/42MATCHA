@@ -598,7 +598,7 @@
         "summary": "Get all blocked by sender_id",
         "description": "Get all blocked by sender_id from the database",
         "parameters": [
-          
+
         ],
         "responses": {
           "200": {
@@ -624,7 +624,7 @@
         "parameters": [
           {
           "name": "sender_id",
-          "in": "formData",
+          "in": "path",
           "required": true,
           "type": "integer"
           }
@@ -653,7 +653,7 @@
         "parameters": [
           {
           "name": "sender_id",
-          "in": "formData",
+          "in": "path",
           "required": true,
           "type": "integer"
         }
@@ -683,7 +683,7 @@
         "parameters": [
           {
           "name": "sender_id",
-          "in": "formData",
+          "in": "path",
           "required": true,
           "type": "integer"
           }
