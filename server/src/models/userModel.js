@@ -137,8 +137,9 @@ export async function seedUsersTable() {
           );
         `;
         await client.query(query);
-        }
       }
+      log.info('[userModel.js]', 'table seeded');
+    }
     else {
       log.info('[userModel.js]', 'user table already seeded - no need to seed');
     }
