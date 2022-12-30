@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment } from "react"
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
+import { BellIcon, ChatBubbleLeftRightIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 
 import  socket  from '../../Context/socket'
@@ -205,8 +205,14 @@ return (
         <div className="px-8">
           <div className="relative flex h-16 items-center justify-between">
             <img onClick={(event) => gotomenu(event)} className="block h-8 w-auto" src="../logo.png" alt="logo"/>
-            <div id="TODELETELATER" className="border-2 border-red-500 text-white">id:{user.id}, name:{user.first_name} {user.last_name}</div>
             <div id="navbarRightButtons" className="flex items-center gap-4">
+              <div id="TODELETELATER" className="border-2 border-red-500 text-white">id:{user.id}, name:{user.first_name} {user.last_name}</div>
+              {/* <Menu as="div">
+                <Menu.Button className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
+                  <Cog6ToothIcon  className={`h-8 w-8 text-gray-400 hover:text-white`} aria-hidden="true" />
+
+                </Menu.Button>
+              </Menu > */}
               <Menu as="div">
                 <Menu.Button onClick={gotochat} className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                   <ChatBubbleLeftRightIcon className={`h-8 w-8`} aria-hidden="true" />

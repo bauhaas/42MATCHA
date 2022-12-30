@@ -12,6 +12,7 @@ const Home = () => {
 			<div className="bg-chess-default min-h-screen">
 				<NavBar/>
 				<CardsMap/>
+
 			</div>
 		</>
 	)

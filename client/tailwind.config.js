@@ -4,6 +4,10 @@ const plugin = require('tailwindcss/plugin')
 
 module.exports = {
   content: ["./src/**/*.{html,js}"],
+  important: '#root',
+  // corePlugins: {
+  //     preflight: false,
+  // },
   theme: {
     extend: {
       colors: {
