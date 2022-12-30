@@ -201,7 +201,7 @@ router.get('/:id/profile', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { firstName, lastName, email, password, position } = req.body;
-    const id = await insertUser(firstName, lastName, email, password, position);
+    const id = await insertUser(firstName.trim(), lastName.trim(), email.trim(), password, position);
     res.send({ id });
   } catch (err) {
     if (err.message === 'A user with the given email already exists.') {
@@ -215,37 +215,34 @@ router.post('/', async (req, res) => {
 
 function changeUserData(user, update) {
   if (update.first_name) {
-    user.first_name = update.first_name;
+    user.first_name = update.first_name.trim();
   }
   if (update.last_name) {
-    user.last_name = update.last_name;
+    user.last_name = update.last_name.trim();
   }
   if (update.email) {
-    user.email = update.email;
+    user.email = update.email.trim();
   }
   if (update.age) {
     user.age = update.age;
   }
   if (update.sex) {
-    user.sex = update.sex;
+    user.sex = update.sex.trim();
   }
   if (update.sex_orientation) {
-    user.sex_orientation = update.sex_orientation;
+    user.sex_orientation = update.sex_orientation.trim();
   }
   if (update.city) {
-    user.city = update.city;
+    user.city = update.city.trim();
   }
   if (update.country) {
     user.country = update.country;
   }
   if (update.interests) {
-    user.interests = update.interests;
+    user.interests = update.interests.trim();
   }
   if (update.bio) {
     user.bio = update.bio;
-  }
-  if (update.active) {
-    user.active = update.active;
   }
   if (update.last_location) {
     user.last_location = update.last_location;

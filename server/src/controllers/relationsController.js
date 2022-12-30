@@ -124,7 +124,7 @@ router.post('/', async (req, res) => {
       throw 'You are blocked';
     }
 
-    const newRelation = await insertRelation(sender_id, receiver_id, type);
+    const newRelation = await insertRelation(sender_id, receiver_id, type.trim());
 
     res.send(newRelation);
   } catch (err) {
@@ -153,7 +153,7 @@ router.delete('/', async (req, res) => {
       throw '400: wrong type' + type;
     }
 
-    await deleteRelationByContent(sender_id, receiver_id, type);
+    await deleteRelationByContent(sender_id, receiver_id, type.trim());
 
     res.send({sender_id});
   } catch (err) {
