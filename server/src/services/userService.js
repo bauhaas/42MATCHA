@@ -24,12 +24,13 @@ export const getBachelors = async (id) => {
 
     const client = await pool.connect();
     const me = await getUserById(id);
+    console.log(me.longitude);
     const result = await client.query(`
-      SELECT *, SQRT(POWER(73 * ABS($2 - ST_X(last_location::geometry)), 2) + POWER(111 * ABS($3 - ST_Y(last_location::geometry)), 2)) as distance
+      SELECT *, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance
       FROM users
       WHERE $1 != id
-      AND SQRT(POWER(73 * ABS($2 - ST_X(last_location::geometry)), 2) + POWER(111 * ABS($3 - ST_Y(last_location::geometry)), 2)) < 50
-    `, [me.id, me.last_location.x , me.last_location.y]);
+      AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) < 50
+    `, [me.id, me.longitude, me.latitude]);
 
     var closeUsers = result.rows;
 
@@ -69,15 +70,15 @@ export const getFilteredBachelors = async (id, filters) => {
 
     const me = await getUserById(id);
     const result = await client.query(`
-      SELECT *, ABS($2 - ST_X(last_location::geometry)) + ABS($3 - ST_Y(last_location::geometry)) as distance
+      SELECT *, ABS($2 - longitude) + ABS($3 - latitude) as distance
       FROM users
       WHERE $1 != id
-      AND SQRT(POWER(73 * ABS($2 - ST_X(last_location::geometry)), 2) + POWER(111 * ABS($3 - ST_Y(last_location::geometry)), 2)) >= $4
-      AND SQRT(POWER(73 * ABS($2 - ST_X(last_location::geometry)), 2) + POWER(111 * ABS($3 - ST_Y(last_location::geometry)), 2)) <= $5
+      AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) >= $4
+      AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) <= $5
       AND age >= $6
       AND age <= $7
       AND fame_rating >= $8
-    `, [me.id, me.last_location.x , me.last_location.y, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
+    `, [me.id, me.longitude, me.latitude, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
 
     var filteredUsers = result.rows;
     
@@ -357,8 +358,8 @@ export const CreateFakeUser = async (fakeUser, position) => {
     log.info('[userService]', 'gonna insert the fake user');
     const fakeMail = fakeUser + "@" + fakeUser + ".com" ;
     const result = await client.query(`
-    INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count, last_location)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, POINT($16, $17))
+    INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count, longitude, latitude)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
     RETURNING *;
   `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "man", "hetero", "Paris", "France", '["test_interets"]', "", fakeUser, true, 0, 0, position.longitude, position.latitude]);
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));

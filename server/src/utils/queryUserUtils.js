@@ -10,8 +10,8 @@ const GET_USER_BY_ID = `
 `;
 
 const INSERT_USER = `
-  INSERT INTO users (first_name, last_name, email, password, last_location)
-  VALUES ($1, $2, $3, $4 POINT($5, $6))
+  INSERT INTO users (first_name, last_name, email, password, longitude, latitude)
+  VALUES ($1, $2, $3, $4, $5, $6))
   RETURNING *
 `;
 

@@ -23,7 +23,8 @@ export async function createUsersTable() {
         photos TEXT,
         bio TEXT,
         active BOOLEAN,
-        last_location POINT,
+        longitude FLOAT,
+        latitude FLOAT,
         fame_rating INT,
         report_count INT,
         status TIMESTAMPTZ NULL DEFAULT NOW()
@@ -62,7 +63,8 @@ export async function seedUsersTable() {
             fame_rating,
             photos,
             interests,
-            last_location
+            longitude,
+            latitude
           ) VALUES (
             'Baudoin',
             'Haas',
@@ -73,7 +75,8 @@ export async function seedUsersTable() {
             '0',
             'https://randomuser.me/api/portraits/men/17.jpg',
             '["je suis un hobby"]',
-            POINT(2.318641, 48.896561)
+            '2.318641',
+            '48.896561'
           );
         `;
       await client.query(testUser);
@@ -118,7 +121,8 @@ export async function seedUsersTable() {
             photos,
             bio,
             interests,
-            last_location
+            longitude,
+            latitude
           ) VALUES (
             '${first_name}',
             '${last_name}',
@@ -133,7 +137,8 @@ export async function seedUsersTable() {
             '${photos}',
             '${bio}',
             '${interestsStr}',
-            POINT(${2.318641 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}, ${48.896561 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())})
+            '${2.318641 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
+            '${48.896561 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}'
           );
         `;
         await client.query(query);

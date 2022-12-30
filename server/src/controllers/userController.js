@@ -244,9 +244,6 @@ function changeUserData(user, update) {
   if (update.bio) {
     user.bio = update.bio;
   }
-  if (update.last_location) {
-    user.last_location = update.last_location;
-  }
   if (update.report_count) {
     user.report_count += 1;
   }

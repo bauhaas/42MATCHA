@@ -10,7 +10,7 @@ const CardsMap = () => {
 	const user = useSelector((state) => state.user.user);
 
     useEffect(() => {
-        axios.get(`http://localhost:3001/users/${user.id}/bachelors/1`)
+        axios.get(`http://localhost:3001/users/${user.id}/bachelors`)
             .then(response => {
                 setUsers(response.data);
             })
