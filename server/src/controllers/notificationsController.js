@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken';
 import express from 'express';
-import { getAllNotifications, getReceivedNotifications, deleteNotification, insertNotification, updateReadNotification, updateTimeNotification } from '../services/notificationsService.js';
+import { getNotifById, getAllNotifications, getReceivedNotifications, deleteNotification, insertNotification, updateReadNotification, updateTimeNotification } from '../services/notificationsService.js';
+import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
+
 
 const router = express.Router();
 
@@ -16,26 +18,57 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get notifs where user is sender
-router.get('/:id/received', async (req, res) => {
+// Get notifs where user is receiver
+router.get('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        log.info('[notifController]', 'enter in getReceivedNotifications');
-        const notifications = await getReceivedNotifications(id);
+        if (isNaN(id)) {
+            throw '400: conversationId must be a number';
+        }
+        log.info('[notifController]', 'enter in getNotifById');
+        const notifications = await getNotifById(id);
         res.send(notifications);
     } catch (err) {
+        if (typeof(err) === "string" && err.includes('400')) {
+            res.status(400).send(err.message)
+        }
         res.status(500).send(err.message);
     }
 });
 
-// Delete a notif by it's id
+
+// Get notifs where user is receiver
+router.get('/:id/receiver', async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (isNaN(id)) {
+            throw '400: conversationId must be a number';
+        }
+        log.info('[notifController]', 'enter in getReceivedNotifications');
+        const notifications = await getReceivedNotifications(id);
+        res.send(notifications);
+    } catch (err) {
+        if (typeof(err) === "string" && err.includes('400')) {
+            res.status(400).send(err.message)
+        }
+        res.status(500).send(err.message);
+    }
+});
+
+// Delete a notif by its id
 router.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
+        if (isNaN(id)) {
+            throw '400: conversationId must be a number';
+        }
         log.info('[notifController]', 'enter in deleteNotifications');
         await deleteNotification(id);
         res.send({id});
     } catch (err) {
+        if (typeof(err) === "string" && err.includes('400')) {
+            res.status(400).send(err.message)
+        }
         res.status(500).send(err.message);
     }
 });
@@ -43,13 +76,26 @@ router.delete('/:id', async (req, res) => {
 // Insert a new notif
 router.post('/', async (req, res) => {
     try {
-        log.info('[notifController]', 'body: ', req.body);
         const { sender_id, receiver_id, type } = req.body;
+        if (isNaN(sender_id) || isNaN(receiver_id)) {
+            throw '400: sender_id and receiver_id must be a number';
+        }
+
+        const blocked = await isBlocked(receiver_id, sender_id);
+        if (blocked) {
+          throw 'You are blocked';
+        }
+
         log.info('[notifController]', 'enter in insertNotification');
         await insertNotification(sender_id, receiver_id, type);
         res.sendStatus(200);
     } catch (err) {
-            res.status(500).send(err.message);
+        if (err.message === 'You are blocked') {
+          res.status(404).send(err.message);
+        } else if (typeof(err) === "string" && err.includes('400')) {
+            res.status(400).send(err.message)
+        }
+        res.status(500).send(err.message);
     }
 });
 
@@ -57,32 +103,19 @@ router.post('/', async (req, res) => {
 router.put('/:id/update_read', async (req, res) => {
     try {
         const id = req.params.id;
-        log.info('[notifController]', req.body);
-        log.info('[notifController]', 'enter in updateReadNotifications');
+        if (isNaN(id)) {
+            throw '400: userId must be a number';
+        }
+
+        log.info('[notifController]', 'enter in updateReadNotification');
         await updateReadNotification(id);
         res.send({ id });
     } catch (err) {
-        res.status(500).send(err.message);
-    }
-});
-
-// Update a notification's updated_at information
-router.put('/:id/update_time', async (req, res) => {
-    try {
-        const id = req.params.id;
-        log.info('[notifController]', req.body);
-        log.info('[notifController]', 'enter in updateTimeNotification');
-        await updateTimeNotification(id);
-        res.send({ id });
-    } catch (err) {
+        if (typeof(err) === "string" && err.includes('400')) {
+            res.status(400).send(err.message)
+        }
         res.status(500).send(err.message);
     }
 });
 
 export default router
-
-// processus de recrutement (cb d'étapes, et quelles sont-elles ?)
-// recruté sur mission ou profile
-// politique concernant les certifications
-// structure de l'entreprise (Revolve, Innovation, ...)
-// Localisation (bureaux sur Strasbourg?)

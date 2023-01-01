@@ -6,10 +6,10 @@ import log from '../config/log.js';
 export const deleteConversation = async (id) => {
     try {
         const client = await pool.connect();
-        log.info('[conversationService]', 'delete');
+        log.info('[conversationService]', 'deleteConversation');
 
         await client.query(
-            `DELETE FROM conversation
+            `DELETE FROM conversations
             WHERE id = $1;`, [id]);
         client.release();
     } catch (err) {
@@ -21,7 +21,7 @@ export const deleteConversation = async (id) => {
 const getConversationCustom = async (id, userId1, userId2) => {
     try {
         const client = await pool.connect();
-        log.info('[conversationService]', 'get conversation');
+        log.info('[conversationService]', 'getConversationCustom');
         const result = await client.query(`
     SELECT conversation.id, conversation.userId1, conversation.userId2,
   user1.first_name || ' ' || user1.last_name as user1_name,
@@ -45,7 +45,7 @@ WHERE conversation.id = $1 AND ((conversation.userId1 = $2 AND conversation.user
 export const insertConversation = async (userId1, userId2) => {
     try {
         const client = await pool.connect();
-        log.info('[conversationService]', 'insert');
+        log.info('[conversationService]', 'insertConversation');
 
         // Check if a conversation already exists between the two users
         const result = await client.query(`
@@ -76,44 +76,64 @@ export const insertConversation = async (userId1, userId2) => {
     }
 };
 
-
-// // Patch a conv in the database
-// export const patchConversation = async (id, unread) => {
-//     try {
-//         const client = await pool.connect();
-//         log.info('[conversationService]', 'patch', id, unread);
-//         const result = await client.query('UPDATE conversation SET unread = false WHERE id = $1;', [id]);
-//         log.info('[conversationService]', 'patch done');
-//         client.release();
-//     } catch (err) {
-//         throw err;
-//     }
-// };
-
-
 // Get all conv in the database from a user
 export const getConversations = async (id) => {
     try {
         const client = await pool.connect();
-        log.info('[conversationService]', 'get');
+        log.info('[conversationService]', 'getConversations');
 
         //chat gpted (si tu need des details je peux te filer les logs du chat)
         const result = await client.query(`
-SELECT conversation.id, conversation.userId1, conversation.userId2,
-  user1.first_name || ' ' || user1.last_name as user1_name,
-  user2.first_name || ' ' || user2.last_name as user2_name,
-  (SELECT message FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message,
-  (SELECT sender_id FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_author_id,
-  (SELECT unread FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_unread
-FROM conversation
-JOIN users as user1 ON user1.id = conversation.userId1
-JOIN users as user2 ON user2.id = conversation.userId2
-WHERE (conversation.userId1 = $1 OR conversation.userId2 = $1);`,
+            SELECT conversation.id, conversation.userId1, conversation.userId2,
+            user1.first_name || ' ' || user1.last_name as user1_name,
+            user2.first_name || ' ' || user2.last_name as user2_name,
+            (SELECT message FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message,
+            (SELECT sender_id FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_author_id,
+            (SELECT unread FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_unread
+            FROM conversation
+            JOIN users as user1 ON user1.id = conversation.userId1
+            JOIN users as user2 ON user2.id = conversation.userId2
+            WHERE (conversation.userId1 = $1 OR conversation.userId2 = $1);`,
           [id]
         );
         const conversations = result.rows;
         client.release();
         return conversations;
+    } catch (err) {
+        throw err;
+    }
+};
+
+export const deleteConversationOfPair = async (id1, id2) => {
+    try {
+        const client = await pool.connect();
+        log.info('[conversationService]', 'deleteConversationOfPair');
+
+
+        const convResult = await client.query(`
+        SELECT id FROM conversation
+        WHERE (userId1 = $1 AND userId2 = $1)
+        OR (userId1 = $2 AND userId2 = $1);
+        `
+        , [id1, id2]);
+        const conversation = convResult.rows[0];
+
+        if (conversation === undefined) {
+            return 0;
+        }
+
+        const messagesResult = await client.query(`
+        SELECT id FROM messages
+        WHERE (conversation_id = $1);
+        `, [conversation]);
+
+        const messagesIds = messagesResult.rows;
+
+        for (let i = 0; i < messagesIds.length; i++) {
+            await deleteMessage(messagesIds.id);
+        }
+        client.release();
+        return messagesIds;
     } catch (err) {
         throw err;
     }

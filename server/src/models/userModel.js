@@ -23,7 +23,8 @@ export async function createUsersTable() {
         photos TEXT,
         bio TEXT,
         active BOOLEAN,
-        last_location POINT,
+        longitude FLOAT,
+        latitude FLOAT,
         fame_rating INT,
         report_count INT,
         status TIMESTAMPTZ NULL DEFAULT NOW()
@@ -62,7 +63,8 @@ export async function seedUsersTable() {
             fame_rating,
             photos,
             interests,
-            last_location
+            longitude,
+            latitude
           ) VALUES (
             'Baudoin',
             'Haas',
@@ -73,7 +75,8 @@ export async function seedUsersTable() {
             '0',
             'https://randomuser.me/api/portraits/men/17.jpg',
             '["je suis un hobby"]',
-            POINT(2.318641, 48.896561)
+            '2.318641',
+            '48.896561'
           );
         `;
       await client.query(testUser);
@@ -94,7 +97,7 @@ export async function seedUsersTable() {
         // const birthdate = faker.date.birthdate({refDate: Date});
         const hobbies = ["sport", "bagarre", "flute", "contrebasse", "trompette", "aviation", "chanter", "danser", "courgette", "livre", "je suis un interet", "je suis un hobby"];
         var interestsStr = "[";
-        for (let i = 0; i < 1 + Math.floor(Math.random() * hobbies.length); i++) {
+        for (let i = 0; i < 3 + Math.floor(Math.random() * 6); i++) {
           var j = Math.floor(Math.random() * hobbies.length);
           interestsStr += "\"" + hobbies[j] + "\",";
         }
@@ -102,6 +105,7 @@ export async function seedUsersTable() {
         interestsStr += "]";
         const photos = faker.image.avatar();
         const bio = faker.lorem.lines(3).replace('\'', '');
+
         const query = `
           INSERT INTO users (
             first_name,
@@ -117,7 +121,8 @@ export async function seedUsersTable() {
             photos,
             bio,
             interests,
-            last_location
+            longitude,
+            latitude
           ) VALUES (
             '${first_name}',
             '${last_name}',
@@ -132,12 +137,14 @@ export async function seedUsersTable() {
             '${photos}',
             '${bio}',
             '${interestsStr}',
-            POINT(${2.318641 - 2 + (4*Math.random())}, ${48.896561 - 2 + (4*Math.random())})
+            '${2.318641 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
+            '${48.896561 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}'
           );
         `;
         await client.query(query);
-        }
       }
+      log.info('[userModel.js]', 'user table seeded');
+    }
     else {
       log.info('[userModel.js]', 'user table already seeded - no need to seed');
     }

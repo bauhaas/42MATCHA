@@ -1,13 +1,13 @@
 import express from 'express';
 import { createUsersTable, seedUsersTable } from './models/userModel.js';
 import { createNotificationsTable, seedNotificationsTable } from './models/notificationsModel.js';
-import { createBlocksTable } from './models/blockModel.js';
 import { createMessagesTable } from './models/messageModel.js';
+import { createRelationsTable } from './models/relationsModel.js';
 import messageController from './controllers/messageController.js';
 import userController from './controllers/userController.js';
 import conversationController from './controllers/conversationController.js';
-import blockController from './controllers/blockController.js';
 import notificationsController from './controllers/notificationsController.js';
+import relationsController from './controllers/relationsController.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger.json';
 import bodyParser from 'body-parser';
@@ -22,6 +22,7 @@ import { updateStatusUser } from './services/userService.js';
 import { createConversationTable } from './models/conversationModel.js';
 import { insertMessage2 } from './services/messageService.js';
 import { getConversations } from './services/conversationService.js';
+import { isBlocked } from './services/relationsService.js';
 
 const app = express();
 
@@ -76,6 +77,8 @@ io.on('connection', (socket) => {
     log.info('[index.js]', 'receive sendMessage event');
     log.info('[index.js]', 'payload:', messagePayload);
 
+
+    const blocked = await isBlocked()
     const messageHistory = await insertMessage2(messagePayload);
     const fromSocket = map.get(String(messagePayload.from));
     const toSocket = map.get(String(messagePayload.to));
@@ -100,16 +103,16 @@ server.listen(port, async () => {
   log.info('[index.js]', `Server listening on port ${port}`);
   await createUsersTable();
   await seedUsersTable();
+  await createRelationsTable();
   await createNotificationsTable();
   await seedNotificationsTable();
-  await createBlocksTable();
   await createConversationTable();
   await createMessagesTable();
 });
 
 app.use('/users', userController);
+app.use('/relations', relationsController);
 app.use('/notifications', notificationsController);
-app.use('/block', blockController);
 app.use('/messages', messageController);
 app.use('/conversations', conversationController)
 

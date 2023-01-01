@@ -19,18 +19,18 @@ export const getAllUsers = async () => {
 };
 
 // Get bachelors from the database
-export const getBachelors = async (id, page) => {
+export const getBachelors = async (id) => {
   try {
 
     const client = await pool.connect();
-
     const me = await getUserById(id);
+    console.log(me.longitude);
     const result = await client.query(`
-      SELECT *, ABS($2 - ST_X(last_location::geometry)) + ABS($3 - ST_Y(last_location::geometry)) as distance
+      SELECT *, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance
       FROM users
       WHERE $1 != id
-      AND ABS($2 - ST_X(last_location::geometry)) + ABS($3 - ST_Y(last_location::geometry)) <= 1
-    `, [me.id, me.last_location.x , me.last_location.y]);
+      AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) < 50
+    `, [me.id, me.longitude, me.latitude]);
 
     var closeUsers = result.rows;
 
@@ -43,7 +43,6 @@ export const getBachelors = async (id, page) => {
 
     closeUsers.map(function (user) {
         const fameFactor = Math.max(1 - (0.01 * user.fame_rating), 0.5);
-
         const commonInterests = me.interests.filter(value => user.interests.includes(value));
         const interestsFactor = Math.max(1 - (0.1 * commonInterests.length), 0.5);
 
@@ -53,9 +52,6 @@ export const getBachelors = async (id, page) => {
 
         return user;
     });
-
-    console.log("length", closeUsers.length);
-    console.log("me", me);
 
     // sort by increasing distance
     closeUsers.sort((a, b) => a.distance < b.distance);
@@ -70,21 +66,19 @@ export const getBachelors = async (id, page) => {
 // Get bachelors with filters from the database
 export const getFilteredBachelors = async (id, filters) => {
   try {
-
     const client = await pool.connect();
 
     const me = await getUserById(id);
     const result = await client.query(`
-      SELECT *, ABS($2 - ST_X(last_location::geometry)) + ABS($3 - ST_Y(last_location::geometry)) as distance
+      SELECT *, ABS($2 - longitude) + ABS($3 - latitude) as distance
       FROM users
       WHERE $1 != id
-      AND (ABS($2 - ST_X(last_location::geometry)) * ABS($2 - ST_X(last_location::geometry))) + (ABS($3 - ST_Y(last_location::geometry)) *ABS($3 - ST_Y(last_location::geometry))) >= $4
-      AND (ABS($2 - ST_X(last_location::geometry)) * ABS($2 - ST_X(last_location::geometry))) + (ABS($3 - ST_Y(last_location::geometry)) *ABS($3 - ST_Y(last_location::geometry))) <= $5
+      AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) >= $4
+      AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) <= $5
       AND age >= $6
       AND age <= $7
       AND fame_rating >= $8
-      AND fame_rating <= $9
-    `, [me.id, me.last_location.x , me.last_location.y, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame, filters.max_fame]);
+    `, [me.id, me.longitude, me.latitude, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
 
     var filteredUsers = result.rows;
     
@@ -97,7 +91,7 @@ export const getFilteredBachelors = async (id, filters) => {
 
     filteredUsers = filteredUsers.filter(function (user) {
         const commonInterests = me.interests.filter(value => user.interests.includes(value));
-        if (commonInterests.length >= filters.min_common_interests && commonInterests.length <= filters.max_common_interests) {
+        if (commonInterests.length >= filters.min_common_interests) {
           return true;
         }
         return false;
@@ -364,8 +358,8 @@ export const CreateFakeUser = async (fakeUser, position) => {
     log.info('[userService]', 'gonna insert the fake user');
     const fakeMail = fakeUser + "@" + fakeUser + ".com" ;
     const result = await client.query(`
-    INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count, last_location)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, POINT($16, $17))
+    INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count, longitude, latitude)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
     RETURNING *;
   `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "man", "hetero", "Paris", "France", '["test_interets"]', "", fakeUser, true, 0, 0, position.longitude, position.latitude]);
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));
@@ -457,6 +451,24 @@ export const getMatchedUsers = async (id) => {
       WHERE id IN (
         SELECT receiver_id FROM notifications
         WHERE sender_id = $1 AND type = 'match'
+      )
+    `, [id]);
+    const users = result.rows;
+    client.release();
+    return users;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export const getBlockedUsers = async (id) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query(`
+      SELECT * FROM users
+      WHERE id IN (
+        SELECT receiver_id FROM notifications
+        WHERE sender_id = $1 AND type = 'block'
       )
     `, [id]);
     const users = result.rows;
