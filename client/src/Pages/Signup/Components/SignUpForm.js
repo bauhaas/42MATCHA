@@ -110,7 +110,7 @@ const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorTog
 
             <label className={`block ${invalidFields.includes('password') ? " text-red-500" : "text-gray-700"} text-sm font-bold self-start mb-1`}>
                 Password
-                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("passwordConfirm", passwordConfirm, "required|match|min:12", {
+                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("password", password, "required|match|min:12", {
                     messages: {
                         required: " is required",
                         match: "doesn't match",
