@@ -49,9 +49,9 @@ const MatchedUsers = () => {
 				<NavBar/>
 				<div className='mx-2 pt-16 h-screen'>
 					<SettingsHeader />
-					<div className='flex gap-4 mt-2 sm:mx-40'>
+					<div className='flex gap-4 mt-2'>
 						<SettingsMenu/>
-						<div className='text-white bg-chess-dark p-4 rounded-lg'>
+						<div className='text-white bg-chess-dark p-4 rounded-lg max-w-3xl'>
 							<span className='font-bold'>Matched Users</span>
 							<p className='text-sm py-2 break-words'>
 								A matched user is able to see your profile and send you messages. Unmatch a user will delete your chat history with him but you are able rematch

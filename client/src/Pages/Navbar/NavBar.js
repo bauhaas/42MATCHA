@@ -200,6 +200,25 @@ const Navbar = () => {
   if(convlist)
     console.log(convlist.filter(conv => conv.last_message_unread === true).length !== 0);
 
+  const getNotifText = (notification) => {
+    console.log(notification.type);
+    switch(notification.type){
+      case 'match':
+        return `You got a match with ${notification.fullname}`;
+      case 'unmatch':
+        return ` ${notification.fullname} unmatched you`;
+      case 'like':
+        return ` ${notification.fullname} liked you`;
+      case 'block':
+        return ` ${notification.fullname} blocked you`;
+      case 'unblock':
+        return ` ${notification.fullname} unblocked you`;
+      case 'visit':
+        return ` ${notification.fullname} visited your profile`;
+      default:
+        return notification.type;
+    }
+  }
 return (
   <Disclosure as="nav" className="bg-chess-dark fixed top-0 min-w-full z-40">
     {({ open }) => (
@@ -240,7 +259,7 @@ return (
                       <Menu.Item key={notification.id}>
                         <div onMouseEnter={(event) => setNotifRead(event, notification)} className={classNames(notification.read ? '' : 'bg-blue-100', 'px-4 py-2 text-sm text-gray-700 flex items-center gap-1')}>
                             <Avatar imageAttribute={'rounded-full w-8'} attribute={'avatar'} />
-                            <div className="flex-1">{notification.type}</div>
+                            <div className="flex-1">{getNotifText(notification)}</div>
                             <svg onClick={(event) =>deleteNotifs(event, notification)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 rounded-full hover:bg-blue-200">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>

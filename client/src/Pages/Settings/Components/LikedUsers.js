@@ -47,9 +47,9 @@ const LikedUsers = () => {
 				<NavBar />
 				<div className='mx-2 pt-16 h-screen'>
 					<SettingsHeader />
-					<div className='flex gap-4 mt-2 sm:mx-40'>
+					<div className='flex gap-4 mt-2'>
 						<SettingsMenu />
-						<div className='text-white bg-chess-dark p-4 rounded-lg'>
+						<div className='text-white bg-chess-dark p-4 rounded-lg max-w-3xl'>
 							<span className='font-bold'>Liked Users</span>
 							<p className='text-sm py-2 break-words'>
 								A liked user is able to see your profile. If a user likes you back but you unliked him, you won't be noticed and will have to like him again.

@@ -18,7 +18,10 @@ module.exports = {
         'chess-placeholder':'#3d3b39',
         'chess-bar': '#939291',
         'chess-place-text':'#9e9d9c',
-        'chess-text': '#ffffff'
+        'top-logo':'#fe2283',
+        'mid-logo':"#fd6778",
+        'bot-logo':'#feab7b'
+
       },
       aspectRatio: {
         '4/3': '4 / 3',
