@@ -22,11 +22,7 @@ const CardsMap = () => {
 	const currentUser = useSelector((state) => state.user.user);
 
     useEffect(() => {
-<<<<<<< HEAD
-        axios.get(`http://localhost:3001/users/${currentUser.id}/bachelors/1`)
-=======
-        axios.get(`http://localhost:3001/users/${user.id}/bachelors`)
->>>>>>> main
+        axios.get(`http://localhost:3001/users/${currentUser.id}/bachelors`)
             .then(response => {
                 setUsers(response.data);
             })
