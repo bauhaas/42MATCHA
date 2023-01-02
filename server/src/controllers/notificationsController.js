@@ -84,8 +84,13 @@ router.post('/', async (req, res) => {
             throw '400: sender_id and receiver_id must be a number';
         }
 
+        log.info(sender_id, receiver_id, type)
+
         const blocked = await isBlocked(receiver_id, sender_id);
+        log.info(sender_id, receiver_id, type)
+
         if (blocked) {
+            log.error('[notifController]', 'you are blocked');
           throw 'You are blocked';
         }
 
