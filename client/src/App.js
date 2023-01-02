@@ -27,7 +27,7 @@ navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
 function App() {
     useEffect(() => {
         return () => {
-          if (socket.client.connected === true) {
+          if (socket.client && socket.client.connected === true) {
             socket.disconnect();
           }
       }

@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import useValidator from '../../../Hooks/useValidator';
 import axios from 'axios';
+import position from '../../../Context/position'
+
 
 const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorToggle, setHasSignedUP}) => {
 
@@ -24,7 +26,9 @@ const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorTog
             firstName: firstName,
             lastName: lastName,
             email: email,
-            password: password
+            password: password,
+            longitude: position.longitude,
+            latitude: position.latitude,
         })
             .then(response => {
                 console.log(response);
@@ -47,7 +51,7 @@ const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorTog
             (!validator.check(firstName, "required|alpha|max:15")) ? invalidFieldsSet.add('firstName') : invalidFieldsSet.delete('firstName');
             (!validator.check(lastName, "required|alpha|max:15")) ? invalidFieldsSet.add('lastName') : invalidFieldsSet.delete('lastName');
             (!validator.check(email, "required|email")) ? invalidFieldsSet.add('email') : invalidFieldsSet.delete('email');
-            (!validator.check(password, "required")) ? invalidFieldsSet.add('password') : invalidFieldsSet.delete('password');
+            (!validator.check(password, "required|match|min:12")) ? invalidFieldsSet.add('password') : invalidFieldsSet.delete('password');
             (!validator.check(passwordConfirm, "required|match")) ? invalidFieldsSet.add('passwordConfirm') : invalidFieldsSet.delete('passwordConfirm');
 
             // validator.showMessages();
@@ -106,6 +110,13 @@ const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorTog
 
             <label className={`block ${invalidFields.includes('password') ? " text-red-500" : "text-gray-700"} text-sm font-bold self-start mb-1`}>
                 Password
+                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("password", password, "required|match|min:12", {
+                    messages: {
+                        required: " is required",
+                        match: "doesn't match",
+                        min: " too short, at least 12 characters"
+                    },
+                })}</span>
             </label>
             <input className={`shadow appearance-none border rounded w-full py-2 px-3 ${invalidFields.includes('password') ? " text-red-500 border-red-500" : "text-gray-700"} mb-3 leading-tight focus:outline-none focus:shadow-outline`} id="password" type="password" placeholder="***********" value={password} onChange={(event) => setPassword(event.target.value)} />
 

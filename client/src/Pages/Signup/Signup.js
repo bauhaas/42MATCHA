@@ -9,7 +9,7 @@ const Signup = () => {
   const [hasSignedUp, setHasSignedUP] = useToggle(false);
   const [error, setError] = useState([])
 
-  console.log(hasSignedUp);
+  console.log("hasSignedUp", hasSignedUp);
   return (
     <>
     <div className="h-screen flex flex-col md:flex-row-reverse items-center content-start">
