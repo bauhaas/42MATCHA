@@ -4,7 +4,7 @@ const SettingsHeader = () => {
 
     return (
         <>
-            <div className='flex items-center gap-2 p-2 text-white font-bold text-2xl sm:mx-40'>
+            <div className='flex items-center gap-2 p-2 text-white font-bold text-2xl'>
                 <Cog6ToothIcon className={`h-6 w-6`} />
                 <span>Settings</span>
             </div>

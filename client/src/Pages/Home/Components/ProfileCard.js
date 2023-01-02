@@ -1,6 +1,9 @@
 import { motion } from "framer-motion"
 import useToggle from '../../../Hooks/useToggle';
 
+import { HeartIcon as HeartOutlineIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
+
 const transition = {
 	duration: 0.5,
 	ease: 'linear',
@@ -11,13 +14,18 @@ const ProfileCard = ({ user }) => {
 
 	return (
 		<>
-			<div className="rounded-md bg-black group w-full scale-90">
+			<div className="rounded-md bg-chess-hover hover:bg-chess-dark group w-full scale-90">
 				{
 					<>
 						<div id='cardRevealed' className="flex flex-col h-full">
 							<img className="w-full rounded-t-md" src={user.photos} alt="user" />
 							<div className="p-2 grow">
-								<p className="text-4xl font-bold text-orange-400">{user.first_name}, {user.age}</p>
+								<div className="flex flex-row items-center w-full">
+									<p className="text-4xl font-bold text-orange-400 grow">{user.first_name}, {user.age}</p>
+									<div className="tooltip" data-tip="Like">
+										<HeartOutlineIcon className='h-10 w-10 text-red-500 hover:text-red-700 hover:cursor-pointer'/>
+									</div>
+								</div>
 								<p className='text-xl font-bold text-orange-400'>Student</p>
 								<p className='font-bold text-orange-400 pb-2'>{user.city} - {Math.round(user.distance)}km</p>
 								<p className='line-clamp-5 text-justify text-gray-300'>{user.bio}</p>
@@ -28,7 +36,7 @@ const ProfileCard = ({ user }) => {
 										return null;
 									}
 									return (
-										<span className="bg-orange-300 text-orange-900 rounded-md px-1">{interest}</span>
+										<span className="bg-orange-300 text-chess-default rounded-lg p-1">{interest}</span>
 									);
 								})}
 							</div>

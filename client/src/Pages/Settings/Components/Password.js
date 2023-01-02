@@ -50,11 +50,55 @@ const Password = () => {
 				<NavBar/>
 				<div className='mx-2 pt-16 h-screen'>
                     <SettingsHeader/>
-					<div className='flex gap-4 mt-2 sm:mx-40'>
+					<div className='flex gap-4 mt-2'>
 						<SettingsMenu/>
-						<div className='relative text-white bg-chess-dark p-4 rounded-lg w-full'>
+                        <div className=' text-white bg-chess-dark p-4 rounded-lg w-full max-w-3xl flex flex-col'>
 							<span className='font-bold'>Change password</span>
-                            <div className=' pt-2 flex flex-col sm:flex-row mb-2 sm:justify-between sm:gap-2'>
+                            <div className='flex flex-col w-3/4 h-full'>
+                                <div className='mt-2 flex flex-col sm:flex-row  sm:justify-between mb-2'>
+                                    <label className="text-white text-sm self-start">
+                                        Current password
+                                    </label>
+                                    <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
+                                        <input className="w-full bg-transparent text-white focus:outline-none focus:shadow-outline" id="currentPass"
+                                                type='password'
+                                                value={currentPassword}
+                                                onChange={(event) => setCurrentPassword(event.target.value)} />
+                                    </div>
+
+                                </div>
+                                <div className='flex flex-col mb-2 sm:flex-row sm:justify-between'>
+                                        <label className="text-white text-sm self-start">
+                                            New password
+                                        </label>
+                                    <div className='bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
+                                        <input className="w-full pl-2 bg-transparent text-white rounded-sm focus:outline-none focus:shadow-outline" id="password"
+                                                type={isRevealed ? 'text' : 'password'}
+                                                value={password}
+                                                onChange={(event) => setPassword(event.target.value)} />
+                                        <button onClick={toggleReveal}>
+                                            <EyeIcon onClick={toggleReveal}  className={`h-6 w-6 p-1 text-chess-place-text hover:text-white`}/>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className='flex flex-col sm:flex-row sm:justify-between'>
+                                        <label className="text-white text-sm self-start">
+                                            Confirm new password
+                                        </label>
+                                        <div className='bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
+                                        <input className="w-full pl-2 bg-transparent text-white rounded-sm focus:outline-none focus:shadow-outline" id="passwordConfirm"
+                                                    type={isRevealedConfirm ? 'text' : 'password'}
+                                                    value={passwordConfirm}
+                                                    onChange={(event) => setPasswordConfirm(event.target.value)} />
+                                            <button onClick={toggleRevealConfirm}>
+                                                <EyeIcon className={`h-6 w-6 p-1 text-chess-place-text hover:text-white`}/>
+                                            </button>
+                                        </div>
+
+                                </div>
+                                <button onClick={resetPassword}  className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500 ${ password !== passwordConfirm || password.length <= 0 ? 'btn-disabled': ''}`}>Change password</button>
+                            </div>
+                            {/* <div className=' pt-2 flex flex-col sm:flex-row mb-2 sm:justify-between sm:gap-2'>
                                     <label className="text-white text-sm self-start">
                                         Current password
                                     </label>
@@ -94,8 +138,8 @@ const Password = () => {
                                         </button>
                                     </div>
 
-                            </div>
-                            <button onClick={resetPassword}  className={`btn btn-sm absolute bottom-2 sm:bottom-5 rounded-md  bg-green-600 hover:bg-green-500 ${ password !== passwordConfirm || password.length <= 0 ? 'btn-disabled': ''}`}>Change password</button>
+                            </div> */}
+                            {/* <button onClick={resetPassword}  className={`btn btn-sm absolute bottom-2 sm:bottom-5 rounded-md  bg-green-600 hover:bg-green-500 ${ password !== passwordConfirm || password.length <= 0 ? 'btn-disabled': ''}`}>Change password</button> */}
 						</div>
 					</div>
 

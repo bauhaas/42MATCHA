@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import SettingsHeader from './SettingsHeader';
 import { useSelector } from 'react-redux';
+import SettingsLayout from './SettingsLayout';
 
 const BlockedUsers = () => {
 
@@ -56,9 +57,9 @@ const BlockedUsers = () => {
 				<NavBar/>
 				<div className='mx-2 pt-16 h-screen'>
 					<SettingsHeader />
-					<div className='flex gap-4 mt-2 sm:mx-40'>
+					<div className='flex gap-4 mt-2'>
 						<SettingsMenu/>
-						<div className='text-white bg-chess-dark p-4 rounded-lg w-full'>
+						<div className='text-white bg-chess-dark p-4 rounded-lg max-w-3xl'>
 							<span className='font-bold'>Blocked Users</span>
 							<p className='text-sm py-2 break-words'>
 								A blocked user will not see your profile appear in their searches, or be able to send you messages. Blocking a user will delete your chat history with them
