@@ -32,7 +32,6 @@ export const insertMessage2 = async (payload) => {
 
         client.release();
         return messageHistory;
-
     } catch (err) {
         throw err;
     }
