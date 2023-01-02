@@ -14,10 +14,13 @@ const BlockedUsers = () => {
 	const unblockUser = (event, id) => {
 		event.preventDefault();
 		console.log('unblock user', id);
-		axios.post('http://localhost:3001/relations', {
-			sender_id: currentUser.id,
-			receiver_id: id,
-			type: 'unblock'
+		axios.delete('http://localhost:3001/relations', {
+			data:{
+				sender_id: currentUser.id,
+				receiver_id: id,
+				type: 'block'
+			}
+
 		  })
 		.then(response => {
 			console.log(response);
@@ -32,6 +35,7 @@ const BlockedUsers = () => {
 		console.log(currentUser.id);
 		axios.get(`http://localhost:3001/users/${currentUser.id}/blocked`)
             .then(response => {
+				console.log(response.data);
 				setBlockedUsers(response.data);
             })
             .catch(error => {
@@ -74,7 +78,7 @@ const BlockedUsers = () => {
 												{user.first_name} {user.last_name}
 											</td>
 											<td className="text-right">
-												<button onClick={(event) => unblockUser(event, user.blocked_id)}>Unblock</button>
+												<button onClick={(event) => unblockUser(event, user.id)}>Unblock</button>
 											</td>
 										</tr>
 									))}

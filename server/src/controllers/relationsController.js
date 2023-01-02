@@ -83,8 +83,8 @@ router.post('/', async (req, res) => {
 // Delete a block
 router.delete('/', async (req, res) => {
   try {
-    console.log(req.body);
-    log.info('[relationsController]', 'delete relation');
+    console.log(req.body, req.params);
+    log.info('[relationsController]', 'delete relation', req.body);
 
     const { sender_id, receiver_id, type } = req.body;
     if (isNaN(sender_id) || isNaN(receiver_id)) {
@@ -94,7 +94,7 @@ router.delete('/', async (req, res) => {
     if (validTypes.includes("type")) {
       throw '400: wrong type' + type;
     }
-
+    log.info('[relationsController]', 'enter in deleteRelationByContent');
     await deleteRelationByContent(sender_id, receiver_id, type.trim());
 
     res.send({sender_id});

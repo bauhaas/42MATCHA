@@ -146,7 +146,7 @@ const createLikeRelation = async (sender_id, receiver_id) => {
         await createNotification(sender_id, receiver_id, "like");
         return await createRelation(sender_id, receiver_id, "like");
     }
-    
+
     await updateUserFameRating(sender_id, true);
     await updateUserFameRating(receiver_id, true);
 
@@ -205,6 +205,7 @@ export const insertRelation = async (sender_id, receiver_id, type) => {
 // Delete a user from the database
 export const deleteRelationByContent = async (sender_id, receiver_id, type) => {
     try {
+        log.info('[relationsService]', 'gonna delete relation');
         const client = await pool.connect();
         const result = await client.query(`
         DELETE FROM relations

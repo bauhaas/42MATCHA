@@ -25,7 +25,7 @@ const MatchedUsers = () => {
 	const unmatchUser = (event, id) => {
 		event.preventDefault();
 		console.log('unmatch user', id);
-		axios.post('http://localhost:3001/notifications', {
+		axios.post('http://localhost:3001/relations', {
 			sender_id: currentUser.id,
 			receiver_id: id,
 			type: 'unlike'

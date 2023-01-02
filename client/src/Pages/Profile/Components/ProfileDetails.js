@@ -57,7 +57,7 @@ const ProfileDetails = ({id}) => {
             axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
                 .then(response => {
                     const likedUsers = response.data;
-                    const userExists = likedUsers.find(likedUser => likedUser.receiver_id == id);
+                    const userExists = likedUsers.find(likedUser => likedUser.id == id);
                     if (userExists)
                     {
                         console.log('i like him');
@@ -73,7 +73,7 @@ const ProfileDetails = ({id}) => {
             axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
                 .then(response => {
                     const matchedUsers = response.data;
-                    const isMatch = matchedUsers.find(matchedUser => matchedUser.receiver_id == id);
+                    const isMatch = matchedUsers.find(matchedUser => matchedUser.id == id);
                     if (isMatch)
                     {
                         setIsMatched(true);
@@ -90,7 +90,7 @@ const ProfileDetails = ({id}) => {
             axios.get(`http://localhost:3001/users/${id}/blocked`)
                 .then(response => {
                     const blockedUsers = response.data;
-                    const userExists = blockedUsers.find(user => user.blocked_id == currentUser.id);
+                    const userExists = blockedUsers.find(user => user.id == currentUser.id);
                     if (userExists)
                     {
                         setBlocked(true);

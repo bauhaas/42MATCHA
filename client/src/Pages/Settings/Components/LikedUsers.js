@@ -11,7 +11,6 @@ const LikedUsers = () => {
 	const currentUser = useSelector((state) => state.user.user);
 
 	const getLikedUsers = () => {
-		console.log(currentUser.id);
 		axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
 			.then(response => {
 				console.log(response.data);
@@ -22,10 +21,8 @@ const LikedUsers = () => {
 			});
 	}
 
-	//unlike a user
 	const unlikeUser = (event, id) => {
 		event.preventDefault();
-		console.log('unlike user', id);
 		axios.post('http://localhost:3001/relations/', {
 				sender_id: currentUser.id,
 				receiver_id: id,
