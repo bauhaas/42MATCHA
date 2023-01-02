@@ -431,7 +431,7 @@ export const getLikedUsers = async (id) => {
     const result = await client.query(`
       SELECT * FROM users
       WHERE id IN (
-        SELECT receiver_id FROM notifications
+        SELECT receiver_id FROM relations
         WHERE sender_id = $1 AND type = 'like'
       )
     `, [id]);
@@ -449,7 +449,7 @@ export const getMatchedUsers = async (id) => {
     const result = await client.query(`
       SELECT * FROM users
       WHERE id IN (
-        SELECT receiver_id FROM notifications
+        SELECT receiver_id FROM relations
         WHERE sender_id = $1 AND type = 'match'
       )
     `, [id]);
@@ -467,7 +467,7 @@ export const getBlockedUsers = async (id) => {
     const result = await client.query(`
       SELECT * FROM users
       WHERE id IN (
-        SELECT receiver_id FROM notifications
+        SELECT receiver_id FROM relations
         WHERE sender_id = $1 AND type = 'block'
       )
     `, [id]);
