@@ -11,7 +11,7 @@ const GET_USER_BY_ID = `
 
 const INSERT_USER = `
   INSERT INTO users (first_name, last_name, email, password, longitude, latitude)
-  VALUES ($1, $2, $3, $4, $5, $6))
+  VALUES ($1, $2, $3, $4, $5, $6)
   RETURNING *
 `;
 
@@ -29,9 +29,9 @@ export const DBgetUserById = (id) => ({
   values: [id]
 });
 
-export const DBinsertUser = (firstName, lastName, email, password, position) => ({
+export const DBinsertUser = (firstName, lastName, email, password, longitude, latitude) => ({
   text: INSERT_USER,
-  values: [firstName, lastName, email, password, position]
+  values: [firstName, lastName, email, password, longitude, latitude]
 });
 
 

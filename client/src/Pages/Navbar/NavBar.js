@@ -109,7 +109,7 @@ const Navbar = () => {
   const logout = (event) => {
     event.preventDefault();
     localStorage.removeItem('jwt');
-    if (socket.client.connected === true) {
+    if (socket.client && socket.client.connected === true) {
       socket.disconnect();
     }
     navigate('/signin');
