@@ -17,7 +17,8 @@ router.get('/history/:conversationId', async (req, res) => {
     res.send(messages);
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message);
+      res.status(400).send(err.message);
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -26,20 +27,21 @@ router.get('/history/:conversationId', async (req, res) => {
 
 // Patch conv of a user
 router.patch('/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-        if (isNaN(id)) {
-            throw '400: id must be a number';
-        }
-        log.info('[messageController]', 'enter in patchMessages of conv:', id);
-        const messages = await patchMessages(id);
-        res.sendStatus(200);
-    } catch (err) {
-      if (typeof(err) === "string" && err.includes('400')) {
-          res.status(400).send(err.message);
+  try {
+      const id = req.params.id;
+      if (isNaN(id)) {
+          throw '400: id must be a number';
       }
-      res.status(500).send(err.message);
+      log.info('[messageController]', 'enter in patchMessages of conv:', id);
+      const messages = await patchMessages(id);
+      res.sendStatus(200);
+  } catch (err) {
+    if (typeof(err) === "string" && err.includes('400')) {
+        res.status(400).send(err.message);
+      return;
     }
+    res.status(500).send(err.message);
+  }
 });
 
 // Delete a conversation
@@ -54,7 +56,8 @@ router.delete('/', async (req, res) => {
     res.send(sender_id);
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }

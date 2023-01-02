@@ -17,6 +17,7 @@ router.delete('/:id', async (req, res) => {
     } catch (err) {
         if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
+            return;
         }
         res.status(500).send(err.message);
     }
@@ -36,6 +37,7 @@ router.post('/', async (req, res) => {
     } catch (err) {
         if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
+            return;
         }
         res.status(500).send(err.message);
     }
@@ -55,6 +57,7 @@ router.get('/:userId', async (req, res) => {
     } catch (err) {
         if (typeof(err) === "string" && err.includes('400')) {
             res.status(400).send(err.message)
+            return;
         }
         res.status(500).send(err.message);
     }

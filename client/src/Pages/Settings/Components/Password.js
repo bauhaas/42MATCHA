@@ -29,7 +29,7 @@ const Password = () => {
         axios.put(`http://localhost:3001/users/resetpassword`, {
             currentPassword: currentPassword,
             newPassword: password,
-            id:user.id
+            id: user.id
         })
             .then(response => {
                 console.log(response);

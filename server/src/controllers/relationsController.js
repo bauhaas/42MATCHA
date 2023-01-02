@@ -28,7 +28,8 @@ router.get('/:sender_id', async (req, res) => {
     res.send(blocks);
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -47,7 +48,8 @@ router.get('/type/:sender_id/:receiver_id', async (req, res) => {
     res.send(type);
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -73,7 +75,8 @@ router.post('/', async (req, res) => {
     if (err.message === 'You are blocked') {
       res.status(404).send(err.message);
     } else if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -100,7 +103,8 @@ router.delete('/', async (req, res) => {
     res.send({sender_id});
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }

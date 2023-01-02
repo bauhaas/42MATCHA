@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import nodemailer from 'nodemailer';
 import log from '../config/log.js';
 import jwt from 'jsonwebtoken';
+import  emailValidator from 'deep-email-validator';
 
 // Get all users from the database
 export const getAllUsers = async () => {
@@ -232,6 +233,9 @@ export const sendConfirmationEmail = async (email, firstName, lastName, accessTo
   log.info('[userService]', "Email sent to ", email);
 };
 
+const isEmailValid = async (email) => {
+  return emailValidator.validate(email)
+}
 
 // Insert a new user into the database
 export const insertUser = async (firstName, lastName, email, password, longitude, latitude) => {
@@ -247,6 +251,10 @@ export const insertUser = async (firstName, lastName, email, password, longitude
     if (dupplicateEmailResult.rowCount > 0)
       throw new Error('A user with the given email already exists.');
 
+    const emailValidation = await isEmailValid(email);
+    if (emailValidation.valid === false) {
+      throw new Error('invalid email');
+    }
 
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);
@@ -361,7 +369,7 @@ export const CreateFakeUser = async (fakeUser, longitude, latitude) => {
     INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count, longitude, latitude)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
     RETURNING *;
-  `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "man", "hetero", "Paris", "France", '["test_interets"]', "", fakeUser, true, 0, 0, longitude, latitude]);
+  `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "male", "hetero", "Paris", "France", '["test_interets"]', "", fakeUser, true, 0, 0, longitude, latitude]);
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));
 
     client.release();
