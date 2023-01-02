@@ -14,6 +14,7 @@ const LikedUsers = () => {
 		console.log(currentUser.id);
 		axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
 			.then(response => {
+				console.log(response.data);
 				setLikedUsers(response.data);
 			})
 			.catch(error => {
@@ -25,7 +26,7 @@ const LikedUsers = () => {
 	const unlikeUser = (event, id) => {
 		event.preventDefault();
 		console.log('unlike user', id);
-		axios.post('http://localhost:3001/notifications', {
+		axios.post('http://localhost:3001/relations/', {
 				sender_id: currentUser.id,
 				receiver_id: id,
 				type:'unlike'

@@ -54,7 +54,7 @@ const ProfileDetails = ({id}) => {
 
     useEffect(() => {
         const isUserLiked = async () => {
-            axios.get(`http://localhost:3001/relations/${currentUser.id}/liked`)
+            axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
                 .then(response => {
                     const likedUsers = response.data;
                     const userExists = likedUsers.find(likedUser => likedUser.receiver_id == id);
@@ -70,7 +70,7 @@ const ProfileDetails = ({id}) => {
         }
 
         const isUserMatched = async () => {
-            axios.get(`http://localhost:3001/relations/${currentUser.id}/matched`)
+            axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
                 .then(response => {
                     const matchedUsers = response.data;
                     const isMatch = matchedUsers.find(matchedUser => matchedUser.receiver_id == id);
@@ -87,7 +87,7 @@ const ProfileDetails = ({id}) => {
         }
 
         const currentUserIsBlocked = async () => {
-            axios.get(`http://localhost:3001/relations/${id}/blocked`)
+            axios.get(`http://localhost:3001/users/${id}/blocked`)
                 .then(response => {
                     const blockedUsers = response.data;
                     const userExists = blockedUsers.find(user => user.blocked_id == currentUser.id);
@@ -110,7 +110,6 @@ const ProfileDetails = ({id}) => {
             isUserMatched();
             currentUserIsBlocked();
 
-            console.log('check if user exist before send a notif');
             if (user && user.id) {
                 console.log('send a visit notif to:', user.id, ' from:', currentUser.id);
                 sendVisitNotification(currentUser.id, user.id);

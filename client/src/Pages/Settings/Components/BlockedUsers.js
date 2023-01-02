@@ -10,31 +10,14 @@ const BlockedUsers = () => {
 	const [blockedUsers, setBlockedUsers] = useState([]);
 	const currentUser = useSelector((state) => state.user.user);
 
-	//block a user
-	const blockUser = () => {
-        var randomNumber = Math.floor(Math.random() * 20) + 1;
-        axios.post('http://localhost:3001/block', {
-			blocker_id: currentUser.id,
-            blocked_id: randomNumber
-        })
-            .then(response => {
-                console.log(response);
-				getBlockedUsers();
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }
-
 	//unblock a user
 	const unblockUser = (event, id) => {
 		event.preventDefault();
 		console.log('unblock user', id);
-		axios.delete('http://localhost:3001/block', {
-			data: {
-				blocker_id: currentUser.id,
-			  blocked_id: id
-			}
+		axios.post('http://localhost:3001/relations', {
+			sender_id: currentUser.id,
+			receiver_id: id,
+			type: 'unblock'
 		  })
 		.then(response => {
 			console.log(response);
@@ -47,7 +30,7 @@ const BlockedUsers = () => {
 
 	const getBlockedUsers = () => {
 		console.log(currentUser.id);
-		axios.get(`http://localhost:3001/block/${currentUser.id}/users`)
+		axios.get(`http://localhost:3001/users/${currentUser.id}/blocked`)
             .then(response => {
 				setBlockedUsers(response.data);
             })
@@ -100,10 +83,6 @@ const BlockedUsers = () => {
 							</div>
 						</div>
 					</div>
-					<div className='absolute bottom-0'>
-                    	<div className='text-red-600 text-center'>TMP TEST</div>
-                    	<button onClick={() => blockUser()} className='btn btn-sm bg-red-600'>block random user</button>
-                	</div>
 				</div>
 			</div>
 		</>
