@@ -6,6 +6,22 @@ import log from '../config/log.js';
 import jwt from 'jsonwebtoken';
 import  emailValidator from 'deep-email-validator';
 
+export const isActive = async (id) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query(`
+    SELECT active from users
+    WHERE id = $1
+    `, [id]);
+    console.log(result);
+    console.log(result.rows);
+    client.release();
+    return result;
+  } catch (err) {
+    throw err;
+  }
+}
+
 // Get all users from the database
 export const getAllUsers = async () => {
   try {
@@ -22,10 +38,8 @@ export const getAllUsers = async () => {
 // Get bachelors from the database
 export const getBachelors = async (id) => {
   try {
-
     const client = await pool.connect();
     const me = await getUserById(id);
-    console.log(me.longitude);
     const result = await client.query(`
       SELECT *, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance
       FROM users
@@ -150,6 +164,7 @@ export const getLogin = async (email, password) => {
 export const getUserById = async (id) => {
   try {
     const client = await pool.connect();
+    console.log(id);
     const result = await client.query(DBgetUserById(id));
     const user = result.rows[0];
     client.release();
@@ -262,14 +277,15 @@ export const insertUser = async (firstName, lastName, email, password, longitude
     log.info('[userService]', 'gonna insert the user');
     const result = await client.query(DBinsertUser(firstName, lastName, email, hash, longitude, latitude));
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));
-    const id = result.rows[0].id;
+    const user = result.rows[0];
 
     const accessToken = generateAccessToken(result.rows[0]);
 
     await sendConfirmationEmail(email, firstName, lastName, accessToken);
 
     client.release();
-    return id;
+    console.log(user)
+    return user;
   } catch (err) {
     log.error('[userService]', err);
     throw err;

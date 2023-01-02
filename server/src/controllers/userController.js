@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 
-import { getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
+import { isActive, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
@@ -28,6 +28,7 @@ router.get('/:id/bachelors/', async (req, res) => {
     const users = await getBachelors(id);
     res.send(users);
   } catch (err) {
+    console.log(err);
     if (typeof(err) === "string" && err.includes('400')) {
       res.status(400).send(err.message)
       return;
@@ -178,29 +179,41 @@ router.get('/:id', async (req, res) => {
 });
 
 // Get a user by their ID w/o email and password
-router.get('/:id/profile', async (req, res) => {
+router.get('/:id/profile', authenticateToken, async (req, res) => {
   try {
     if (req.params.id === null) {
       throw 'get /users/:id/profile id undefined'
     }
     if (isNaN(req.params.id)) {
-        throw '400: id must be a number';
+        throw new Error('id must be a number');
     }
     const { sender_id } = req.body;
+    const isActive = await isActive(sender_id);
+    if (isActive === false) {
+      throw new Error('Please activate your account by uploading a photo');
+    }
     const blocked = await isBlocked(id, sender_id);
     if (blocked) {
-      throw 'You are blocked';
+      throw new Error('You are blocked')
     }
     const user = await getUserByIdProfile(req.params.id);
+    if (user.active === false )
+      new Error('this user is inactive');
+
     res.send(user);
   } catch (err) {
+    console.log(err);
+    console.log(err.message);
     if (err.message === 'You are blocked') {
       res.status(404).send(err.message);
       return;
-    } else if (typeof(err) === "string" && err.includes('400')) {
+    } else if (typeof(err) === "string" && err.includes('number')) {
       res.status(400).send(err.message)
       return;
-    }
+    } else if (err.message.includes('activ')) {
+      res.status(403).send(err.message)
+      return;
+    } 
     res.status(500).send(err.message);
   }
 });
@@ -209,8 +222,8 @@ router.get('/:id/profile', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { firstName, lastName, email, password, longitude, latitude } = req.body;
-    const id = await insertUser(firstName.trim(), lastName.trim(), email.trim(), password, longitude, latitude);
-    res.send({ id });
+    const user = await insertUser(firstName.trim(), lastName.trim(), email.trim(), password, longitude, latitude);
+    res.send(user);
   } catch (err) {
     console.log(err)
     console.log(err.message)

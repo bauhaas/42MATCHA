@@ -22,7 +22,7 @@ export async function createUsersTable() {
         interests JSON,
         photos TEXT,
         bio TEXT,
-        active BOOLEAN,
+        active BOOLEAN DEFAULT false,
         longitude FLOAT,
         latitude FLOAT,
         fame_rating INT,
@@ -64,7 +64,8 @@ export async function seedUsersTable() {
             photos,
             interests,
             longitude,
-            latitude
+            latitude,
+            active
           ) VALUES (
             'Baudoin',
             'Haas',
@@ -76,7 +77,8 @@ export async function seedUsersTable() {
             'https://randomuser.me/api/portraits/men/17.jpg',
             '["je suis un hobby"]',
             '2.318641',
-            '48.896561'
+            '48.896561',
+            '1'
           );
         `;
       await client.query(testUser);
@@ -122,7 +124,8 @@ export async function seedUsersTable() {
             bio,
             interests,
             longitude,
-            latitude
+            latitude,
+            active
           ) VALUES (
             '${first_name}',
             '${last_name}',
@@ -138,7 +141,8 @@ export async function seedUsersTable() {
             '${bio}',
             '${interestsStr}',
             '${2.318641 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
-            '${48.896561 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}'
+            '${48.896561 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
+            '${i <= 10 ? false : true}'
           );
         `;
         await client.query(query);

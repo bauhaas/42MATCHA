@@ -2,10 +2,14 @@ import React, { useState } from "react"
 import useValidator from '../../../Hooks/useValidator';
 import axios from 'axios';
 import position from '../../../Context/position'
+import jwt_decode from "jwt-decode";
+import { setUser } from "../../../userSlice";
+import { useDispatch } from 'react-redux';
 
 
 const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorToggle, setHasSignedUP}) => {
 
+    const dispatch = useDispatch();
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [password, setPassword] = useState("");
@@ -21,6 +25,10 @@ const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorTog
         });
 
 
+    const saveToRedux = (data) => {
+        console.log('redux data', data);
+        dispatch(setUser(data));
+    }
     const addUser = () => {
         axios.post('http://localhost:3001/users', {
             firstName: firstName,
@@ -33,6 +41,9 @@ const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorTog
             .then(response => {
                 console.log(response);
                 setHasSignedUP(true);
+                saveToRedux(response.data);
+                localStorage.setItem('jwt', response.data);
+                return ;
             })
             .catch(error => {
                 console.log(error);
