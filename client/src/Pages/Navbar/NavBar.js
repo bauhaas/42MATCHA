@@ -197,6 +197,8 @@ const Navbar = () => {
     return dateB - dateA;
   });
 
+  if(convlist)
+    console.log(convlist.filter(conv => conv.last_message_unread === true).length !== 0);
 
 return (
   <Disclosure as="nav" className="bg-chess-dark fixed top-0 min-w-full z-40">
@@ -222,7 +224,7 @@ return (
               <Menu as="div">
                   <Menu.Button className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                     <BellIcon className={`h-8 w-8`} aria-hidden="true" />
-                    <div id="notifCount" className={`${notifications && notifications.filter(notif => notif.read === false).length === 0 ? 'hidden' : ''} absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{notifications && notifications.filter(notif => notif.read === false).length}</div>
+                  <div id="notifCount" className={`${notifications && notifications.filter(notif => notif.read === false).length === 0 ? 'hidden' : ''} absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{notifications && notifications.filter(notif => notif.read === false).length}</div>
                   </Menu.Button>
                 <Transition
                   as={Fragment}

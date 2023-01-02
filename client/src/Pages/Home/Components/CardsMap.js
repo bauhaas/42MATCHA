@@ -146,7 +146,37 @@ const CardsMap = () => {
     };
 
     const [sortDirection, setSortDirection] = useState('ascending');
-    console.log(sortBy, sortDirection);
+
+    useEffect(() => {
+        if(sortBy && sortDirection)
+        {
+            const sort = sortBy + ' ' + sortDirection;
+            console.log('gonna switch sort with:', sort)
+            switch(sort){
+                case 'fame descending':
+                    setUsers(users.sort((a, b) => b.fame - a.fame));
+                    break;
+                case 'fame ascending':
+                    setUsers(users.sort((a, b) => a.fame - b.fame));
+                    break;
+                case 'distance descending':
+                    setUsers(users.sort((a, b) => b.distance - a.distance));
+                    break;
+                case 'distance ascending':
+                    setUsers(users.sort((a, b) => a.distance - b.distance));
+                    break;
+                case 'age descending':
+                    setUsers(users.sort((a, b) => b.age - a.age));
+                    break;
+                case 'age ascending':
+                    setUsers(users.sort((a, b) => a.age - b.age));
+                    break;
+                default:
+                    console.log('switch case unknown');
+            }
+
+        }
+    }, [sortBy, sortDirection, users]);
 
     return (
         <>
@@ -248,7 +278,7 @@ const CardsMap = () => {
 
                 <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                     {users.map((user, index) => (
-                        <li key={user + index} id={user + index} className="scale-90">
+                        <li key={user + index} id={user + index} className="flex">
                             <ProfileCard user={user} />
                         </li>
                     ))}
