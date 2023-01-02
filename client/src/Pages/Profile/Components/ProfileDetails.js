@@ -6,7 +6,6 @@ import { HeartIcon as HeartOutlineIcon, NoSymbolIcon} from '@heroicons/react/24/
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
 
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
-import socket from '../../../Context/socket'
 import axios from 'axios';
 
 //TODO when match happend, add animation

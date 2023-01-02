@@ -60,9 +60,7 @@ const InterestsForm = ({ interests, setInterests }) => {
                         ))}
                     </ul>
                 </div>
-
             </div>
-
         </>
     );
 }

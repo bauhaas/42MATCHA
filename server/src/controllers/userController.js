@@ -29,7 +29,8 @@ router.get('/:id/bachelors/', async (req, res) => {
     res.send(users);
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -46,7 +47,8 @@ router.post('/:id/filteredBachelors', async (req, res) => {
     res.send(users);
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -64,7 +66,8 @@ router.get('/:id/liked', async (req, res) => {
     res.send(likedUsers);
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -81,7 +84,8 @@ router.get('/:id/matched', async (req, res) => {
     res.send(likedUsers);
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -98,7 +102,8 @@ router.get('/:id/blocked', async (req, res) => {
     res.send(likedUsers);
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -165,7 +170,8 @@ router.get('/:id', async (req, res) => {
   } catch (err) {
     console.log(err)
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -190,8 +196,10 @@ router.get('/:id/profile', async (req, res) => {
   } catch (err) {
     if (err.message === 'You are blocked') {
       res.status(404).send(err.message);
+      return;
     } else if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message)
+      res.status(400).send(err.message)
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -204,11 +212,17 @@ router.post('/', async (req, res) => {
     const id = await insertUser(firstName.trim(), lastName.trim(), email.trim(), password, longitude, latitude);
     res.send({ id });
   } catch (err) {
+    console.log(err)
+    console.log(err.message)
+    console.log(err.message === "invalid email")
     if (err.message === 'A user with the given email already exists.') {
       res.status(403).send(err.message);
-    } else {
-      res.status(500).send(err.message);
+      return;
+    } else if (err.message === "invalid email") {
+      res.send(err);
+      return;
     }
+    res.status(500).send(err);
   }
 });
 
@@ -294,8 +308,10 @@ router.put('/resetpassword', async (req, res) => {
   } catch (err) {
     if (err.message === 'A user with the given email already exists.') {
       res.status(403).send(err.message);
+      return;
     } else if (typeof(err) === "string" && err.includes('400')) {
       res.status(400).send(err.message);
+      return;
     }
     res.status(500).send(err.message);
   }
@@ -312,7 +328,8 @@ router.delete('/:id', async (req, res) => {
     res.send({ id });
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message);
+      res.status(400).send(err.message);
+      return;
     }
     res.status(500).send(err.message);
   }
