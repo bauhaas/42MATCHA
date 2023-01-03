@@ -17,6 +17,7 @@ import FormLabel from '@mui/material/FormLabel';
 import { grey, deepOrange } from '@mui/material/colors';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import { Cog6ToothIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 const Settings = () => {
 
@@ -28,11 +29,40 @@ const Settings = () => {
     const [orientation, setOrientation] = useState(user.sex_orientation);
     const [bio, setBio] = useState(user.bio);
     const [interests, setInterests] = useState(user.interests);
+    const [newInterest, setNewInterest] = useState('');
 
-    console.log(orientation, gender, interests);
-
-    const handleDelete = () => {
+    const handleDelete = (tag) => {
         console.info('You clicked the delete icon.');
+        var array = [...interests]; // make a separate copy of the array
+        var index = array.indexOf(tag)
+        if (index !== -1) {
+            array.splice(index, 1);
+            setInterests(array);
+  }
+    };
+
+    const addInterest = () => {
+        console.info('You clicked the add interest and want to add:', newInterest);
+        if(newInterest !== '')
+            setInterests((prevInterests) => [...prevInterests, newInterest]);
+    };
+
+    const updateUser = () => {
+        console.log('gonna updateUser');
+        axios.put(`http://localhost:3001/users/${user.id}/update`, {
+            first_name:first_name,
+            last_name:last_name,
+            email:email,
+            sex:gender,
+            sex_orientation:orientation,
+            interests:interests
+        })
+            .then(response => {
+                console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     };
 
     return (
@@ -167,12 +197,12 @@ const Settings = () => {
                                         <label className="text-white text-sm self-start">
                                             Bio
                                         </label>
-                                        <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64 h-80'>
+                                        <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64 h-fit'>
                                             <TextField
+                                                className='grow'
                                                 multiline
                                                 rows={10}
                                                 defaultValue={user.bio}
-
                                                 sx={{
                                                     '& .MuiInputBase-input': {
                                                         color: 'white',
@@ -197,20 +227,43 @@ const Settings = () => {
                                     <label className="text-white text-sm self-start mb-2">
                                         Interests
                                     </label>
-                                    {interests.map((tag, index) => (
-                                        // <div className='badge relative group'>
-                                        //     {tag}
-                                        //     <button className="invisible group-hover:visible flex justify-center items-center h-3 w-3 absolute bottom-3 bg-red-500 right-0 rounded-full">
-                                        //         x
-                                        //     </button>
-                                        // </div>
-                                        <Chip
-                                            label="Clickable Deletable"
-                                            size="small"
-                                            color="primary"
-                                            onDelete={handleDelete}
-                                        />
-                                    ))}
+                                    <div className='flex flex-col'>
+                                        <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64 self-end'>
+                                                <input className="w-full bg-transparent text-white focus:outline-none focus:shadow-outline" id="currentPass"
+                                                    placeholder="Add interest..."
+                                                    onChange={(event) => setNewInterest(event.target.value)}
+                                                    onKeyDown={(event) => {
+                                                        if (event.keyCode === 13) {
+                                                            addInterest();
+                                                            event.target.value = '';
+                                                        }
+                                                    }}/>
+
+                                                <button>
+                                                    <PlusIcon onClick={(event) => addInterest()} className={`h-6 w-6 p-1 text-chess-place-text hover:text-white`}/>
+                                                </button>
+                                        </div>
+                                        <div className='w-64'>
+                                        {interests.map((tag, index) => (
+                                                <Chip
+                                                    label={tag}
+                                                    size="small"
+                                                    color="primary"
+                                                    onDelete={(event) => handleDelete(tag)}
+                                                    className="bg-orange-300 text-chess-default mr-1"
+                                                    sx={{
+                                                        '& .MuiChip-deleteIcon, .MuiChip-deleteIcon:hover': {
+                                                            color: '#312e2b',
+                                                        },
+                                                    }}
+                                                />
+                                            ))}
+                                        </div>
+
+
+                                    </div>
+
+
                                 </div>
 
                                 <div className='mt-2 flex flex-col sm:flex-row  sm:justify-between mb-2'>
@@ -218,6 +271,7 @@ const Settings = () => {
                                         Pictures
                                     </label>
                                 </div>
+                                <button onClick={updateUser} className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500`}>Update</button>
                                 </div>
                             </div>
 						</div>

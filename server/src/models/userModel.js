@@ -22,6 +22,7 @@ export async function createUsersTable() {
         interests JSON,
         photos TEXT,
         bio TEXT,
+        job TEXT,
         active BOOLEAN DEFAULT false,
         longitude FLOAT,
         latitude FLOAT,
@@ -50,7 +51,7 @@ export async function seedUsersTable() {
 
     if (tableIsEmpty.rowCount === 0) {
       var salt = bcrypt.genSaltSync(10);
-      var hash = bcrypt.hashSync('a', salt);
+      var hash = bcrypt.hashSync('42', salt);
 
       const testUser = `
           INSERT INTO users (
@@ -62,20 +63,24 @@ export async function seedUsersTable() {
             password,
             fame_rating,
             photos,
+            bio,
+            job,
             interests,
             longitude,
             latitude,
             active
           ) VALUES (
-            'Baudoin',
-            'Haas',
+            'Cat',
+            'Norminet',
             'male',
             'hetero',
-            'a@a.com',
+            '42@42.com',
             '${hash}',
             '0',
-            'https://randomuser.me/api/portraits/men/17.jpg',
-            '["je suis un hobby"]',
+            'https://pbs.twimg.com/media/Db8uqDaX4AE6vA3.jpg:large',
+            'Impossible to not like me',
+            'Executive Cat',
+            '["Sleeping"]',
             '2.318641',
             '48.896561',
             '1'
@@ -107,7 +112,7 @@ export async function seedUsersTable() {
         interestsStr += "]";
         const photos = faker.image.avatar();
         const bio = faker.lorem.lines(3).replace('\'', '');
-
+        const job = faker.name.jobTitle();
         const query = `
           INSERT INTO users (
             first_name,
@@ -122,6 +127,7 @@ export async function seedUsersTable() {
             fame_rating,
             photos,
             bio,
+            job,
             interests,
             longitude,
             latitude,
@@ -139,6 +145,7 @@ export async function seedUsersTable() {
             '${fame_rating}',
             '${photos}',
             '${bio}',
+            '${job}',
             '${interestsStr}',
             '${2.318641 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
             '${48.896561 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',

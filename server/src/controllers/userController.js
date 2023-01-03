@@ -213,7 +213,7 @@ router.get('/:id/profile', authenticateToken, async (req, res) => {
     } else if (err.message.includes('activ')) {
       res.status(403).send(err.message)
       return;
-    } 
+    }
     res.status(500).send(err.message);
   }
 });
@@ -266,7 +266,9 @@ function changeUserData(user, update) {
     user.country = update.country;
   }
   if (update.interests) {
-    user.interests = update.interests.trim();
+    //TODO foire à cause du format json
+    log.info("[userController]", user.interests, update.interests)
+    user.interests = update.interests;
   }
   if (update.bio) {
     user.bio = update.bio;
@@ -278,19 +280,19 @@ function changeUserData(user, update) {
 }
 
 // Update user
-router.put('/:id/update', authenticateToken, async (req, res) => {
+router.put('/:id/update', async (req, res) => {
   try {
     const id = req.params.id;
-    log.info("id", id, "update");
+    log.info("[userController]", "update user:", id);
     if (isNaN(id)) {
         throw '400: id must be a number';
     }
     var user = await getUserById(id);
 
-    log.info(req.body);
+    log.info("[userController]", req.body);
     user = changeUserData(user, req.body);
 
-    log.info(user);
+    log.info("[userController]", user);
     const newUser = await updateUser(user);
 
     res.send(newUser);

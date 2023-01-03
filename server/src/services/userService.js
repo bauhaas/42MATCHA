@@ -96,7 +96,7 @@ export const getFilteredBachelors = async (id, filters) => {
     `, [me.id, me.longitude, me.latitude, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
 
     var filteredUsers = result.rows;
-    
+
     if (["hetero", "homo"].includes(me.sex_orientation)) {
       const homo = me.sex_orientation === "homo";
       filteredUsers = filteredUsers.filter((user) => (homo ? user.sex === me.sex : user.sex !== me.sex) && user.sex_orientation === me.sex_orientation);

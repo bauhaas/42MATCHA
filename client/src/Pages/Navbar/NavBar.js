@@ -220,7 +220,7 @@ const Navbar = () => {
     }
   }
 return (
-  <Disclosure as="nav" className="bg-chess-dark fixed top-0 min-w-full z-40">
+  <Disclosure as="nav" className="bg-chess-hover fixed top-0 min-w-full z-40">
     {({ open }) => (
       <>
         <div className="px-8">

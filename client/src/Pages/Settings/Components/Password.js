@@ -65,7 +65,6 @@ const Password = () => {
                                                 value={currentPassword}
                                                 onChange={(event) => setCurrentPassword(event.target.value)} />
                                     </div>
-
                                 </div>
                                 <div className='flex flex-col mb-2 sm:flex-row sm:justify-between'>
                                         <label className="text-white text-sm self-start">
@@ -94,55 +93,11 @@ const Password = () => {
                                                 <EyeIcon className={`h-6 w-6 p-1 text-chess-place-text hover:text-white`}/>
                                             </button>
                                         </div>
-
                                 </div>
                                 <button onClick={resetPassword}  className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500 ${ password !== passwordConfirm || password.length <= 0 ? 'btn-disabled': ''}`}>Change password</button>
                             </div>
-                            {/* <div className=' pt-2 flex flex-col sm:flex-row mb-2 sm:justify-between sm:gap-2'>
-                                    <label className="text-white text-sm self-start">
-                                        Current password
-                                    </label>
-                                    <div className='bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
-                                        <input className=" px-2 bg-transparent text-white rounded-sm focus:outline-none focus:shadow-outline" id="currentPass"
-                                                type='password'
-                                                value={currentPassword}
-                                                onChange={(event) => setCurrentPassword(event.target.value)} />
-                                    </div>
-                            </div>
-                            <div className='flex flex-col mb-2 sm:flex-row sm:justify-between sm:gap-2'>
-                                    <label className="text-white text-sm self-start">
-                                        New password
-                                    </label>
-                                <div className='bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
-                                        <input className=" px-2 bg-transparent text-white rounded-sm focus:outline-none focus:shadow-outline" id="password"
-                                                type={isRevealed ? 'text' : 'password'}
-                                                value={password}
-                                                onChange={(event) => setPassword(event.target.value)} />
-                                        <button onClick={toggleReveal}>
-                                            <EyeIcon className={`h-6 w-6 p-1 ml-4 text-chess-place-text hover:text-white`}/>
-                                        </button>
-                                    </div>
-
-                            </div>
-                            <div className='flex flex-col sm:flex-row mb-2 sm:justify-between sm:gap-2'>
-                                    <label className="text-white text-sm self-start">
-                                        Confirm new password
-                                    </label>
-                                    <div className='bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
-                                        <input className=" px-2 bg-transparent text-white rounded-sm focus:outline-none focus:shadow-outline" id="passwordConfirm"
-                                                type={isRevealedConfirm ? 'text' : 'password'}
-                                                value={passwordConfirm}
-                                                onChange={(event) => setPasswordConfirm(event.target.value)} />
-                                        <button onClick={toggleRevealConfirm}>
-                                            <EyeIcon className={`h-6 w-6 p-1 ml-4 text-chess-place-text hover:text-white`}/>
-                                        </button>
-                                    </div>
-
-                            </div> */}
-                            {/* <button onClick={resetPassword}  className={`btn btn-sm absolute bottom-2 sm:bottom-5 rounded-md  bg-green-600 hover:bg-green-500 ${ password !== passwordConfirm || password.length <= 0 ? 'btn-disabled': ''}`}>Change password</button> */}
 						</div>
 					</div>
-
 				</div>
 			</div>
 		</>
