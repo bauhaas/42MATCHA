@@ -38,10 +38,11 @@ export const unlikeUserById = async (sender_id, receiver_id) => {
 }
 
 export const getUserById = async (id) => {
-    return axios.get(`http://localhost:3001/users/${id}`)
-        .then(response => response.data
-        )
-        .catch(error => {
-            console.log(error);
-        });
-}
+    try {
+        console.log(id);
+        const response = await axios.get(`http://localhost:3001/users/${id}`);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+    }
+};

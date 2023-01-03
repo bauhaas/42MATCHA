@@ -166,6 +166,7 @@ router.get('/:id', async (req, res) => {
       console.log("here");
         throw '400: id must be a number';
     }
+    console.log('get a user by id');
     const user = await getUserById(req.params.id);
     res.send(user);
   } catch (err) {

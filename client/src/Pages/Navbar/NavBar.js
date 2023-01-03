@@ -9,7 +9,6 @@ import  socket  from '../../Context/socket'
 import axios from 'axios';
 import Avatar from "../../SharedComponents/Avatar";
 import { setConvs } from "../../convSlice";
-// import { setNotifs, addNotif, updateNotif } from "../../notifSlice";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -19,7 +18,6 @@ const Navbar = () => {
 
   const user = useSelector((state) => state.user.user);
   const convs = useSelector((state) => state.convs.convs);
-  // const notifs = useSelector((state) => state.notifs.notifs);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [notifications, setNotifications] = useState([]);
@@ -34,10 +32,6 @@ const Navbar = () => {
 
   useEffect(() => {
     console.log('retrieve all notifs')
-    // if (user && user.id) {
-
-      console.log('axios get notif')
-
       axios.get(`http://localhost:3001/notifications/${user.id}/receiver`, {
         id: user.id
       })
@@ -45,26 +39,11 @@ const Navbar = () => {
           // handle success
           console.log('get all notifs of currentuser', response.data);
           setNotifications(response.data);
-          // // Use the setState method to update the notifications state in an immutable way
-          // setNotifications(prevState => {
-          //   // Make a copy of the notifications state array
-          //   const updatedNotifications = [...prevState];
-
-          //   const index = updatedNotifications.findIndex(notif => notif.id === notifToUpdate.id);
-          //   const updatedNotif = {
-          //     ...notifToUpdate,
-          //     read: true
-          //   };
-          //   updatedNotifications[index] = updatedNotif;
-
-          //   return updatedNotifications;
-          // });
         })
         .catch(error => {
           // handle error
           console.log(error);
         });
-    // }
     }, []);
 
 
@@ -200,6 +179,8 @@ const Navbar = () => {
   if(convlist)
     console.log(convlist.filter(conv => conv.last_message_unread === true).length !== 0);
 
+    console.log('notificqtions check:', notifications && notifications.filter(notif => notif.read === false).length === 0);
+
   const getNotifText = (notification) => {
     console.log(notification.type);
     switch(notification.type){
@@ -228,22 +209,16 @@ return (
             <img onClick={(event) => gotomenu(event)} className="block h-8 w-auto" src="../logo.png" alt="logo"/>
             <div id="navbarRightButtons" className="flex items-center gap-4">
               <div id="TODELETELATER" className="border-2 border-red-500 text-white">id:{user.id}, name:{user.first_name} {user.last_name}</div>
-              {/* <Menu as="div">
-                <Menu.Button className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
-                  <Cog6ToothIcon  className={`h-8 w-8 text-gray-400 hover:text-white`} aria-hidden="true" />
-
-                </Menu.Button>
-              </Menu > */}
               <Menu as="div">
                 <Menu.Button onClick={gotochat} className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                   <ChatBubbleLeftRightIcon className={`h-8 w-8`} aria-hidden="true" />
-                  <div id="chat" className={`${convlist && convlist.filter(conv => conv.last_message_unread === true).length !== 0 ? '' : 'hidden'} absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{convlist && convlist.filter(conv => conv.last_message_unread === true).length}</div>
+                  <div id="chat" className={`${convlist && convlist.filter(conv => conv.last_message_unread === true).length !== 0 ? '' : 'hidden'} absolute top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{convlist && convlist.filter(conv => conv.last_message_unread === true).length}</div>
                 </Menu.Button>
               </Menu >
               <Menu as="div">
                   <Menu.Button className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                     <BellIcon className={`h-8 w-8`} aria-hidden="true" />
-                  <div id="notifCount" className={`${notifications && notifications.filter(notif => notif.read === false).length === 0 ? 'hidden' : ''} absolute bot-0 top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm`}>{notifications && notifications.filter(notif => notif.read === false).length}</div>
+                  <div id="notifCount" className={`${notifications  && notifications.filter(notifications => notifications.read === false).length !== 0 ? 'absolute top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-400 text-white text-sm':'hidden'} `}>{notifications && notifications.filter(notif => notif.read === false).length}</div>
                   </Menu.Button>
                 <Transition
                   as={Fragment}

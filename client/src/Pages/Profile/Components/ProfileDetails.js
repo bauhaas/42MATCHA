@@ -2,10 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import { HeartIcon as HeartOutlineIcon, NoSymbolIcon} from '@heroicons/react/24/outline';
+import { AdjustmentsVerticalIcon, HeartIcon as HeartOutlineIcon, NoSymbolIcon} from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
 
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
+import Chip from '@mui/material/Chip';
+import Avatar from "../../../SharedComponents/Avatar";
+import Badge from '@mui/material/Badge';
 import axios from 'axios';
 
 //TODO when match happend, add animation
@@ -138,64 +141,10 @@ const ProfileDetails = ({id}) => {
             setUser(response);
         }
         getUser();
-
-        // console.log('check if user exist before send a notif');
-        // if (user && user.id) {
-        //     console.log('send a visit notif to:', user.id, ' from:', currentUser.id);
-        //     sendVisitNotification(currentUser.id, user.id);
-        // }
     }, []);
 
-console.log(user);
-    // useEffect(() => {
-    //     console.log('check if user exist before send a notif');
-    //     if (user && user.id) {
-    //         console.log('send a visit notif to:', user.id, ' from:', currentUser.id);
-    //         sendVisitNotification(currentUser.id, user.id);
-    //     }
-    // }, [user]);
+    console.log(user);
 
-    // useEffect(() => {
-    //     console.log('check if user exist before send a notif');
-    //     if(user)
-    //     {
-    //         console.log('send a visit notif to:', user.id,' from:', currentUser.id);
-
-    //         axios.post('http://localhost:3001/notifications', {
-    //             sender_id: currentUser.id,
-    //             receiver_id: user.id,
-    //             type: 'visit'
-    //         })
-    //             .then(response => {
-    //                 console.log(response.data);
-    //             })
-    //             .catch(error => {
-    //                 console.log(error);
-    //             });
-    //     }
-    // }, [user]);
-
-
-    // useEffect(() => {
-    //     socket.client.on('isMatched', (data) => {
-    //         console.log(data);
-    //     })
-
-    //     return () => {
-    //         socket.client.off('isMatched');
-    //     };
-    // }, []);
-
-
-    //     useEffect(() => {
-    //     socket.client.on('isMatched', (data) => {
-    //         console.log(data);
-    //     })
-
-    //     return () => {
-    //         socket.client.off('isMatched');
-    //     };
-    // }, []);
     return (
         <>
             <div className='mx-2 pt-16 h-full'>
@@ -207,6 +156,21 @@ console.log(user);
                         :
                             <>
                                     <p>Profile of {user.first_name} {user.last_name}</p>
+                                    <div className='relative'>
+                                        <Avatar imageAttribute={'rounded-full w-40'} attribute={`avatar`}/>
+                                        {/* <div className={`absolute bottom-0 left-28 w-12 h-12 z-4 rounded-full ${user.status ? 'bg-gray-400': 'bg-green-400'}`}>{' '}</div> */}
+                                    </div>
+
+                                    <p>{user.age}</p>
+                                    <p>{user.job}</p>
+                                    <p>{user.city}</p>
+                                    <p>{user.country}</p>
+                                    <p>{user.sex}</p>
+                                    <p>{user.sex_orientation}</p>
+                                    <p>{user.bio}</p>
+                                    {/* {user.interests.map((interest, index) => (
+                                        <Chip label={interest} className="bg-orange-200"/>
+                                    ))} */}
                                     {
                                         currentUser.id !== Number(id)
                                         ?
