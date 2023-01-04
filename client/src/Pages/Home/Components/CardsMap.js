@@ -301,9 +301,9 @@ const CardsMap = () => {
 
                 {
                     showTopBtn &&
-                    <btn onClick={gototop} className='btn btn-circle fixed bottom-5 right-5'>
+                    <button onClick={gototop} className='btn btn-circle bg-orange-500 fixed bottom-5 right-5'>
                         <HiArrowUp className='h-6 w-6'/>
-                    </btn>
+                    </button>
                 }
 
             </div>

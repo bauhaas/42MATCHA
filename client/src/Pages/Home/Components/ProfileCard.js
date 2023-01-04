@@ -1,15 +1,5 @@
-import { motion } from "framer-motion"
-import useToggle from '../../../Hooks/useToggle';
-import { useLocation, useNavigate } from 'react-router-dom';
-
-import { HeartIcon as HeartOutlineIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
+import { useNavigate } from 'react-router-dom';
 import { AiFillFire } from 'react-icons/ai';
-const transition = {
-	duration: 0.5,
-	ease: 'linear',
-	delay: 0.5
-}
 
 const ProfileCard = ({ user }) => {
 
@@ -44,8 +34,8 @@ const ProfileCard = ({ user }) => {
 									if (index >= 4) {
 										return null;
 									}
-									return (
-										<span className="bg-orange-300 text-chess-default rounded-lg p-1">{interest}</span>
+										return (
+										<span key={interest + index} className="bg-orange-300 text-chess-default rounded-lg p-1">{interest}</span>
 									);
 								})}
 							</div>
@@ -58,15 +48,3 @@ const ProfileCard = ({ user }) => {
 }
 
 export default ProfileCard;
-
-// {/* <motion.div transition={transition} whileHover={{ translateY: '50%'}}   id='cardHidden' className={isToggle ?'absolute rounded-md min-w-full min-h-full  grid ':'hidden'}>
-// 							<img src="../bg-profilecard.svg" className="col-start-1 row-start-1 object-cover w-full h-full rounded-md" alt="Hidden Card" />
-// 							<div className="col-start-1 row-start-1 self-center justify-self-center text-4xl font-bold group-hover:animate-wiggle">
-// 								100%
-// 							</div>
-// 							<img
-// 								className="col-start-1 row-start-1 h-8 w-8 self-end justify-self-center mb-10 group-hover:animate-wiggle"
-// 								src="../logo.png"
-// 								alt="logo"
-// 							/>
-// 						</motion.div> */}

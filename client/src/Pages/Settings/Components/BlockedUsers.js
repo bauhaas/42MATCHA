@@ -20,10 +20,8 @@ const BlockedUsers = () => {
 				receiver_id: id,
 				type: 'block'
 			}
-
 		  })
 		.then(response => {
-			console.log(response);
 			getBlockedUsers();
 		})
 		.catch(error => {
@@ -32,10 +30,8 @@ const BlockedUsers = () => {
 	}
 
 	const getBlockedUsers = () => {
-		console.log(currentUser.id);
 		axios.get(`http://localhost:3001/users/${currentUser.id}/blocked`)
             .then(response => {
-				console.log(response.data);
 				setBlockedUsers(response.data);
             })
             .catch(error => {
@@ -44,11 +40,9 @@ const BlockedUsers = () => {
     }
 
 	useEffect(() => {
-			console.log('get blocked users');
 			getBlockedUsers();
 	  }, []);
 
-	console.log(blockedUsers);
 
 	return (
 		<>

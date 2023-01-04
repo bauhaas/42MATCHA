@@ -5,8 +5,8 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "start:dev": "DEBUG=socket* NODE_ENV=dev nodemon --experimental-json-modules src/index.js",
-        "start:prod": "DEBUG=socket* NODE_ENV=prod nodemon --experimental-json-modules src/index.js"
+        "start:dev": "NODE_ENV=dev nodemon --experimental-json-modules src/index.js",
+        "start:prod": "NODE_ENV=prod nodemon --experimental-json-modules src/index.js"
     },
     "keywords": [
         "NodeJs",

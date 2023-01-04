@@ -2,13 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import { AdjustmentsVerticalIcon, HeartIcon as HeartOutlineIcon, NoSymbolIcon} from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
-import { GoPrimitiveDot } from 'react-icons/go';
-import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
 import Chip from '@mui/material/Chip';
 import Avatar from "../../../SharedComponents/Avatar";
-import Badge from '@mui/material/Badge';
 import axios from 'axios';
 import InteractionButtons from './InteractionButtons';
 import { AiFillFire } from 'react-icons/ai';
@@ -23,40 +18,6 @@ const ProfileDetails = ({id}) => {
     const [blocked, setBlocked] = useState(false);
     const [filledIcon, setFilledIcon] = useState(false);
     const [user, setUser] = useState({});
-
-    const [interests, setInterests] = useState([]);
-
-    const blockUser = async () => {
-        await blockUserById(currentUser.id, user.id);
-    }
-
-    const likeUser = async (event) => {
-        await likeUserById(currentUser.id, user.id);
-        setFilledIcon(true);
-    }
-
-    const unlikeUser = async (event) => {
-        await unlikeUserById(currentUser.id, user.id);
-        setFilledIcon(false);
-    }
-
-    const gotochat = async (event) => {
-        axios.post('http://localhost:3001/conversations', {
-            userId1: currentUser.id,
-            userId2: user.id
-        })
-            .then(response => {
-                console.log(response.data);
-                navigate(`/chat/${response.data.id}`, {
-                    state: {
-                        conv: response.data,
-                    }
-                });
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }
 
     useEffect(() => {
         const isUserLiked = async () => {
@@ -140,7 +101,6 @@ const ProfileDetails = ({id}) => {
 
     useEffect(() => {
         const getUser = async () => {
-            console.log('getuser');
             await axios.get(`http://localhost:3001/users/${currentUser.id}/profile/${id}`)
                 .then(response => {
                     // console.log(response.data);
@@ -148,15 +108,13 @@ const ProfileDetails = ({id}) => {
                 })
                 .catch(error => {
                     console.log(error);
+                    navigate('/Unknown');
                 });
             // const response = await getUserById(currentUser.id, id);
             // setUser(response);
         }
         getUser();
     }, []);
-
-    console.log(user);
-    console.log(user.interests);
 
     return (
         <>
@@ -186,29 +144,13 @@ const ProfileDetails = ({id}) => {
                                             <p>{user.sex_orientation} {user.sex}</p>
 
                                         </div>
-                                        {/* {
-                                            currentUser.id === Number(user.id) ?
-                                                null
-                                            :
-                                                <Chip
-                                                    size='small'
-                                                    label={user.status ? 'offline' : 'online'}
-                                                    icon={<GoPrimitiveDot />}
-                                                    className={`w-20 sm:mt-3 ${user.status ? 'bg-gray-400' : 'bg-green-400'}`}
-                                                    sx={{
-                                                        '& .MuiChip-icon': {
-                                                            color: `${user.status ? 'gray' : 'green'}`,
-                                                        }
-                                                    }}
-                                                />
-                                        } */}
                                         <InteractionButtons user={user} isMatched={isMatched} filled={filledIcon} />
                                     </div>
                                     <div className='bg-chess-button rounded-lg m-2 py-2'>
                                         <h1 className='text-center'>Interests</h1>
                                         <div className='pt-2 flex gap-2 justify-center flex-wrap'>
                                             {user.interests && user.interests.map((interest, index) => (
-                                                <Chip label={interest} className="bg-orange-200" />
+                                                <Chip key={interest + index} label={interest} className="bg-orange-200" />
                                             ))}
                                         </div>
 

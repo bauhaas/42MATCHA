@@ -10,7 +10,7 @@ const Unknown = () => {
 
     const handleNavToProfile = (event) => {
       event.preventDefault();
-      navigate("/Profile");
+      navigate("/Settings");
     }
 
     return(

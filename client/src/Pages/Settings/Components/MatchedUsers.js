@@ -11,7 +11,6 @@ const MatchedUsers = () => {
 	const currentUser = useSelector((state) => state.user.user);
 
 	const getMatchedUsers = () => {
-		console.log(currentUser.id);
 		axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
 			.then(response => {
 				setmatchedUsers(response.data);

@@ -13,7 +13,6 @@ const LikedUsers = () => {
 	const getLikedUsers = () => {
 		axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
 			.then(response => {
-				console.log(response.data);
 				setLikedUsers(response.data);
 			})
 			.catch(error => {
@@ -40,8 +39,6 @@ const LikedUsers = () => {
 	useEffect(() => {
 		getLikedUsers();
 	}, []);
-
-	console.log(likedUsers);
 
 	return (
 		<>
