@@ -159,7 +159,7 @@ const ProfileDetails = ({id}) => {
 
     return (
         <>
-            <div className='mx-2 pt-16 h-full'>
+            <div className='mx-2 pt-16 h-screen'>
                 <div className='mx-4 my-2 p-2 rounded-lg bg-chess-dark text-white'>
                     {
                         blocked
@@ -167,32 +167,31 @@ const ProfileDetails = ({id}) => {
                             <div>You have been blocked by that user</div>
                         :
                             <>
-                                    <div className='flex gap-2'>
+                                    <div className=' m-2 grid grid-cols-2 justify-center sm:flex sm:gap-2'>
                                         <div className='relative'>
-                                            <Avatar imageAttribute={'rounded-full w-40'} attribute={`avatar`} />
+                                            <Avatar imageAttribute={'rounded-full w-30 sm:w-40'} attribute={`avatar`} />
                                         </div>
                                         <div className='flex flex-col'>
-                                            <div className='flex items-center gap-2'>
+                                            <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
                                                 <p className='text-4xl font-bold text-orange-400 grow'>{user.first_name} {user.last_name}</p>
-
-                                                <Chip
-                                                    size='small'
-                                                    label={user.status ? 'offline' : 'online'}
-                                                    icon={<GoPrimitiveDot />}
-                                                    className={` ${user.status ? 'bg-gray-400' : 'bg-green-400'}`}
-                                                    sx={{
-                                                        '& .MuiChip-icon': {
-                                                            color: `${user.status ? 'gray' : 'green'}`,
-                                                        }
-                                                    }}
-                                                />
                                             </div>
                                             <p>{user.job}</p>
                                             <p>{user.city}, {user.country}</p>
                                             <p>{user.age} years old</p>
                                             <p>{user.sex_orientation} {user.sex}</p>
                                         </div>
-                                        <InteractionButtons user={user} isMatched={isMatched} />
+                                        <Chip
+                                            size='small'
+                                            label={user.status ? 'offline' : 'online'}
+                                            icon={<GoPrimitiveDot />}
+                                            className={`w-20 sm:mt-3 ${user.status ? 'bg-gray-400' : 'bg-green-400'}`}
+                                            sx={{
+                                                '& .MuiChip-icon': {
+                                                    color: `${user.status ? 'gray' : 'green'}`,
+                                                }
+                                            }}
+                                        />
+                                        <InteractionButtons user={user} isMatched={isMatched} filled={filledIcon} />
                                     </div>
                                     <div className='bg-chess-button rounded-lg m-2 py-2'>
                                         <h1 className='text-center'>Interests</h1>

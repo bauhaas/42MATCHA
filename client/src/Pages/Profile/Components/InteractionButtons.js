@@ -8,7 +8,7 @@ import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon 
 import axios from 'axios';
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
 
-const InteractionButtons = ({user, isMatched}) => {
+const InteractionButtons = ({user, isMatched, filled}) => {
 
     const currentUser = useSelector((state) => state.user.user);
     const [filledIcon, setFilledIcon] = useState(false);
@@ -52,12 +52,12 @@ const InteractionButtons = ({user, isMatched}) => {
                 currentUser.id !== Number(user.id)
                     ?
                     <>
-                        <div className='flex ml-auto p-2'>
+                        <div className='flex ml-auto sm:p-2'>
                             <div className="tooltip" data-tip="Block">
                                 <NoSymbolIcon onClick={blockUser} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
                             </div>
                             {
-                                filledIcon
+                                filledIcon || filled
                                     ?
                                     <div className="tooltip" data-tip="Unlike">
                                         <HeartSolidIcon onClick={(event) => unlikeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
