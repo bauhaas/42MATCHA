@@ -26,16 +26,16 @@ const Profile = () => {
 
     return (
         <>
-            <div className="bg-chess-default min-h-screen">
+            <div className="bg-chess-default min-h-screen overflow-y-auto">
                 {
                     token
                     ?
                         <InitProfile userId={userId}/>
                     :
-                        <div>
+                        <>
                             <NavBar />
                             <ProfileDetails id={id}/>
-                        </div>
+                        </>
                 }
 
             </div>

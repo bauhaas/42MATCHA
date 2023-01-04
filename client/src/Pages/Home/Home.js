@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
 
 import CardsMap from './Components/CardsMap';
 import NavBar from '../Navbar/NavBar';
@@ -12,7 +11,6 @@ const Home = () => {
 			<div className="bg-chess-default min-h-screen">
 				<NavBar/>
 				<CardsMap/>
-
 			</div>
 		</>
 	)

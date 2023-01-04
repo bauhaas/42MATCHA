@@ -200,6 +200,7 @@ export const getUserById = async (id) => {
 // Get a user by their ID from the database
 export const getUserByIdProfile = async (id) => {
   try {
+    log.info('[userService]', 'getUserByIdProfile');
     const client = await pool.connect();
     const result = await client.query(DBgetUserById(id));
     const user = result.rows[0];

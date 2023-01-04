@@ -57,20 +57,26 @@ const MatchedUsers = () => {
 								A matched user is able to see your profile and send you messages. Unmatch a user will delete your chat history with him but you are able rematch
 							</p>
 							<div className="pt-2">
-								<table className="text-white w-full text-left">
-									<tbody>
-										{matchedUsers.map((user, index) => (
-											<tr className="border-b border-chess-bar text-xs">
-												<td>
-													{user.first_name} {user.last_name}
-												</td>
-												<td className="text-right">
-													<button onClick={(event) => unmatchUser(event, user.id)}>Unmatch</button>
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
+								{
+									matchedUsers.length > 0 ?
+										<table className="text-white w-full text-left">
+											<tbody>
+												{matchedUsers.map((user, index) => (
+													<tr className="border-b border-chess-bar text-xs">
+														<td>
+															{user.first_name} {user.last_name}
+														</td>
+														<td className="text-right">
+															<button onClick={(event) => unmatchUser(event, user.id)}>Unmatch</button>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									:
+										<div>No users matched yet</div>
+								}
+
 							</div>
 						</div>
 					</div>

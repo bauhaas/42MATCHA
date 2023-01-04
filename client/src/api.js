@@ -41,6 +41,7 @@ export const getUserById = async (id, visit_id) => {
     try {
         console.log(id);
         const response = await axios.get(`http://localhost:3001/users/${id}/profile/${visit_id}`);
+        console.log('test');
         return response.data;
     } catch (error) {
         console.log(error);

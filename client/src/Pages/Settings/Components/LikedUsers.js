@@ -41,6 +41,8 @@ const LikedUsers = () => {
 		getLikedUsers();
 	}, []);
 
+	console.log(likedUsers);
+
 	return (
 		<>
 			<div className="bg-chess-default min-h-screen">
@@ -55,20 +57,27 @@ const LikedUsers = () => {
 								A liked user is able to see your profile. If a user likes you back but you unliked him, you won't be noticed and will have to like him again.
 							</p>
 							<div className="pt-2">
-								<table className="text-white w-full text-left">
-									<tbody>
-										{likedUsers.map((user, index) => (
-											<tr className="border-b border-chess-bar text-xs">
-												<td>
-													{user.first_name} {user.last_name}
-												</td>
-												<td className="text-right">
-													<button onClick={(event) => unlikeUser(event, user.id)}>Unlike</button>
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
+								{
+									likedUsers.length > 0 ?
+											<table className="text-white w-full text-left">
+												<tbody>
+													{likedUsers.map((user, index) => (
+														<tr className="border-b border-chess-bar text-xs">
+															<td>
+																{user.first_name} {user.last_name}
+															</td>
+															<td className="text-right">
+																<button onClick={(event) => unlikeUser(event, user.id)}>Unlike</button>
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+									:
+										<div>No users liked yet</div>
+
+								}
+
 							</div>
 						</div>
 					</div>

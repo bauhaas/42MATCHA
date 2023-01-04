@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import SettingsHeader from './SettingsHeader';
 import { useSelector } from 'react-redux';
-import SettingsLayout from './SettingsLayout';
 
 const BlockedUsers = () => {
 
@@ -64,27 +63,27 @@ const BlockedUsers = () => {
 							<p className='text-sm py-2 break-words'>
 								A blocked user will not see your profile appear in their searches, or be able to send you messages. Blocking a user will delete your chat history with them
 							</p>
-							<div className='flex gap-2 w-full'>
-								<input className={`grow rounded-lg focus:outline-none max-w-xs px-2 text-sm bg-chess-placeholder placeholder-chess-place-text text-chess-place-text`} type="text" placeholder="search..." />
-								<button className="btn btn-xs bg-chess-button btn-disabled text-white">
-									block
-								</button>
-							</div>
 							<div className="pt-2">
-								<table className="text-white w-full text-left">
-									<tbody>
-									{blockedUsers.map((user, index) => (
-										<tr className="border-b border-chess-bar text-xs">
-											<td>
-												{user.first_name} {user.last_name}
-											</td>
-											<td className="text-right">
-												<button onClick={(event) => unblockUser(event, user.id)}>Unblock</button>
-											</td>
-										</tr>
-									))}
-									</tbody>
-								</table>
+								{
+									blockedUsers.length > 0 ?
+										<table className="text-white w-full text-left">
+											<tbody>
+												{blockedUsers.map((user, index) => (
+													<tr className="border-b border-chess-bar text-xs">
+														<td>
+															{user.first_name} {user.last_name}
+														</td>
+														<td className="text-right">
+															<button onClick={(event) => unblockUser(event, user.id)}>Unblock</button>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									:
+										<div>No users blocked yet</div>
+								}
+
 							</div>
 						</div>
 					</div>

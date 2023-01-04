@@ -53,9 +53,8 @@ const Settings = () => {
     };
 
     const saveToRedux = (data) => {
-      const user = jwt_decode(data);
-      console.log('redux save', user);
-      dispatch(setUser(user));
+      console.log('redux save', data);
+      dispatch(setUser(data));
     }
 
     const updateUser = () => {
@@ -66,7 +65,8 @@ const Settings = () => {
             email:email,
             sex:gender,
             sex_orientation:orientation,
-            interests:interests
+            interests:interests,
+            bio:bio
         })
             .then(response => {
                 console.log(response);
@@ -157,7 +157,8 @@ const Settings = () => {
                                                         color: deepOrange[200],
                                                     },
                                                 }}
-                                                />} label="Male" />
+                                                />} label="Male"
+                                                className='grow' />
                                             </RadioGroup>
                                         </FormControl>
                                     </div>
@@ -169,8 +170,6 @@ const Settings = () => {
                                         <FormControl>
                                             <RadioGroup
                                                 row
-                                                aria-labelledby="demo-controlled-radio-buttons-group"
-                                                name="controlled-radio-buttons-group"
                                                 value={orientation}
                                                 onChange={(event) => setOrientation(event.target.value)}
                                             >
@@ -191,7 +190,7 @@ const Settings = () => {
                                                     '&.Mui-checked': {
                                                         color: deepOrange[200],
                                                     },
-                                                }} />} label="Homo" />
+                                                }} />} label="Homo" className='grow' />
                                             <FormControlLabel labelPlacement="start"  value="bi" control={<Radio
                                                 sx={{
                                                     '&.MuiRadio-root': {
@@ -200,7 +199,9 @@ const Settings = () => {
                                                     '&.Mui-checked': {
                                                         color: deepOrange[200],
                                                     },
-                                                }} />} label="Bi" />
+                                                }} />} label="Bi"
+                                                className='grow'
+                                                />
                                             </RadioGroup>
                                         </FormControl>
                                     </div>
@@ -214,7 +215,8 @@ const Settings = () => {
                                                 className='grow'
                                                 multiline
                                                 rows={10}
-                                                defaultValue={user.bio}
+                                                value={bio}
+                                                onChange={(event) => setBio(event.target.value)}
                                                 sx={{
                                                     '& .MuiInputBase-input': {
                                                         color: 'white',
@@ -240,7 +242,7 @@ const Settings = () => {
                                         Interests
                                     </label>
                                     <div className='flex flex-col'>
-                                        <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64 self-end'>
+                                        <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64 self-end mb-2'>
                                                 <input className="w-full bg-transparent text-white focus:outline-none focus:shadow-outline" id="currentPass"
                                                     placeholder="Add interest..."
                                                     onChange={(event) => setNewInterest(event.target.value)}
@@ -262,7 +264,7 @@ const Settings = () => {
                                                     size="small"
                                                     color="primary"
                                                     onDelete={(event) => handleDelete(tag)}
-                                                    className="bg-orange-300 text-chess-default mr-1"
+                                                    className="bg-orange-300 text-chess-default m-1"
                                                     sx={{
                                                         '& .MuiChip-deleteIcon, .MuiChip-deleteIcon:hover': {
                                                             color: '#312e2b',

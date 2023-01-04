@@ -208,7 +208,7 @@ return (
           <div className="relative flex h-16 items-center justify-between">
             <img onClick={(event) => gotomenu(event)} className="block h-8 w-auto" src="../logo.png" alt="logo"/>
             <div id="navbarRightButtons" className="flex items-center gap-4">
-              <div id="TODELETELATER" className="border-2 border-red-500 text-white">id:{user.id}, name:{user.first_name} {user.last_name}</div>
+              <div id="TODELETELATER" className="border-2 border-red-500 text-white">id:{user.id}, name:{user.first_name} {user.last_name}, status:{user.status ? 'offline':'online'}</div>
               <Menu as="div">
                 <Menu.Button onClick={gotochat} className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                   <ChatBubbleLeftRightIcon className={`h-8 w-8`} aria-hidden="true" />

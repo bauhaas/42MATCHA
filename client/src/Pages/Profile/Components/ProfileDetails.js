@@ -4,12 +4,14 @@ import { useSelector } from 'react-redux';
 
 import { AdjustmentsVerticalIcon, HeartIcon as HeartOutlineIcon, NoSymbolIcon} from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
-
+import { GoPrimitiveDot } from 'react-icons/go';
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
 import Chip from '@mui/material/Chip';
 import Avatar from "../../../SharedComponents/Avatar";
 import Badge from '@mui/material/Badge';
 import axios from 'axios';
+import InteractionButtons from './InteractionButtons';
+import { AiFillFire } from 'react-icons/ai';
 
 //TODO when match happend, add animation
 const ProfileDetails = ({id}) => {
@@ -21,6 +23,8 @@ const ProfileDetails = ({id}) => {
     const [blocked, setBlocked] = useState(false);
     const [filledIcon, setFilledIcon] = useState(false);
     const [user, setUser] = useState({});
+
+    const [interests, setInterests] = useState([]);
 
     const blockUser = async () => {
         await blockUserById(currentUser.id, user.id);
@@ -137,74 +141,106 @@ const ProfileDetails = ({id}) => {
     useEffect(() => {
         const getUser = async () => {
             console.log('getuser');
-            const response = await getUserById(currentUser.id, id);
-            setUser(response);
+            await axios.get(`http://localhost:3001/users/${currentUser.id}/profile/${id}`)
+                .then(response => {
+                    // console.log(response.data);
+                    setUser(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            // const response = await getUserById(currentUser.id, id);
+            // setUser(response);
         }
         getUser();
     }, []);
 
     console.log(user);
+    console.log(user.interests);
 
     return (
         <>
-            <div className='mx-2 pt-16 h-full'>
-                <div className='mx-4 my-2 rounded-lg bg-chess-dark text-white'>
+            <div className='mx-2 pt-16 h-screen'>
+                <div className='mx-4 my-2 p-2 rounded-lg bg-chess-dark text-white'>
                     {
                         blocked
                         ?
                             <div>You have been blocked by that user</div>
                         :
                             <>
-                                    <p>Profile of {user.first_name} {user.last_name}</p>
-                                    <div className='relative'>
-                                        <Avatar imageAttribute={'rounded-full w-40'} attribute={`avatar`}/>
-                                        {/* <div className={`absolute bottom-0 left-28 w-12 h-12 z-4 rounded-full ${user.status ? 'bg-gray-400': 'bg-green-400'}`}>{' '}</div> */}
-                                    </div>
-
-                                    <p>{user.age}</p>
-                                    <p>{user.job}</p>
-                                    <p>{user.city}</p>
-                                    <p>{user.country}</p>
-                                    <p>{user.sex}</p>
-                                    <p>{user.sex_orientation}</p>
-                                    <p>{user.bio}</p>
-                                    {/* {user.interests.map((interest, index) => (
-                                        <Chip label={interest} className="bg-orange-200"/>
-                                    ))} */}
-                                    {
-                                        currentUser.id !== Number(id)
-                                        ?
-                                            <>
-                                                <div className="tooltip" data-tip="Block">
-                                                    <NoSymbolIcon onClick={blockUser} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
+                                    <div className='m-2 grid grid-cols-2  sm:flex sm:gap-2'>
+                                        <div>
+                                            <Avatar imageAttribute={'rounded-full w-30 sm:w-40'} attribute={`avatar`} />
+                                        </div>
+                                        <div className='flex flex-col'>
+                                            <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
+                                                <p className='text-4xl font-bold text-orange-400 grow'>{user.first_name} {user.last_name}</p>
+                                                <div className='flex items-center relative'>
+                                                    <p className='absolute ml-3 mt-2'>{user.fame_rating}</p>
+                                                    <AiFillFire className='w-9 h-9 text-red-700 bg-transparent'></AiFillFire>
                                                 </div>
-                                            {
-                                                filledIcon
-                                                    ?
-                                                    <div className="tooltip" data-tip="Unlike">
-                                                        <HeartSolidIcon onClick={(event) => unlikeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
-                                                    </div>
-                                                    :
-                                                    <div className="tooltip" data-tip="Like">
-                                                        <HeartOutlineIcon onClick={(event) => likeUser(event)} className='h-6 w-6 text-red-500 hover:text-red-700 hover:cursor-pointer' />
-                                                    </div>
-                                            }
-                                            <div className="tooltip" data-tip="Report">
-                                                <ExclamationCircleIcon className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
                                             </div>
-                                            {
-                                                isMatched
-                                                    ?
-                                                    <div className="tooltip" data-tip="Start chatting">
-                                                        <ChatBubbleLeftIcon onClick={(event) => gotochat(event)} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
-                                                    </div>
-                                                    :
-                                                    null
-                                            }
-                                            </>
-                                        :
-                                        null
-                                    }
+                                            <p>{user.job}</p>
+                                            <p>{user.city}, {user.country}</p>
+                                            <p>{user.age} years old</p>
+                                            <p>{user.sex_orientation} {user.sex}</p>
+
+                                        </div>
+                                        {
+                                            currentUser.id === Number(user.id) ?
+                                                null
+                                            :
+                                                <Chip
+                                                    size='small'
+                                                    label={user.status ? 'offline' : 'online'}
+                                                    icon={<GoPrimitiveDot />}
+                                                    className={`w-20 sm:mt-3 ${user.status ? 'bg-gray-400' : 'bg-green-400'}`}
+                                                    sx={{
+                                                        '& .MuiChip-icon': {
+                                                            color: `${user.status ? 'gray' : 'green'}`,
+                                                        }
+                                                    }}
+                                                />
+                                        }
+                                        <InteractionButtons user={user} isMatched={isMatched} filled={filledIcon} />
+                                    </div>
+                                    <div className='bg-chess-button rounded-lg m-2 py-2'>
+                                        <h1 className='text-center'>Interests</h1>
+                                        <div className='pt-2 flex gap-2 justify-center flex-wrap'>
+                                            {user.interests && user.interests.map((interest, index) => (
+                                                <Chip label={interest} className="bg-orange-200" />
+                                            ))}
+                                        </div>
+
+                                    </div>
+                                    <div className='bg-chess-button rounded-lg m-2 py-2'>
+                                        <h1 className='text-center'>Bio</h1>
+                                        <p className='text-center'>{user.bio}</p>
+                                    </div>
+                                <div className='bg-chess-button rounded-lg m-2 py-2'>
+                                    <h1 className='text-center'>Pictures</h1>
+                                    {/* <div className='grid grid-cols-1 sm:grid-cols-2'>
+                                        <div className='border rounded-lg m-2 py-2'>
+                                            {user.photos ? <img src={user.photos} alt='user photos'/> : null}
+                                        </div>
+                                        <div className='border rounded-lg h-80 w-80'>
+                                            {user.photos ? <img className='rounded-lg object-fill' src={user.photos} alt='user photos' /> : null}
+                                        </div>
+                                        <div className='border rounded-lg m-2 py-2'>
+                                            {user.photos ? <img src={user.photos} alt='user photos' /> : null}
+                                        </div>
+                                        <div className='border rounded-lg m-2 py-2'>
+                                            {user.photos ? <img src={user.photos} alt='user photos' /> : null}
+                                        </div>
+                                        <div className='border rounded-lg m-2 py-2'>
+                                            {user.photos ? <img src={user.photos} alt='user photos' /> : null}
+                                        </div>
+                                    </div> */}
+                                </div>
+
+
+
+
 
 
                             </>

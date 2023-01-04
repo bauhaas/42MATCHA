@@ -22,11 +22,11 @@ const ProfileCard = ({ user }) => {
 							<div className="p-2 grow">
 								<div className="flex flex-row items-center w-full">
 									<p className="text-4xl font-bold text-orange-400 grow">{user.first_name}, {user.age}</p>
-									<div className="tooltip" data-tip="Like">
+									{/* <div className="tooltip" data-tip="Like">
 										<HeartOutlineIcon className='h-10 w-10 text-red-500 hover:text-red-700 hover:cursor-pointer'/>
-									</div>
+									</div> */}
 								</div>
-								<p className='text-xl font-bold text-orange-400'>Student</p>
+								<p className='text-xl font-bold text-orange-400'>{user.job}</p>
 								<p className='font-bold text-orange-400 pb-2'>{user.city} - {Math.round(user.distance)}km</p>
 								<p className='line-clamp-5 text-justify text-gray-300'>{user.bio}</p>
 							</div>
