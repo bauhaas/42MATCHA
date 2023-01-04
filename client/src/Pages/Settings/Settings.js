@@ -260,6 +260,7 @@ const Settings = () => {
                                         <div className='w-64'>
                                         {interests.map((tag, index) => (
                                                 <Chip
+                                                    key={tag + index}
                                                     label={tag}
                                                     size="small"
                                                     color="primary"

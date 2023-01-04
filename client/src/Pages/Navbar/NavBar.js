@@ -31,13 +31,11 @@ const Navbar = () => {
 	}, []);
 
   useEffect(() => {
-    console.log('retrieve all notifs')
       axios.get(`http://localhost:3001/notifications/${user.id}/receiver`, {
         id: user.id
       })
         .then(response => {
           // handle success
-          console.log('get all notifs of currentuser', response.data);
           setNotifications(response.data);
         })
         .catch(error => {
@@ -48,7 +46,6 @@ const Navbar = () => {
 
 
   useEffect(() => {
-    console.log('socket useEffect');
     socket.client.on('convUpdate', (data) => {
       console.log('receive message history event in navbar page', data)
 
@@ -168,18 +165,12 @@ const Navbar = () => {
 
   }
 
-  console.log('notifications:', notifications);
 
   const sortedNotifications = notifications && notifications.sort((a, b) => {
     const dateA = new Date(a.created_at);
     const dateB = new Date(b.created_at);
     return dateB - dateA;
   });
-
-  if(convlist)
-    console.log(convlist.filter(conv => conv.last_message_unread === true).length !== 0);
-
-    console.log('notificqtions check:', notifications && notifications.filter(notif => notif.read === false).length === 0);
 
   const getNotifText = (notification) => {
     console.log(notification.type);

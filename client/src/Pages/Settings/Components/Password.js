@@ -1,9 +1,8 @@
 import NavBar from '../../Navbar/NavBar';
 import SettingsMenu from './SettingsMenu';
-import { Cog6ToothIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { EyeIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { current } from 'daisyui/src/colors';
+import { useState } from 'react';
 import SettingsHeader from './SettingsHeader';
 
 import { useSelector } from 'react-redux';
@@ -22,7 +21,7 @@ const Password = () => {
     const toggleRevealConfirm = () => setIsRevealedConfirm(!isRevealedConfirm);
 
 
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state) => state.user.user);
 
     const resetPassword = () => {
         console.log('reset password clicked');
@@ -38,11 +37,6 @@ const Password = () => {
                 console.log(error);
             });
     }
-
-
-	useEffect(() => {
-			console.log('password', user);
-	  }, []);
 
 	return (
 		<>

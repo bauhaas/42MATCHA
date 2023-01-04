@@ -380,6 +380,7 @@ router.put('/resetpassword', async (req, res) => {
     }
     const user = await getUserById(id);
 
+    console.log('lol')
     await resetPassword(currentPassword, newPassword, user);
 
    res.sendStatus(200);
