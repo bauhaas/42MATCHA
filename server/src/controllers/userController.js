@@ -5,6 +5,7 @@ import { isActive, getFilteredBachelors, getAllUsers, getUserById, insertUser, u
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
+import fs from 'fs';
 
 const router = express.Router();
 
@@ -30,10 +31,8 @@ router.get('/:id/bachelors/', async (req, res) => {
       if (user.photos === 0) {
         return ;
       }
-      user.photos_path = [];
-      for (let i = 0; i < user.photos; i++) {
-        user.photos_path.push("../server/pictures/user_" + user.id + "_image_" + (i + 1));
-      }
+      var files = fs.readdirSync('./pictures/').filter(file => file.startsWith('user_' + user.id + "_"));
+      user.photos_path = files;
     });
     res.send(users);
   } catch (err) {
@@ -59,11 +58,10 @@ router.post('/:id/filteredBachelors', async (req, res) => {
       if (user.photos === 0) {
         return ;
       }
-      user.photos_path = [];
-      for (let i = 0; i < user.photos; i++) {
-        user.photos_path.push("../server/pictures/user_" + user.id + "_image_" + (i + 1));
-      }
+      var files = fs.readdirSync('./pictures/').filter(file => file.startsWith('user_' + user.id + "_"));
+      user.photos_path = files;
     });
+    res.send(users);
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
       res.status(400).send(err.message)
