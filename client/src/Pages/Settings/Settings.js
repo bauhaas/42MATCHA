@@ -65,7 +65,8 @@ const Settings = () => {
             email:email,
             sex:gender,
             sex_orientation:orientation,
-            interests:interests
+            interests:interests,
+            bio:bio
         })
             .then(response => {
                 console.log(response);
@@ -214,7 +215,8 @@ const Settings = () => {
                                                 className='grow'
                                                 multiline
                                                 rows={10}
-                                                defaultValue={user.bio}
+                                                value={bio}
+                                                onChange={(event) => setBio(event.target.value)}
                                                 sx={{
                                                     '& .MuiInputBase-input': {
                                                         color: 'white',
