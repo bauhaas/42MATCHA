@@ -188,9 +188,8 @@ router.get('/:id', async (req, res) => {
       return user;
     }
     user.photos_path = [];
-    for (let i = 0; i < user.photos; i++) {
-      user.photos_path.push("../server/pictures/user_" + user.id + "_image_" + (i + 1));
-    }
+    var files = fs.readdirSync('./pictures/').filter(file => file.startsWith('user_' + user.id + "_"));
+    user.photos_path = files;
 
     res.send(user);
   } catch (err) {
@@ -230,9 +229,8 @@ router.get('/:id/profile/:visit_id', async (req, res) => {
       return user;
     }
     user.photos_path = [];
-    for (let i = 0; i < user.photos; i++) {
-      user.photos_path.push("../server/pictures/user_" + user.id + "_image_" + (i + 1));
-    }
+    var files = fs.readdirSync('./pictures/').filter(file => file.startsWith('user_' + user.id + "_"));
+    user.photos_path = files;
 
     res.send(user);
   } catch (err) {
