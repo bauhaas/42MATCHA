@@ -149,7 +149,7 @@ export async function seedUsersTable() {
             '${interestsStr}',
             '${2.318641 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
             '${48.896561 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
-            '${i <= 10 ? false : true}'
+            '${i <= 200 ? false : true}'
           );
         `;
         await client.query(query);

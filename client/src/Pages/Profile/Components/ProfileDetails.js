@@ -137,7 +137,7 @@ const ProfileDetails = ({id}) => {
     useEffect(() => {
         const getUser = async () => {
             console.log('getuser');
-            const response = await getUserById(id);
+            const response = await getUserById(currentUser.id, id);
             setUser(response);
         }
         getUser();

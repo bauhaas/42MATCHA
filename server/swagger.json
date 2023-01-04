@@ -291,7 +291,7 @@
         }
       }
     },
-    "/users/{id}/profile": {
+    "/users/{id}/profile/{visit_id}": {
       "get": {
         "tags": [
           "users"
@@ -304,11 +304,17 @@
             "in": "path",
             "required": true,
             "type": "integer"
+          },
+          {
+            "name": "visit_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved user",
+            "description": "Successfully retrieved user without sensitive data",
             "schema": {
               "$ref": "#/definitions/User"
             }
@@ -452,11 +458,6 @@
             "name": "age",
             "in": "formData",
             "type": "integer"
-          },
-          {
-            "name": "sex",
-            "in": "formData",
-            "type": "string"
           },
           {
             "name": "sex_orientation",

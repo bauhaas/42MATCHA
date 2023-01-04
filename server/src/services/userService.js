@@ -40,6 +40,7 @@ export const getBachelors = async (id) => {
   try {
     const client = await pool.connect();
     const me = await getUserById(id);
+    console.log("getBachelors", me);
     const result = await client.query(`
       SELECT *, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance
       FROM users

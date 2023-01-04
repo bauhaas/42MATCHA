@@ -180,26 +180,28 @@ router.get('/:id', async (req, res) => {
 });
 
 // Get a user by their ID w/o email and password
-router.get('/:id/profile', authenticateToken, async (req, res) => {
+router.get('/:id/profile/:visit_id', async (req, res) => {
   try {
-    if (req.params.id === null) {
+    if (req.params.id === null || req.params.visit_id === null) {
       throw 'get /users/:id/profile id undefined'
     }
-    if (isNaN(req.params.id)) {
-        throw new Error('id must be a number');
+    if (isNaN(req.params.id) || isNaN(req.params.visit_id)) {
+      throw new Error('id must be a number');
     }
-    const { sender_id } = req.body;
-    const isActive = await isActive(sender_id);
-    if (isActive === false) {
+
+    const active = await isActive(req.params.id);
+    if (active === false) {
       throw new Error('Please activate your account by uploading a photo');
     }
-    const blocked = await isBlocked(id, sender_id);
+    const blocked = await isBlocked(req.params.id, req.params.visit_id);
     if (blocked) {
       throw new Error('You are blocked')
     }
-    const user = await getUserByIdProfile(req.params.id);
-    if (user.active === false )
-      new Error('this user is inactive');
+
+    const user = await getUserByIdProfile(req.params.visit_id);
+    if (user.active === false) {
+      throw new Error('this user is inactive');
+    }
 
     res.send(user);
   } catch (err) {
