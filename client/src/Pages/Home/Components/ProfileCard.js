@@ -3,7 +3,7 @@ import useToggle from '../../../Hooks/useToggle';
 
 import { HeartIcon as HeartOutlineIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
-
+import { AiFillFire } from 'react-icons/ai';
 const transition = {
 	duration: 0.5,
 	ease: 'linear',
@@ -21,10 +21,14 @@ const ProfileCard = ({ user }) => {
 							<img className="w-full rounded-t-md" src={user.photos} alt="user" />
 							<div className="p-2 grow">
 								<div className="flex flex-row items-center w-full">
-									<p className="text-4xl font-bold text-orange-400 grow">{user.first_name}, {user.age}</p>
+									<p className="text-4xl font-bold text-orange-400">{user.first_name}, {user.age}</p>
 									{/* <div className="tooltip" data-tip="Like">
 										<HeartOutlineIcon className='h-10 w-10 text-red-500 hover:text-red-700 hover:cursor-pointer'/>
 									</div> */}
+									<div className='relative ml-auto mb-10 mr-10'>
+										<AiFillFire className='absolute w-12 h-12 text-center text-red-600'>{" "}</AiFillFire>
+										<p className='absolute ml-4 mt-4 text-white'>{user.fame_rating}</p>
+									</div>
 								</div>
 								<p className='text-xl font-bold text-orange-400'>{user.job}</p>
 								<p className='font-bold text-orange-400 pb-2'>{user.city} - {Math.round(user.distance)}km</p>
