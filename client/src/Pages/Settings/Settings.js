@@ -53,9 +53,8 @@ const Settings = () => {
     };
 
     const saveToRedux = (data) => {
-      const user = jwt_decode(data);
-      console.log('redux save', user);
-      dispatch(setUser(user));
+      console.log('redux save', data);
+      dispatch(setUser(data));
     }
 
     const updateUser = () => {
