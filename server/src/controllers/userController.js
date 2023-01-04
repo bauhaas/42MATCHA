@@ -6,6 +6,7 @@ import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
 import fs from 'fs';
+import fetch from 'node-fetch';
 
 const router = express.Router();
 
@@ -32,7 +33,12 @@ router.get('/:id/bachelors/', async (req, res) => {
         return ;
       }
       var files = fs.readdirSync('./pictures/').filter(file => file.startsWith('user_' + user.id + "_"));
-      user.photos_path = files;
+      user.photos_blobs = [];
+      files.forEach(async (file) => {
+        const fileData = fs.readFileSync(file);
+        const blob = new Blob([fileData]);
+        user.photos_blobs.push(blob);
+      });
     });
     res.send(users);
   } catch (err) {
@@ -304,6 +310,9 @@ function changeUserData(user, update) {
   if (update.bio) {
     user.bio = update.bio;
   }
+  if (update.active) {
+    user.active += update.active;
+  }
   if (update.report_count) {
     user.report_count += 1;
   }
@@ -323,7 +332,7 @@ function changeUserData(user, update) {
       user.photos += 1;
       fs.copyFile(path, './pictures/user_' + user.id + "_image_" + user.photos + path.split('.').pop(), (err) => {
         if (err) throw err;
-        console.log(parg + ' was copied to destination.txt');
+        console.log(path + ' was copied to destination.txt');
       });
     });
   }

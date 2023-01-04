@@ -108,9 +108,14 @@ export async function seedUsersTable() {
         country = country.replace('\'', '');
         const fame_rating = Math.floor(Math.random() * 20);
         // const birthdate = faker.date.birthdate({refDate: Date});
+        const commonHobbies = ["42", "matcha", "super", "chouette", "I am a common hobby", "vitesse"];
         const hobbies = ["sport", "bagarre", "flute", "contrebasse", "trompette", "aviation", "chanter", "danser", "courgette", "livre", "je suis un interet", "je suis un hobby"];
         var interestsStr = "[";
-        for (let i = 0; i < 3 + Math.floor(Math.random() * 6); i++) {
+        for (let i = 0; i < 4; i++) {
+          var j = Math.floor(Math.random() * commonHobbies.length);
+          interestsStr += "\"" + commonHobbies[j] + "\",";
+        }
+        for (let i = 0; i < Math.floor(Math.random() * 6); i++) {
           var j = Math.floor(Math.random() * hobbies.length);
           interestsStr += "\"" + hobbies[j] + "\",";
         }
