@@ -194,6 +194,7 @@ export const insertRelation = async (sender_id, receiver_id, type) => {
         await deleteRelation(match.id);
         await deleteRelation(reverse.id);
 
+        await deleteConversationOfPair(sender_id, receiver_id);
         return await createNotification(sender_id, receiver_id, type);
     } catch (err) {
         log.error('[relationsService]', err);
