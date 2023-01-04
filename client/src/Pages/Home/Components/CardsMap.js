@@ -6,6 +6,7 @@ import axios from 'axios';
 import Slider, { SliderThumb } from '@mui/material/Slider';
 import { FaStar } from 'react-icons/fa';
 import { AiFillFire } from 'react-icons/ai';
+import { HiArrowUp } from 'react-icons/hi';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 
 import ProfileCard from './ProfileCard';
@@ -97,7 +98,6 @@ const CardsMap = () => {
             });
     };
 
-
     const marks = [
         {
             value: 0,
@@ -178,13 +178,30 @@ const CardsMap = () => {
         }
     }, [sortBy, sortDirection, users]);
 
+    const [showTopBtn, setShowTopBtn] = useState(false);
+
+    useEffect(() => {
+        window.addEventListener('scroll', () => {
+            // if (window.scrollY > 400) {
+            //     setShowTopBtn(true);
+            // } else {
+            //     setShowTopBtn(false);
+            // }
+            setShowTopBtn(true);
+        });
+    }, []);
+
+    const gototop = (event) => {
+        console.log('y position:',window.screenY)
+        window.scrollTo({top:0, behavior:'smooth'})
+    };
+
+
     return (
         <>
             <div className='mt-16'>
-
-                <div className='flex items-center justify-center border-2 border-red-500 gap-4'>
-                    <label htmlFor="my-modal" className="btn h-16 bg-chess-bar">Filters</label>
-                    {/* Put this part before </body> tag */}
+                <div className='flex items-center justify-center gap-4 pt-2'>
+                    <label htmlFor="my-modal" className="btn h-16 bg-chess-dark">Filters</label>
                     <input type="checkbox" id="my-modal" className="modal-toggle" />
                     <div className="modal">
                         <div className="modal-box">
@@ -253,7 +270,15 @@ const CardsMap = () => {
                         </div>
                     </div>
 
-                    <FormControl className='bg-chess-bar rounded-lg mt-2 w-40'>
+                    <div className='h-fit'>
+                        {sortDirection === 'ascending' ? (
+                            <BiSortDown className={`btn ${sortBy ? null : 'btn-disabled text-chess-hover'} bg-chess-dark  h-16 w-16`} onClick={() => setSortDirection('descending')} />
+                        ) : (
+                                <BiSortUp className={`btn ${sortBy ? null : 'btn-disabled text-chess-hover'} bg-chess-dark h-16 w-16`} onClick={() => setSortDirection('ascending')} />
+                        )}
+                    </div>
+
+                    <FormControl className='bg-chess-dark rounded-lg w-40'>
                         <InputLabel id="demo-simple-select-label" className='text-white'>Sort by</InputLabel>
                         <Select
                             value={sortBy}
@@ -265,15 +290,6 @@ const CardsMap = () => {
                             <MenuItem value={'fame'}>Fame</MenuItem>
                         </Select>
                     </FormControl>
-
-
-                    <div className='h-fit'>
-                        {sortDirection === 'ascending' ? (
-                            <BiSortDown className='h-16 w-16 text-chess-bar' onClick={() => setSortDirection('descending')} />
-                        ) : (
-                            <BiSortUp className='h-16 w-16 text-chess-bar' onClick={() => setSortDirection('ascending')} />
-                        )}
-                    </div>
                 </div>
 
                 <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
@@ -283,6 +299,14 @@ const CardsMap = () => {
                         </li>
                     ))}
                 </ul>
+
+                {
+                    showTopBtn &&
+                    <btn onClick={gototop} className='btn btn-circle fixed bottom-5 right-5'>
+                        <HiArrowUp className='h-6 w-6'/>
+                    </btn>
+                }
+
             </div>
         </>
     )

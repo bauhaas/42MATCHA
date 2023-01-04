@@ -21,7 +21,10 @@ const ConvCard = ({conv}) => {
     return (
         <>
             <div className={`flex bg-chess-dark rounded-lg gap-2 p-2 ${conv.last_message_unread && conv.last_message_author_id !== currentUser.id ? 'bg-red-500' : 'hover:bg-chess-hover'}`}>
-                <Avatar imageAttribute={'rounded-full w-12'} attribute={'avatar'} />
+                <div className='indicator'>
+                    <span className="indicator-item badge indicator-bottom indicator-start m-2 bg-blue-500"></span>
+                    <Avatar imageAttribute={'rounded-full w-12'} attribute={'avatar'} />
+                </div>
                 <div>
                     <p className='font-bold'>{convPartner}</p>
                     <p className='line-clamp-1'>{conv.last_message_author_id === currentUser.id ? 'You: ' : ''}{conv.last_message || "No messages yet"}</p>

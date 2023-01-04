@@ -11,6 +11,7 @@ import Avatar from "../../../SharedComponents/Avatar";
 import Badge from '@mui/material/Badge';
 import axios from 'axios';
 import InteractionButtons from './InteractionButtons';
+import { AiFillFire } from 'react-icons/ai';
 
 //TODO when match happend, add animation
 const ProfileDetails = ({id}) => {
@@ -167,35 +168,45 @@ const ProfileDetails = ({id}) => {
                             <div>You have been blocked by that user</div>
                         :
                             <>
-                                    <div className=' m-2 grid grid-cols-2 justify-center sm:flex sm:gap-2'>
-                                        <div className='relative'>
+                                    <div className='m-2 grid grid-cols-2  sm:flex sm:gap-2'>
+                                        <div>
                                             <Avatar imageAttribute={'rounded-full w-30 sm:w-40'} attribute={`avatar`} />
                                         </div>
                                         <div className='flex flex-col'>
                                             <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
                                                 <p className='text-4xl font-bold text-orange-400 grow'>{user.first_name} {user.last_name}</p>
+                                                <div className='flex items-center relative'>
+                                                    <p className='absolute ml-3 mt-2'>{user.fame_rating}</p>
+                                                    <AiFillFire className='w-9 h-9 text-red-700 bg-transparent'></AiFillFire>
+                                                </div>
                                             </div>
                                             <p>{user.job}</p>
                                             <p>{user.city}, {user.country}</p>
                                             <p>{user.age} years old</p>
                                             <p>{user.sex_orientation} {user.sex}</p>
+
                                         </div>
-                                        <Chip
-                                            size='small'
-                                            label={user.status ? 'offline' : 'online'}
-                                            icon={<GoPrimitiveDot />}
-                                            className={`w-20 sm:mt-3 ${user.status ? 'bg-gray-400' : 'bg-green-400'}`}
-                                            sx={{
-                                                '& .MuiChip-icon': {
-                                                    color: `${user.status ? 'gray' : 'green'}`,
-                                                }
-                                            }}
-                                        />
+                                        {
+                                            currentUser.id === Number(user.id) ?
+                                                null
+                                            :
+                                                <Chip
+                                                    size='small'
+                                                    label={user.status ? 'offline' : 'online'}
+                                                    icon={<GoPrimitiveDot />}
+                                                    className={`w-20 sm:mt-3 ${user.status ? 'bg-gray-400' : 'bg-green-400'}`}
+                                                    sx={{
+                                                        '& .MuiChip-icon': {
+                                                            color: `${user.status ? 'gray' : 'green'}`,
+                                                        }
+                                                    }}
+                                                />
+                                        }
                                         <InteractionButtons user={user} isMatched={isMatched} filled={filledIcon} />
                                     </div>
                                     <div className='bg-chess-button rounded-lg m-2 py-2'>
                                         <h1 className='text-center'>Interests</h1>
-                                        <div className='pt-2 flex gap-2 justify-center'>
+                                        <div className='pt-2 flex gap-2 justify-center flex-wrap'>
                                             {user.interests && user.interests.map((interest, index) => (
                                                 <Chip label={interest} className="bg-orange-200" />
                                             ))}

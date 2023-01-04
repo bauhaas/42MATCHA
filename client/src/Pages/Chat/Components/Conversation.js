@@ -76,6 +76,7 @@ const Conversation = () => {
         messagesRef.current.scrollTo(0, messagesRef.current.scrollHeight);
     }, [messages]);
 
+    console.log(conversation);
     return (
         <>
             <div className="bg-chess-default min-h-screen">
@@ -90,7 +91,10 @@ const Conversation = () => {
                                     </svg>
                                 </button>
                                 <p>{convPartner}</p>
-                                <Avatar imageAttribute={'rounded-full w-10'} attribute={'avatar'}/>
+                                <div className='indicator'>
+                                    <span className="indicator-item badge indicator-bottom indicator-start m-2 bg-blue-500"></span>
+                                    <Avatar imageAttribute={'rounded-full w-12'} attribute={'avatar'} />
+                                </div>
                             </div>
                         </div>
                         {
