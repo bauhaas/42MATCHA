@@ -46,6 +46,7 @@ export const getBachelors = async (id) => {
       FROM users
       WHERE $1 != id
       AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) < 50
+      AND active = true
     `, [me.id, me.longitude, me.latitude]);
 
     var closeUsers = result.rows;
@@ -71,7 +72,7 @@ export const getBachelors = async (id) => {
 
     // sort by increasing distance
     closeUsers.sort((a, b) => a.distance < b.distance);
-
+    console.log(closeUsers.length)
     client.release();
     return closeUsers;
   } catch (err) {
@@ -94,7 +95,8 @@ export const getFilteredBachelors = async (id, filters) => {
       AND age >= $6
       AND age <= $7
       AND fame_rating >= $8
-    `, [me.id, me.longitude, me.latitude, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
+      AND active = true
+      `, [me.id, me.longitude, me.latitude, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
 
     var filteredUsers = result.rows;
 
