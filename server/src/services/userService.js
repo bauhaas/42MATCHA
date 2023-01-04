@@ -329,6 +329,14 @@ export const updateUser = async (data) => {
     const client = await pool.connect();
 
     log.info(data);
+    var interestsStr = "[";
+    for (let i = 0; i < data.interests.length; i++) {
+      interestsStr += "\"" + data.interests[i] + "\",";
+    }
+    if (interestsStr !== "[") {
+      interestsStr = interestsStr.slice(0, -1);
+    }
+    interestsStr += "]";
     log.info('[userService]', 'gonna update the user');
     const result = await client.query(`
     UPDATE users SET
@@ -357,7 +365,7 @@ export const updateUser = async (data) => {
       data.sex_orientation,
       data.city,
       data.country,
-      data.interests,
+      interestsStr,
       data.photos,
       data.bio,
       data.active,

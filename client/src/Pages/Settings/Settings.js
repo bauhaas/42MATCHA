@@ -19,7 +19,12 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import { Cog6ToothIcon, PlusIcon } from '@heroicons/react/24/outline';
 
+import { useDispatch } from 'react-redux';
+import jwt_decode from "jwt-decode";
+import { setUser } from "../../userSlice";
+
 const Settings = () => {
+    const dispatch = useDispatch();
 
     const user = useSelector((state) => state.user.user);
     const [first_name, setFirstName] = useState(user.first_name);
@@ -47,6 +52,12 @@ const Settings = () => {
             setInterests((prevInterests) => [...prevInterests, newInterest]);
     };
 
+    const saveToRedux = (data) => {
+      const user = jwt_decode(data);
+      console.log('redux save', user);
+      dispatch(setUser(user));
+    }
+
     const updateUser = () => {
         console.log('gonna updateUser');
         axios.put(`http://localhost:3001/users/${user.id}/update`, {
@@ -59,6 +70,7 @@ const Settings = () => {
         })
             .then(response => {
                 console.log(response);
+                saveToRedux(response.data)
             })
             .catch(error => {
                 console.log(error);
@@ -136,7 +148,7 @@ const Settings = () => {
                                                         color: deepOrange[200],
                                                     },
                                                 }} />} label="Female" />
-                                            <FormControlLabel labelPlacement="start" value="man" control={<Radio
+                                            <FormControlLabel labelPlacement="start" value="male" control={<Radio
                                                 sx={{
                                                     '&.MuiRadio-root': {
                                                         color: grey[600],

@@ -108,7 +108,9 @@ export async function seedUsersTable() {
           var j = Math.floor(Math.random() * hobbies.length);
           interestsStr += "\"" + hobbies[j] + "\",";
         }
-        interestsStr = interestsStr.slice(0, -1);
+        if (interestsStr !== "[") {
+          interestsStr = interestsStr.slice(0, -1);
+        }
         interestsStr += "]";
         const photos = faker.image.avatar();
         const bio = faker.lorem.lines(3).replace('\'', '');

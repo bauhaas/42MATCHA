@@ -270,7 +270,6 @@ function changeUserData(user, update) {
   }
   if (update.interests) {
     //TODO foire à cause du format json
-    log.info("[userController]", user.interests, update.interests)
     user.interests = update.interests;
   }
   if (update.bio) {
