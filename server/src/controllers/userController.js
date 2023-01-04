@@ -307,6 +307,25 @@ function changeUserData(user, update) {
   if (update.report_count) {
     user.report_count += 1;
   }
+  if (update.photos_path) {
+    // del previous photos
+    if (user.photos > 0) {
+      for (let i = 0; i < user.photos; i++) {
+        fs.unlinkSync('./pictures/user_' + user.id + "_image_" + (i + 1));
+      }
+    }
+
+    // path and files are verificated and secured
+    user.photos = 0;
+    console.log(update.photos_path)
+    update.photos_path.forEach((path) => {
+      user.photos += 1;
+      fs.copyFile(path, './pictures/user_' + user.id + "_image_" + user.photos, (err) => {
+        if (err) throw err;
+        console.log(parg + ' was copied to destination.txt');
+      });
+    });
+  }
   return user
 }
 

@@ -498,6 +498,14 @@
             "name": "report_count",
             "in": "formData",
             "type": "integer"
+          },
+          {
+            "name": "photos_path",
+            "in": "formData",
+            "schema": {
+              "type": "array",
+              "items": "string"
+            }
           }
         ],
         "responses": {
