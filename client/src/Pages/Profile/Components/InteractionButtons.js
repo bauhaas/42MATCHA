@@ -2,7 +2,8 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
+import Chip from '@mui/material/Chip';
+import { GoPrimitiveDot } from 'react-icons/go';
 import { AdjustmentsVerticalIcon, HeartIcon as HeartOutlineIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
@@ -53,6 +54,17 @@ const InteractionButtons = ({user, isMatched, filled}) => {
                     ?
                     <>
                         <div className='flex ml-auto sm:p-2'>
+                            <Chip
+                                size='small'
+                                label={user.status ? 'offline' : 'online'}
+                                icon={<GoPrimitiveDot />}
+                                className={`w-20 ${user.status ? 'bg-gray-400' : 'bg-green-400'}`}
+                                sx={{
+                                    '& .MuiChip-icon': {
+                                        color: `${user.status ? 'gray' : 'green'}`,
+                                    }
+                                }}
+                            />
                             <div className="tooltip" data-tip="Block">
                                 <NoSymbolIcon onClick={blockUser} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
                             </div>

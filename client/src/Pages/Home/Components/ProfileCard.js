@@ -1,5 +1,6 @@
 import { motion } from "framer-motion"
 import useToggle from '../../../Hooks/useToggle';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { HeartIcon as HeartOutlineIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
@@ -12,19 +13,23 @@ const transition = {
 
 const ProfileCard = ({ user }) => {
 
+	const navigate = useNavigate();
+
+	const gotoprofile = (event) => {
+		event.preventDefault();
+		navigate(`/profile/${user.id}`);
+	}
+
 	return (
 		<>
-			<div className="rounded-md bg-chess-hover hover:bg-chess-dark group w-full scale-90">
+			<div onClick={gotoprofile} className="rounded-md bg-chess-hover hover:bg-chess-dark group w-full scale-90">
 				{
 					<>
 						<div id='cardRevealed' className="flex flex-col h-full">
-							<img className="w-full rounded-t-md" src={user.photos} alt="user" />
+							<img className="w-full min-h-1/2 max-h-1/2 rounded-t-md" src={user.photos} alt="user" />
 							<div className="p-2 grow">
 								<div className="flex flex-row items-center w-full">
 									<p className="text-4xl font-bold text-orange-400">{user.first_name}, {user.age}</p>
-									{/* <div className="tooltip" data-tip="Like">
-										<HeartOutlineIcon className='h-10 w-10 text-red-500 hover:text-red-700 hover:cursor-pointer'/>
-									</div> */}
 									<div className='relative ml-auto mb-10 mr-10'>
 										<AiFillFire className='absolute w-12 h-12 text-center text-red-600'>{" "}</AiFillFire>
 										<p className='absolute ml-4 mt-4 text-white'>{user.fame_rating}</p>

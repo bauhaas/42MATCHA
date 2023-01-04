@@ -174,7 +174,7 @@ const ProfileDetails = ({id}) => {
                                         </div>
                                         <div className='flex flex-col'>
                                             <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
-                                                <p className='text-4xl font-bold text-orange-400 grow'>{user.first_name} {user.last_name}</p>
+                                                <p className='text-4xl font-bold text-orange-400'>{user.first_name} {user.last_name}</p>
                                                 <div className='flex items-center relative'>
                                                     <p className='absolute ml-3 mt-2'>{user.fame_rating}</p>
                                                     <AiFillFire className='w-9 h-9 text-red-700 bg-transparent'></AiFillFire>
@@ -186,7 +186,7 @@ const ProfileDetails = ({id}) => {
                                             <p>{user.sex_orientation} {user.sex}</p>
 
                                         </div>
-                                        {
+                                        {/* {
                                             currentUser.id === Number(user.id) ?
                                                 null
                                             :
@@ -201,7 +201,7 @@ const ProfileDetails = ({id}) => {
                                                         }
                                                     }}
                                                 />
-                                        }
+                                        } */}
                                         <InteractionButtons user={user} isMatched={isMatched} filled={filledIcon} />
                                     </div>
                                     <div className='bg-chess-button rounded-lg m-2 py-2'>

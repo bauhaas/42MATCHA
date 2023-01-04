@@ -36,7 +36,7 @@ const CardsMap = () => {
     const minDistance = 1;
     const [ageRange, setAgeRange] = useState([18, 34]);
     const [distanceRange, setDistanceRange] = useState([0, 50]);
-    const [fameRange, setFameRange] = useState([0, 10]);
+    const [fameRange, setFameRange] = useState(0);
     const [commonTags, setCommonTags] = useState(0);
 
     const handleAgeChange = (event, newValue, activeThumb) => {
@@ -73,7 +73,7 @@ const CardsMap = () => {
     };
 
     const handleFameChange = (event, newValue) => {
-        setFameRange([0, newValue]);
+        setFameRange(newValue);
     };
 
     const sendFilters = async (event) => {
@@ -84,7 +84,7 @@ const CardsMap = () => {
             max_age: ageRange[1],
             min_distance: distanceRange[0],
             max_distance: distanceRange[1],
-            min_fame: fameRange[1],
+            min_fame: fameRange,
             min_common_interests: commonTags,
             max_common_interests: 100
         })
@@ -251,7 +251,7 @@ const CardsMap = () => {
                             />
                             <h3 className="font-bold text-lg">Fame</h3>
                             <Slider
-                                defaultValue={70}
+                                defaultValue={0}
                                 valueLabelDisplay="auto"
                                 onChange={handleFameChange}
                                 slots={{ thumb: FireThumbComponent }}
