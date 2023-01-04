@@ -9,7 +9,7 @@ export const deleteConversation = async (id) => {
         log.info('[conversationService]', 'deleteConversation');
 
         await client.query(
-            `DELETE FROM conversations
+            `DELETE FROM conversation
             WHERE id = $1;`, [id]);
         client.release();
     } catch (err) {
@@ -66,7 +66,7 @@ export const insertConversation = async (userId1, userId2) => {
             // return conversation;
         } else {
             // If a conversation already exists, return it
-            const conversation = result.rows[0];
+            const conversation = result.rows[0].id;
             client.release();
             // return conversation;
             return getConversationCustom(conversation.id, userId1, userId2);
@@ -112,12 +112,12 @@ export const deleteConversationOfPair = async (id1, id2) => {
 
         const convResult = await client.query(`
         SELECT id FROM conversation
-        WHERE (userId1 = $1 AND userId2 = $1)
+        WHERE (userId1 = $1 AND userId2 = $2)
         OR (userId1 = $2 AND userId2 = $1);
         `
         , [id1, id2]);
-        const conversation = convResult.rows[0];
-
+        
+        const conversation = convResult.rows[0].id;
         if (conversation === undefined) {
             return 0;
         }
@@ -132,6 +132,8 @@ export const deleteConversationOfPair = async (id1, id2) => {
         for (let i = 0; i < messagesIds.length; i++) {
             await deleteMessage(messagesIds.id);
         }
+        await deleteConversation(conversation);
+
         client.release();
         return messagesIds;
     } catch (err) {

@@ -13,13 +13,13 @@
         "description": "Create a conv after 2 user matched",
         "parameters": [
           {
-            "name": "sender_id",
+            "name": "userId1",
             "in": "formData",
             "required": true,
             "type": "integer"
           },
           {
-            "name": "receiver_id",
+            "name": "userId2",
             "in": "formData",
             "required": true,
             "type": "integer"
@@ -946,13 +946,13 @@
         "description": "Delete conversation",
         "parameters": [
           {
-            "name": "sender_id",
+            "name": "userId1",
             "in": "formData",
             "required": true,
             "type": "integer"
           },
           {
-            "name": "receiver_id",
+            "name": "userId2",
             "in": "formData",
             "required": true,
             "type": "integer"
