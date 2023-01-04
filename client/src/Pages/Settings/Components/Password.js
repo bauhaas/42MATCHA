@@ -22,9 +22,10 @@ const Password = () => {
     const toggleRevealConfirm = () => setIsRevealedConfirm(!isRevealedConfirm);
 
 
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state) => state.user.user);
 
     const resetPassword = () => {
+        console.log(user.id);
         console.log('reset password clicked');
         axios.put(`http://localhost:3001/users/resetpassword`, {
             currentPassword: currentPassword,
