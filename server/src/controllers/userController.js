@@ -152,6 +152,9 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     if (err.message === 'Invalid email or password.') {
       res.status(401).send(err.message);
+      
+    } else if (err.message === 'Email not verified.') {
+      res.status(403).send(err.message);
     } else {
       res.status(500).send(err.message);
     }
@@ -280,25 +283,26 @@ router.post('/', async (req, res) => {
 
 function changeUserData(user, update) {
   if (update.first_name) {
-    user.first_name = update.first_name.trim();
+    user.first_name = update.first_name;
   }
   if (update.last_name) {
-    user.last_name = update.last_name.trim();
+    user.last_name = update.last_name;
   }
   if (update.email) {
-    user.email = update.email.trim();
+    user.email = update.email;
+    user.active = false;
   }
   if (update.age) {
     user.age = update.age;
   }
   if (update.sex) {
-    user.sex = update.sex.trim();
+    user.sex = update.sex;
   }
   if (update.sex_orientation) {
-    user.sex_orientation = update.sex_orientation.trim();
+    user.sex_orientation = update.sex_orientation;
   }
   if (update.city) {
-    user.city = update.city.trim();
+    user.city = update.city;
   }
   if (update.country) {
     user.country = update.country;
@@ -311,7 +315,7 @@ function changeUserData(user, update) {
     user.bio = update.bio;
   }
   if (update.active) {
-    user.active += update.active;
+    user.active = update.active;
   }
   if (update.report_count) {
     user.report_count += 1;

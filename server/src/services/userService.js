@@ -157,12 +157,17 @@ export const getLogin = async (email, password) => {
     // If no user was found with the given email, throw an error
     if (result.rowCount === 0) {
       log.error('[userService]', 'didnt find user with that mail');
-      throw new Error('Invalid email or password.');
+      throw new Error('didnt find user with that mail.');
     }
 
     // Get the user from the result
     const user = result.rows[0];
 
+    // check if email was verified
+    if (user.active === false) {
+      log.error('[userService]', 'email not verified');
+      throw new Error('Email not verified.');
+    }
     // Compare the given password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password);
 

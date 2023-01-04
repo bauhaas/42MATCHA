@@ -122,42 +122,73 @@
           "users"
         ],
         "summary": "Insert new user",
-          "description": "Insert a new user into the database",
-          "parameters": [
-            {
-              "name": "firstName",
-              "in": "formData",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "lastName",
-              "in": "formData",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "email",
-              "in": "formData",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "password",
-              "in": "formData",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "responses": {
-            "201": {
-              "description": "Successfully inserted user into the database"
-            },
-            "500": {
-              "description": "Failed to insert user into the database"
-            }
+        "description": "Insert a new user into the database",
+        "parameters": [
+          {
+            "name": "firstName",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "lastName",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully inserted user into the database"
+          },
+          "500": {
+            "description": "Failed to insert user into the database"
           }
         }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "login the user",
+        "description": "login the user",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully logged in"
+          },
+          "500": {
+            "description": "Failed to log in"
+          }
+        }
+      }
     },
     "/users/{id}": {
       "get": {
