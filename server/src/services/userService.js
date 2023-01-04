@@ -5,6 +5,19 @@ import nodemailer from 'nodemailer';
 import log from '../config/log.js';
 import jwt from 'jsonwebtoken';
 import  emailValidator from 'deep-email-validator';
+import  fs from 'fs';
+import request from 'request';
+
+export const downloadAndStoreImageSeeding = async (id, img_number, url) => {
+  try {
+    const dest = './pictures/user_' + id + '_image_' + img_number + '.jpg'; 
+    request(url)
+    .pipe(fs.createWriteStream(dest))
+    .on('close', () => {});
+  } catch (err) {
+    throw err;
+  }
+}
 
 export const isActive = async (id) => {
   try {
@@ -47,6 +60,7 @@ export const getBachelors = async (id) => {
       WHERE $1 != id
       AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) < 50
       AND active = true
+      AND photos > 0
     `, [me.id, me.longitude, me.latitude]);
 
     var closeUsers = result.rows;
@@ -96,6 +110,7 @@ export const getFilteredBachelors = async (id, filters) => {
       AND age <= $7
       AND fame_rating >= $8
       AND active = true
+      AND photos > 0
       `, [me.id, me.longitude, me.latitude, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
 
     var filteredUsers = result.rows;
@@ -339,23 +354,23 @@ export const updateUser = async (data) => {
     interestsStr += "]";
     log.info('[userService]', 'gonna update the user');
     const result = await client.query(`
-    UPDATE users SET
-    first_name = $1,
-    last_name = $2,
-    email = $3,
-    password = $4,
-    age = $5,
-    sex = $6,
-    sex_orientation = $7,
-    city = $8,
-    country = $9,
-    interests = $10,
-    photos = $11,
-    bio = $12,
-    active = $13,
-    report_count = $14
-    WHERE id = $15
-    RETURNING *;`, [
+      UPDATE users SET
+      first_name = $1,
+      last_name = $2,
+      email = $3,
+      password = $4,
+      age = $5,
+      sex = $6,
+      sex_orientation = $7,
+      city = $8,
+      country = $9,
+      interests = $10,
+      photos = $11,
+      bio = $12,
+      active = $13,
+      report_count = $14
+      WHERE id = $15
+      RETURNING *;`, [
       data.first_name,
       data.last_name,
       data.email,
@@ -393,10 +408,10 @@ export const CreateFakeUser = async (fakeUser, longitude, latitude) => {
     log.info('[userService]', 'gonna insert the fake user');
     const fakeMail = fakeUser + "@" + fakeUser + ".com" ;
     const result = await client.query(`
-    INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count, longitude, latitude)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
-    RETURNING *;
-  `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "male", "hetero", "Paris", "France", '["test_interets"]', "", fakeUser, true, 0, 0, longitude, latitude]);
+      INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count, longitude, latitude)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+      RETURNING *;
+    `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "male", "hetero", "Paris", "France", '["test_interets"]', "", fakeUser, true, 0, 0, longitude, latitude]);
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));
 
     client.release();

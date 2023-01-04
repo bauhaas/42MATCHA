@@ -3,11 +3,13 @@ import bcrypt from "bcryptjs";
 
 import pool from '../config/db.js';
 import log from '../config/log.js';
+import fs from 'fs';
+import { downloadAndStoreImageSeeding } from '../services/userService.js'
 
 export async function createUsersTable() {
   try {
     const client = await pool.connect();
-    await client.query(`
+    const result = await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         first_name VARCHAR(255),
@@ -20,7 +22,7 @@ export async function createUsersTable() {
         city VARCHAR(255),
         country TEXT,
         interests JSON,
-        photos TEXT,
+        photos INTEGER,
         bio TEXT,
         job TEXT,
         active BOOLEAN DEFAULT false,
@@ -50,9 +52,13 @@ export async function seedUsersTable() {
     `);
 
     if (tableIsEmpty.rowCount === 0) {
+      if (!fs.existsSync('pictures')) {
+        fs.mkdirSync('pictures');
+      }
+      
       var salt = bcrypt.genSaltSync(10);
       var hash = bcrypt.hashSync('42', salt);
-
+      await downloadAndStoreImageSeeding(1, 1, 'https://pbs.twimg.com/media/Db8uqDaX4AE6vA3.jpg');
       const testUser = `
           INSERT INTO users (
             first_name,
@@ -77,7 +83,7 @@ export async function seedUsersTable() {
             '42@42.com',
             '${hash}',
             '0',
-            'https://pbs.twimg.com/media/Db8uqDaX4AE6vA3.jpg:large',
+            '1',
             'Impossible to not like me',
             'Executive Cat',
             '["Sleeping"]',
@@ -113,6 +119,7 @@ export async function seedUsersTable() {
         }
         interestsStr += "]";
         const photos = faker.image.avatar();
+        await downloadAndStoreImageSeeding(i + 2, 1, photos);
         const bio = faker.lorem.lines(3).replace('\'', '');
         const job = faker.name.jobTitle();
         const query = `
@@ -145,13 +152,13 @@ export async function seedUsersTable() {
             '${city}',
             '${country}',
             '${fame_rating}',
-            '${photos}',
+            '1',
             '${bio}',
             '${job}',
             '${interestsStr}',
             '${2.318641 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
             '${48.896561 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
-            '${i <= 200 ? false : true}'
+            '${true}'
           );
         `;
         await client.query(query);

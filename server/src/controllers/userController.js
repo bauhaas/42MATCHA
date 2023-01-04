@@ -26,6 +26,15 @@ router.get('/:id/bachelors/', async (req, res) => {
         throw '400: id must be a number';
     }
     const users = await getBachelors(id);
+    users.forEach((user) => {
+      if (user.photos === 0) {
+        return ;
+      }
+      user.photos_path = [];
+      for (let i = 0; i < user.photos; i++) {
+        user.photos_path.push("../server/pictures/user_" + user.id + "_image_" + (i + 1));
+      }
+    });
     res.send(users);
   } catch (err) {
     console.log(err);
@@ -46,6 +55,15 @@ router.post('/:id/filteredBachelors', async (req, res) => {
 
     const users = await getFilteredBachelors(id, req.body);
     res.send(users);
+    users.forEach((user) => {
+      if (user.photos === 0) {
+        return ;
+      }
+      user.photos_path = [];
+      for (let i = 0; i < user.photos; i++) {
+        user.photos_path.push("../server/pictures/user_" + user.id + "_image_" + (i + 1));
+      }
+    });
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
       res.status(400).send(err.message)
@@ -168,6 +186,14 @@ router.get('/:id', async (req, res) => {
     }
     console.log('get a user by id');
     const user = await getUserById(req.params.id);
+    if (user.photos === 0) {
+      return user;
+    }
+    user.photos_path = [];
+    for (let i = 0; i < user.photos; i++) {
+      user.photos_path.push("../server/pictures/user_" + user.id + "_image_" + (i + 1));
+    }
+
     res.send(user);
   } catch (err) {
     console.log(err)
@@ -201,6 +227,13 @@ router.get('/:id/profile/:visit_id', async (req, res) => {
     const user = await getUserByIdProfile(req.params.visit_id);
     if (user.active === false) {
       throw new Error('this user is inactive');
+    }
+    if (user.photos === 0) {
+      return user;
+    }
+    user.photos_path = [];
+    for (let i = 0; i < user.photos; i++) {
+      user.photos_path.push("../server/pictures/user_" + user.id + "_image_" + (i + 1));
     }
 
     res.send(user);
@@ -291,7 +324,6 @@ router.put('/:id/update', async (req, res) => {
     }
     var user = await getUserById(id);
 
-    log.info("[userController]", req.body);
     user = changeUserData(user, req.body);
 
     log.info("[userController]", user);

@@ -83,7 +83,7 @@ router.post('/', async (req, res) => {
 });
 
 
-// Delete a block
+// Delete a relation
 router.delete('/', async (req, res) => {
   try {
     console.log(req.body, req.params);
