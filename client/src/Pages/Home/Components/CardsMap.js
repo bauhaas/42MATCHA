@@ -79,7 +79,7 @@ const CardsMap = () => {
     const sendFilters = async (event) => {
         console.log('age:', ageRange, ' distance:', distanceRange, ' fame:',fameRange, ' commontag:', commonTags)
 
-        await axios.post(`http://localhost:3001/users/${currentUser.id}/filteredBachelors/1`, {
+        await axios.post(`http://localhost:3001/users/${currentUser.id}/filteredBachelors/`, {
             min_age: ageRange[0],
             max_age: ageRange[1],
             min_distance: distanceRange[0],
@@ -154,10 +154,10 @@ const CardsMap = () => {
             console.log('gonna switch sort with:', sort)
             switch(sort){
                 case 'fame descending':
-                    setUsers(users.sort((a, b) => b.fame - a.fame));
+                    setUsers(users.sort((a, b) => b.fame_rating - a.fame_rating));
                     break;
                 case 'fame ascending':
-                    setUsers(users.sort((a, b) => a.fame - b.fame));
+                    setUsers(users.sort((a, b) => a.fame_rating - b.fame_rating));
                     break;
                 case 'distance descending':
                     setUsers(users.sort((a, b) => b.distance - a.distance));
