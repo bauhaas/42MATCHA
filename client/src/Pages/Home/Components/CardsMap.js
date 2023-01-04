@@ -84,8 +84,7 @@ const CardsMap = () => {
             max_age: ageRange[1],
             min_distance: distanceRange[0],
             max_distance: distanceRange[1],
-            min_fame: fameRange[0],
-            max_fame: fameRange[1],
+            min_fame: fameRange[1],
             min_common_interests: commonTags,
             max_common_interests: 100
         })
