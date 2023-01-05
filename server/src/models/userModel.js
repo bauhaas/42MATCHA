@@ -89,7 +89,7 @@ export async function seedUsersTable() {
             '42@42.com',
             '${hash}',
             '0',
-            'https://pbs.twimg.com/media/Db8uqDaX4AE6vA3.jpg:large',,
+            'https://pbs.twimg.com/media/Db8uqDaX4AE6vA3.jpg:large',
             'Impossible to not like me',
             'Executive Cat',
             '["Sleeping"]',

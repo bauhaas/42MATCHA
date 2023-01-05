@@ -16,7 +16,7 @@ const ProfileCard = ({ user }) => {
 				{
 					<>
 						<div id='cardRevealed' className="flex flex-col h-full">
-							<img className="w-full min-h-1/2 max-h-1/2 rounded-t-md" src={user.photos} alt="user" />
+							<img className="w-full min-h-1/2 max-h-1/2 rounded-t-md" src={user.seed_profile_avatar} alt="user" />
 							<div className="p-2 grow">
 								<div className="flex flex-row items-center w-full">
 									<p className="text-4xl font-bold text-orange-400">{user.first_name}, {user.age}</p>
