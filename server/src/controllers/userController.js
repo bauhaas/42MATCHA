@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-
-import { getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
+import pool from '../config/db.js';
+import { deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
@@ -9,46 +9,57 @@ import fs from 'fs';
 // import fetch from 'node-fetch';
 
 import multer from 'multer';
+import { fileTypeFromBuffer, fileTypeFromFile } from 'file-type';
+import { readChunk } from 'read-chunk';
+
 
 const router = express.Router();
 
+const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
+const upload = multer({
+  dest: 'uploads/',
+  fileFilter: async (req, file, cb) => {
+    if (!allowedTypes.includes(file.mimetype)) {
+      console.log('invalid type');
+      return cb({ message: 'Invalid file type', status: 400 }, false);
+    }
+    cb(null, true);
   }
 });
 
-// const upload = multer({ storage:storage});
-const upload = multer({ dest: 'uploads/' });
-// Upload a file
-router.post('/upload', upload.single('file'), async (req, res) => {
-  // req.file is the `file` file
-  // req.body will hold the text fields, if there were any
-  try {
-    // Save the file to the database
-
-    console.log(req.file);
-
-
-    const filePath = req.file.filename;
-    const userId = req.body.userId;
-    await saveFile(userId, filePath);
-
-    // Read the file from the filesystem
-    const file = fs.readFileSync(req.file.path);
-
-        // Set the Content-Type header
-        res.setHeader('Content-Type', 'image/jpeg');
-
-    // Send the file back to the client
-    res.send(file);
-  } catch (err) {
-    res.status(500).send(err.message);
+const errorHandler = (error, req, res, next) => {
+  if (error) {
+    return res.status(error.status || 500).send({ message: error.message });
   }
+  next();
+};
+
+router.post('/:id/upload', async (req, res, next) => {
+  // Check if the user has exceeded the maximum number of allowed files
+  const userId = req.params.id;
+  console.log(userId, req.file);
+  const maxFiles = 5; // Maximum number of allowed files per user
+  const client = await pool.connect();
+  const result = await client.query(`
+    SELECT COUNT(*) as count FROM user_files WHERE user_id = $1
+  `, [userId]);
+  const count = result.rows[0].count;
+  console.log('count:', count);
+  if (count >= maxFiles) {
+    return res.status(400).send({ message: `You have already reached the maximum number of allowed files (${maxFiles})` });
+  }
+  // Pass the request to the next middleware
+  next();
+}, upload.single('file'), errorHandler, async (req, res) => {
+  // Save the file to the database
+  console.log(req.file, 'file');
+  const filePath = req.file.path;
+  const userId = req.params.id;
+  const is_profile_pic = req.body.is_profile_pic;
+  const result = await saveFile(userId, filePath, is_profile_pic);
+  // Send the file back to the client
+  res.send(result);
 });
 
 
@@ -61,6 +72,18 @@ router.get('/files/:userId', async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
+router.delete('/files/:id/:userId', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const userId = req.params.userId;
+    await deleteFile(id, userId);
+    res.send({ message: 'File deleted successfully' });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -81,18 +104,6 @@ router.get('/:id/bachelors/', async (req, res) => {
         throw '400: id must be a number';
     }
     const users = await getBachelors(id);
-    users.forEach((user) => {
-      if (user.photos === 0) {
-        return ;
-      }
-      var files = fs.readdirSync('./pictures/').filter(file => file.startsWith('user_' + user.id + "_"));
-      user.photos_blobs = [];
-      files.forEach(async (file) => {
-        const fileData = fs.readFileSync(file);
-        const blob = new Blob([fileData]);
-        user.photos_blobs.push(blob);
-      });
-    });
     res.send(users);
   } catch (err) {
     console.log(err);
@@ -113,14 +124,7 @@ router.post('/:id/filteredBachelors', async (req, res) => {
 
     const users = await getFilteredBachelors(id, req.body);
     res.send(users);
-    users.forEach((user) => {
-      if (user.photos === 0) {
-        return ;
-      }
-      var files = fs.readdirSync('./pictures/').filter(file => file.startsWith('user_' + user.id + "_"));
-      user.photos_path = files;
-    });
-    res.send(users);
+
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
       res.status(400).send(err.message)
@@ -246,12 +250,7 @@ router.get('/:id', async (req, res) => {
     }
     console.log('get a user by id');
     const user = await getUserById(req.params.id);
-    if (user.photos === 0) {
-      return user;
-    }
-    user.photos_path = [];
-    var files = fs.readdirSync('./pictures/').filter(file => file.startsWith('user_' + user.id + "_"));
-    user.photos_path = files;
+
 
     res.send(user);
   } catch (err) {
@@ -287,13 +286,10 @@ router.get('/:id/profile/:visit_id', async (req, res) => {
     if (user.active === false) {
       throw new Error('this user is inactive');
     }
-    if (user.photos === 0) {
-      return user;
-    }
-    user.photos_path = [];
-    var files = fs.readdirSync('./pictures/').filter(file => file.startsWith('user_' + user.id + "_"));
-    user.photos_path = files;
 
+
+
+    console.log('success');
     res.send(user);
   } catch (err) {
     console.log(err);
@@ -372,26 +368,6 @@ function changeUserData(user, update) {
   }
   if (update.report_count) {
     user.report_count += 1;
-  }
-  if (update.photos_path) {
-    // del previous photos
-    if (user.photos > 0) {
-      var files = fs.readdirSync('./pictures/').filter(file => file.startsWith('user_' + user.id + "_"));
-      files.forEach((file) => {
-        fs.unlinkSync(file);
-      });
-    }
-
-    // path and files are verificated and secured
-    user.photos = 0;
-    console.log(update.photos_path)
-    update.photos_path.forEach((path) => {
-      user.photos += 1;
-      fs.copyFile(path, './pictures/user_' + user.id + "_image_" + user.photos + path.split('.').pop(), (err) => {
-        if (err) throw err;
-        console.log(path + ' was copied to destination.txt');
-      });
-    });
   }
   return user
 }

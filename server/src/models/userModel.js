@@ -22,7 +22,7 @@ export async function createUsersTable() {
         city VARCHAR(255),
         country TEXT,
         interests JSON,
-        photos INTEGER,
+        seed_profile_avatar TEXT,
         bio TEXT,
         job TEXT,
         active BOOLEAN DEFAULT false,
@@ -52,9 +52,9 @@ export async function seedUsersTable() {
     `);
 
     if (tableIsEmpty.rowCount === 0) {
-      if (!fs.existsSync('pictures')) {
-        fs.mkdirSync('pictures');
-      }
+      // if (!fs.existsSync('pictures')) {
+      //   fs.mkdirSync('pictures');
+      // }
 
       var salt = bcrypt.genSaltSync(10);
       var hash = bcrypt.hashSync('42', salt);
@@ -71,7 +71,7 @@ export async function seedUsersTable() {
             email,
             password,
             fame_rating,
-            photos,
+            seed_profile_avatar,
             bio,
             job,
             interests,
@@ -89,7 +89,7 @@ export async function seedUsersTable() {
             '42@42.com',
             '${hash}',
             '0',
-            '1',
+            'https://pbs.twimg.com/media/Db8uqDaX4AE6vA3.jpg:large',,
             'Impossible to not like me',
             'Executive Cat',
             '["Sleeping"]',
@@ -129,8 +129,7 @@ export async function seedUsersTable() {
           interestsStr = interestsStr.slice(0, -1);
         }
         interestsStr += "]";
-        const photos = faker.image.avatar();
-        // await downloadAndStoreImageSeeding(i + 2, 1, photos);
+        const seed_profile_avatar = faker.image.avatar();
         const bio = faker.lorem.lines(3).replace('\'', '');
         const job = faker.name.jobTitle();
         const query = `
@@ -145,7 +144,7 @@ export async function seedUsersTable() {
             city,
             country,
             fame_rating,
-            photos,
+            seed_profile_avatar,
             bio,
             job,
             interests,
@@ -163,7 +162,7 @@ export async function seedUsersTable() {
             '${city}',
             '${country}',
             '${fame_rating}',
-            '1',
+            '${seed_profile_avatar}',
             '${bio}',
             '${job}',
             '${interestsStr}',

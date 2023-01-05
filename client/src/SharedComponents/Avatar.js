@@ -1,10 +1,11 @@
 
-const Avatar = ({ imageAttribute, attribute}) => {
+const Avatar = ({ imageAttribute, attribute, imagePath, from}) => {
 
+    // console.log(imagePath, typeof(imagePath), 'from:', from);
     return (
         <div className={attribute}>
             <div className={imageAttribute}>
-                <img src="https://randomuser.me/api/portraits/men/51.jpg" alt="avatar"/>
+                <img src={`http://localhost:3001/${imagePath}`} alt="avatar"/>
             </div>
         </div>
     );

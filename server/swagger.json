@@ -555,7 +555,7 @@
         }
       }
     },
-    "/users/upload": {
+    "/users/{id}/upload": {
       "post": {
         "tags": [
           "users"
@@ -565,11 +565,18 @@
         "consumes": ["multipart/form-data"],
         "parameters": [
           {
-            "name": "userId",
-            "in": "formData",
+            "name": "id",
+            "in": "path",
             "description": "The ID of the user",
             "required": true,
             "type": "integer"
+          },
+          {
+            "name": "is_profile_pic",
+            "in": "formData",
+            "description": "Boolean to know if it's his default pic",
+            "required": true,
+            "type": "boolean"
           },
           {
             "name": "file",
@@ -617,6 +624,41 @@
           },
           "404": {
             "description": "User not found"
+          }
+        }
+      }
+    },
+    "/users/files/{id}/{userId}": {
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Delete picture of a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the picture",
+            "required": true,
+            "type": "integer"
+          },
+            {
+              "name": "userId",
+              "in": "path",
+              "description": "The ID of the user",
+              "required": true,
+              "type": "integer"
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         }
       }

@@ -99,37 +99,26 @@ const ProfileDetails = ({id}) => {
                 });
     }
 
+    const [profilePic, setProfilePic] = useState('');
+
+
     useEffect(() => {
         const getUser = async () => {
             await axios.get(`http://localhost:3001/users/${currentUser.id}/profile/${id}`)
                 .then(response => {
                     // console.log(response.data);
                     setUser(response.data);
+                    setProfilePic(response.data.files.find((file) => file.is_profile_pic === true).file_path)
                 })
                 .catch(error => {
                     console.log(error);
                     navigate('/Unknown');
                 });
-            // const response = await getUserById(currentUser.id, id);
-            // setUser(response);
         }
         getUser();
     }, []);
 
-
-    const [files, setFiles] = useState([]);
-
-    useEffect(() => {
-      const fetchData = async () => {
-        const result = await axios(`http://localhost:3001/users/files/${currentUser.id}`);
-        setFiles(result.data);
-      };
-
-      fetchData();
-    }, []);
-
-
-    console.log(files);
+    console.log(user, user.files, profilePic);
     return (
         <>
             <div className='mx-2 pt-16 h-screen'>
@@ -142,7 +131,7 @@ const ProfileDetails = ({id}) => {
                             <>
                                     <div className='m-2 grid grid-cols-2  sm:flex sm:gap-2'>
                                         <div>
-                                            <Avatar imageAttribute={'rounded-full w-30 sm:w-40'} attribute={`avatar`} />
+                                        <Avatar imageAttribute={'rounded-full w-30 sm:w-40'} attribute={`avatar`} imagePath={profilePic} from='profiledetails' />
                                         </div>
                                         <div className='flex flex-col'>
                                             <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
@@ -177,11 +166,14 @@ const ProfileDetails = ({id}) => {
                                     <h1 className='text-center'>Pictures</h1>
                                     {/* <img src={`http://localhost:3001/src/uploads/6d2db3d104176705c313e47f5682399d`} alt="uploaded file" /> */}
 
-                                    <div>
-      {files.map((file) => (
-        <img src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
-      ))}
-    </div>
+                                    <div className='grid grid-cols-1 sm:grid-cols-2 border-4 border-red-600'>
+                                        {user.files && user.files.map((file, index) => (
+                                            <div key={file.id + index}  className='border-2 border-blue-500'>
+                                                <img className="border-2 border-green-500" src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {/* <img src={`http://localhost:3001/uploads/a775b82b668f3ba309e651f57e956302`} alt="uploaded file" /> */}
                                     {/* <div className='grid grid-cols-1 sm:grid-cols-2'>
                                         <div className='border rounded-lg m-2 py-2'>
                                             {user.photos ? <img src={user.photos} alt='user photos'/> : null}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import NavBar from '../Navbar/NavBar';
 import SettingsMenu from './Components/SettingsMenu';
 import axios from 'axios';
@@ -21,7 +21,7 @@ import { Cog6ToothIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 import { useDispatch } from 'react-redux';
 import jwt_decode from "jwt-decode";
-import { setUser } from "../../userSlice";
+import { removeFile, setUser, updateFiles } from "../../userSlice";
 
 const Settings = () => {
     const dispatch = useDispatch();
@@ -76,6 +76,66 @@ const Settings = () => {
                 console.log(error);
             });
     };
+
+    const fileInputRef = useRef(null);
+    const [pictures, setPictures] = useState([]);
+
+    const handleFileChange = (event) => {
+        const files = event.target.files;
+
+        if (files.length > 0) {
+            const newImageUrls = [];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileReader = new FileReader();
+                fileReader.onload = (event) => {
+                    newImageUrls.push(event.target.result);
+                    if (newImageUrls.length === files.length) {
+                        setPictures((prevPictures) => [...prevPictures, ...newImageUrls]);
+                    }
+                };
+                fileReader.readAsDataURL(file);
+
+                const formData = new FormData();
+                formData.append('file', file); // file is the file that you get from the input element's onChange event
+                formData.append('userId', user.id);
+                formData.append('is_profile_pic', true);
+                axios.post(`http://localhost:3001/users/${user.id}/upload`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                    .then((response) => {
+                        console.log(response);
+                        console.log('redux save', response);
+                        dispatch(updateFiles(response.data));
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        }
+    };
+
+    const deleteImage = (event, file) => {
+        event.preventDefault();
+        if(user.files.length === 1)
+        {
+            console.log('you must have at least 1 pics');
+            return;
+        }
+        console.log(file);
+        axios.delete(`http://localhost:3001/users/files/${file.id}/${user.id}`)
+            .then(response => {
+                dispatch(removeFile(file));
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+    };
+
+    console.log(pictures);
+    console.log(user);
 
     return (
         <>
@@ -285,6 +345,33 @@ const Settings = () => {
                                     <label className="text-white text-sm self-start mb-2">
                                         Pictures
                                     </label>
+                                    <input
+                                        type="file"
+                                        className="file-input file-input-sm w-full max-w-xs m-auto mt-2"
+                                        ref={fileInputRef}
+                                        onChange={handleFileChange}
+                                        multiple
+                                    />
+                                    {
+                                        <div className="carousel max-h-96 mt-4 mx-4 rounded-lg">
+                                            {user.files.map((imageUrl, index) => (
+                                                <div id={index} className="carousel-item relative w-full">
+                                                    <img src={`http://localhost:3001/${imageUrl.file_path}`} className="mx-auto object-center object-contain" alt="randomshit" />
+                                                    <div className={`absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2 ${user.files.length <= 1 ? 'hidden' : null}`}>
+                                                        <a href={'#' + (index - 1)} className="btn btn-circle">❮</a>
+                                                        <a href={'#' + (index + 1)} className="btn btn-circle">❯</a>
+                                                    </div>
+                                                    <button onClick={(event) => deleteImage(event, imageUrl)} className="btn btn-circle btn-xs absolute right-0 m-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            ))}
+
+                                        </div>
+                                    }
+                                    <p>{user.files.length}/5</p>
                                 </div>
                                 <button onClick={updateUser} className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500`}>Update</button>
                                 </div>

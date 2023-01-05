@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import  emailValidator from 'deep-email-validator';
 import  fs from 'fs';
 import request from 'request';
+import { type } from 'os';
 
 // export const downloadAndStoreImageSeeding = async (id, img_number, url) => {
 //   try {
@@ -33,24 +34,80 @@ export const getUserFiles = async (userId) => {
   }
 };
 
-export const saveFile = async (userId, filePath) => {
-  const client = await pool.connect();
-  console.log(userId, filePath);
+export const deleteFile = async (id, userId) => {
   try {
-    await client.query('BEGIN');
-    const query = 'INSERT INTO user_files (user_id, file_path) VALUES ($1, $2)';
-    const values = [userId, filePath];
-    await client.query(query, values);
-    await client.query('COMMIT');
+    console.log('deleting file with id:', id);
+    const client = await pool.connect();
+    // Get the file path from the database
+    const result = await client.query(`
+      SELECT file_path FROM user_files WHERE id = $1
+    `, [id]);
+    const filePath = result.rows[0].file_path;
+    // Delete the file from the filesystem
+    fs.unlinkSync(filePath);
+    // Delete the row from the user_files table
+    await client.query(`
+      DELETE FROM user_files WHERE id = $1
+    `, [id]);
 
 
-  } catch (err) {
-    await client.query('ROLLBACK');
-    throw err;
-  } finally {
+    // Check if there are any other files with is_profile_pic set to true
+    const result2 = await client.query(`
+      SELECT * FROM user_files WHERE is_profile_pic = $1 AND user_id = $2
+    `, [true, userId]);
+    console.log(result2.rowCount, typeof(result2.rowCount));
+
+    if (result2.rowCount === 0) {
+      console.log('gonna select a new default profile pic');
+      // If there are no other files with is_profile_pic set to true, select a random file and set it as the profile picture
+      const result3 = await client.query(`
+        SELECT * FROM user_files WHERE user_id = $1 ORDER BY RANDOM() LIMIT 1
+      `, [userId]);
+      const randomFileId = result3.rows[0].id;
+      await client.query(`
+        UPDATE user_files SET is_profile_pic = $1 WHERE id = $2
+      `, [true, randomFileId]);
+    }
+
     client.release();
+  } catch (error) {
+    throw error;
   }
-}
+};
+
+
+
+
+//TODO modify the '0' and 'true' to boolean
+export const saveFile = async (userId, filePath, is_profile_pic) => {
+  const client = await pool.connect();
+
+  try {
+    // Check if there are any existing rows for the user
+    const result = await client.query(`SELECT COUNT(*) as count FROM user_files WHERE user_id = $1`, [userId]);
+    const count = result.rows[0].count;
+    console.log(count, result.rows, typeof(count));
+    // If it is the first row, set is_profile_pic to true
+    if (count === '0') {
+      console.log('set profile pic as true');
+      is_profile_pic = 'true';
+    }
+    console.log(userId, filePath, is_profile_pic, typeof (is_profile_pic));
+    // Update previous rows to set is_profile_pic to false
+    if (is_profile_pic == 'true') {
+      console.log('gonna change default profile pic');
+      await client.query(`UPDATE user_files SET is_profile_pic = $1 WHERE user_id = $2 AND is_profile_pic = $3`, [false, userId, true]);
+    }
+    // Insert new row
+    const res = await client.query(`INSERT INTO user_files (user_id, file_path, is_profile_pic) VALUES ($1, $2, $3) RETURNING *;`, [userId, filePath, is_profile_pic]);
+    client.release();
+    console.log(res, res.rows);
+    return res.rows[0];
+  } catch (err) {
+    throw err;
+  }
+};
+
 
 export const isActive = async (id) => {
   try {
@@ -93,7 +150,6 @@ export const getBachelors = async (id) => {
       WHERE $1 != id
       AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) < 50
       AND active = true
-      AND photos > 0
     `, [me.id, me.longitude, me.latitude]);
 
     var closeUsers = result.rows;
@@ -143,7 +199,6 @@ export const getFilteredBachelors = async (id, filters) => {
       AND age <= $7
       AND fame_rating >= $8
       AND active = true
-      AND photos > 0
       `, [me.id, me.longitude, me.latitude, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
 
     var filteredUsers = result.rows;
@@ -181,6 +236,7 @@ export const getLogin = async (email, password) => {
   try {
     const client = await pool.connect();
 
+
     const result = await client.query(`
       SELECT *
       FROM users
@@ -194,7 +250,16 @@ export const getLogin = async (email, password) => {
     }
 
     // Get the user from the result
-    const user = result.rows[0];
+    const id = result.rows[0].id;
+
+    const t = await client.query(`
+SELECT users.*, JSON_AGG(user_files.*) as files
+FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+WHERE users.id = $1
+GROUP BY users.id
+    `, [id]);
+
+    const user = t.rows[0];
 
     // check if email was verified
     if (user.active === false) {
@@ -221,7 +286,13 @@ export const getUserById = async (id) => {
   try {
     const client = await pool.connect();
     console.log(id);
-    const result = await client.query(DBgetUserById(id));
+    // const result = await client.query(DBgetUserById(id));
+    const result = await client.query(`
+SELECT users.*, JSON_AGG(user_files.*) as files
+FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+WHERE users.id = $1
+GROUP BY users.id
+`, [id]);
     const user = result.rows[0];
     client.release();
     return user;
@@ -233,10 +304,20 @@ export const getUserById = async (id) => {
 // Get a user by their ID from the database
 export const getUserByIdProfile = async (id) => {
   try {
-    log.info('[userService]', 'getUserByIdProfile');
+    log.info('[userService]', 'getUserByIdProfile:', id);
     const client = await pool.connect();
-    const result = await client.query(DBgetUserById(id));
+    // const result = await client.query(DBgetUserById(id));
+
+    const result = await client.query(`
+SELECT users.*, JSON_AGG(user_files.*) as files
+FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+WHERE users.id = $1
+GROUP BY users.id
+`, [id]);
+
     const user = result.rows[0];
+    if(user.files[0] === null)
+      user.files = null;
     console.log(user);
     delete(user.email);
     delete(user.password);
@@ -404,11 +485,10 @@ export const updateUser = async (data) => {
       city = $8,
       country = $9,
       interests = $10,
-      photos = $11,
-      bio = $12,
-      active = $13,
-      report_count = $14
-      WHERE id = $15
+      bio = $11,
+      active = $12,
+      report_count = $13
+      WHERE id = $14
       RETURNING *;`, [
       data.first_name,
       data.last_name,
@@ -420,7 +500,6 @@ export const updateUser = async (data) => {
       data.city,
       data.country,
       interestsStr,
-      data.photos,
       data.bio,
       data.active,
       data.report_count,

@@ -8,7 +8,8 @@ export async function createFilesModel() {
         CREATE TABLE IF NOT EXISTS user_files (
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id),
-            file_path VARCHAR(255)
+            file_path VARCHAR(255),
+            is_profile_pic BOOLEAN NOT NULL DEFAULT FALSE
           );`);
         log.info('[filesModel.js]', 'files table have been created');
         client.release();
