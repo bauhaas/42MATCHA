@@ -555,6 +555,72 @@
         }
       }
     },
+    "/users/upload": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "uploadFile",
+        "summary": "Upload a file",
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "formData",
+            "description": "The ID of the user",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "The file to upload",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid file type"
+          }
+        }
+      }
+    },
+    "/users/files/{userId}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "getUserFiles",
+        "summary": "Get files for a user",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "The ID of the user",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
     "/relations": {
       "get": {
         "tags": ["relations"],

@@ -116,6 +116,20 @@ const ProfileDetails = ({id}) => {
         getUser();
     }, []);
 
+
+    const [files, setFiles] = useState([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        const result = await axios(`http://localhost:3001/users/files/${currentUser.id}`);
+        setFiles(result.data);
+      };
+
+      fetchData();
+    }, []);
+
+
+    console.log(files);
     return (
         <>
             <div className='mx-2 pt-16 h-screen'>
@@ -161,6 +175,13 @@ const ProfileDetails = ({id}) => {
                                     </div>
                                 <div className='bg-chess-button rounded-lg m-2 py-2'>
                                     <h1 className='text-center'>Pictures</h1>
+                                    {/* <img src={`http://localhost:3001/src/uploads/6d2db3d104176705c313e47f5682399d`} alt="uploaded file" /> */}
+
+                                    <div>
+      {files.map((file) => (
+        <img src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
+      ))}
+    </div>
                                     {/* <div className='grid grid-cols-1 sm:grid-cols-2'>
                                         <div className='border rounded-lg m-2 py-2'>
                                             {user.photos ? <img src={user.photos} alt='user photos'/> : null}

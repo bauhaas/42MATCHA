@@ -23,11 +23,14 @@ import { createConversationTable } from './models/conversationModel.js';
 import { insertMessage2 } from './services/messageService.js';
 import { getConversations } from './services/conversationService.js';
 import { isBlocked } from './services/relationsService.js';
-
+import { createFilesModel } from './models/filesModel.js';
+import path, {join, dirname} from 'path';
 const app = express();
 
 dotenv.config();
 app.use(cors());
+
+// app.use(express.static('uploads'));
 
 // Use the body-parser middleware to parse request bodies
 // app.use(bodyParser.json());
@@ -40,6 +43,14 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // // Set up the Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+console.log(import.meta.url);
+const uploadsPath = dirname(import.meta.url) + '/uploads';
+
+import * as url from 'url';
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+console.log(__dirname + '../uploads', __filename)
+app.use('/uploads', express.static(__dirname + '../uploads'));
 
 // Set up the server
 const port = process.env.PORT || 3001;
@@ -108,6 +119,7 @@ server.listen(port, async () => {
   await seedNotificationsTable();
   await createConversationTable();
   await createMessagesTable();
+  await createFilesModel();
 });
 
 app.use('/users', userController);

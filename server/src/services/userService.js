@@ -8,14 +8,47 @@ import  emailValidator from 'deep-email-validator';
 import  fs from 'fs';
 import request from 'request';
 
-export const downloadAndStoreImageSeeding = async (id, img_number, url) => {
+// export const downloadAndStoreImageSeeding = async (id, img_number, url) => {
+//   try {
+//     const dest = './pictures/user_' + id + '_image_' + img_number + '.jpg';
+//     request(url)
+//     .pipe(fs.createWriteStream(dest))
+//     .on('close', () => {});
+//   } catch (err) {
+//     throw err;
+//   }
+// }
+
+export const getUserFiles = async (userId) => {
   try {
-    const dest = './pictures/user_' + id + '_image_' + img_number + '.jpg'; 
-    request(url)
-    .pipe(fs.createWriteStream(dest))
-    .on('close', () => {});
+    console.log('get user file of id:', userId);
+    const client = await pool.connect();
+    const result = await client.query(`
+      SELECT * FROM user_files WHERE user_id = $1
+    `, [userId]);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const saveFile = async (userId, filePath) => {
+  const client = await pool.connect();
+  console.log(userId, filePath);
+  try {
+    await client.query('BEGIN');
+    const query = 'INSERT INTO user_files (user_id, file_path) VALUES ($1, $2)';
+    const values = [userId, filePath];
+    await client.query(query, values);
+    await client.query('COMMIT');
+
+
   } catch (err) {
+    await client.query('ROLLBACK');
     throw err;
+  } finally {
+    client.release();
   }
 }
 
@@ -414,10 +447,10 @@ export const CreateFakeUser = async (fakeUser, longitude, latitude) => {
     log.info('[userService]', 'gonna insert the fake user');
     const fakeMail = fakeUser + "@" + fakeUser + ".com" ;
     const result = await client.query(`
-      INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, photos, bio, active, fame_rating, report_count, longitude, latitude)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+      INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, bio, active, fame_rating, report_count, longitude, latitude)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
       RETURNING *;
-    `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "male", "hetero", "Paris", "France", '["test_interets"]', "", fakeUser, true, 0, 0, longitude, latitude]);
+    `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "male", "hetero", "Paris", "France", '["test_interets"]', fakeUser, true, 0, 0, longitude, latitude]);
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));
 
     client.release();

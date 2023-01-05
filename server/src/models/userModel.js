@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import pool from '../config/db.js';
 import log from '../config/log.js';
 import fs from 'fs';
-import { downloadAndStoreImageSeeding } from '../services/userService.js'
+// import { downloadAndStoreImageSeeding } from '../services/userService.js'
 
 export async function createUsersTable() {
   try {
@@ -55,10 +55,10 @@ export async function seedUsersTable() {
       if (!fs.existsSync('pictures')) {
         fs.mkdirSync('pictures');
       }
-      
+
       var salt = bcrypt.genSaltSync(10);
       var hash = bcrypt.hashSync('42', salt);
-      await downloadAndStoreImageSeeding(1, 1, 'https://pbs.twimg.com/media/Db8uqDaX4AE6vA3.jpg');
+      // await downloadAndStoreImageSeeding(1, 1, 'https://pbs.twimg.com/media/Db8uqDaX4AE6vA3.jpg');
       const testUser = `
           INSERT INTO users (
             first_name,
@@ -130,7 +130,7 @@ export async function seedUsersTable() {
         }
         interestsStr += "]";
         const photos = faker.image.avatar();
-        await downloadAndStoreImageSeeding(i + 2, 1, photos);
+        // await downloadAndStoreImageSeeding(i + 2, 1, photos);
         const bio = faker.lorem.lines(3).replace('\'', '');
         const job = faker.name.jobTitle();
         const query = `

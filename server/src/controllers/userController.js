@@ -1,14 +1,66 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 
-import { isActive, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
+import { getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
 import fs from 'fs';
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
+
+import multer from 'multer';
 
 const router = express.Router();
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
+// const upload = multer({ storage:storage});
+const upload = multer({ dest: 'uploads/' });
+// Upload a file
+router.post('/upload', upload.single('file'), async (req, res) => {
+  // req.file is the `file` file
+  // req.body will hold the text fields, if there were any
+  try {
+    // Save the file to the database
+
+    console.log(req.file);
+
+
+    const filePath = req.file.filename;
+    const userId = req.body.userId;
+    await saveFile(userId, filePath);
+
+    // Read the file from the filesystem
+    const file = fs.readFileSync(req.file.path);
+
+        // Set the Content-Type header
+        res.setHeader('Content-Type', 'image/jpeg');
+
+    // Send the file back to the client
+    res.send(file);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+router.get('/files/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const files = await getUserFiles(userId);
+    res.send(files);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -19,6 +71,7 @@ router.get('/', async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
 
 
 router.get('/:id/bachelors/', async (req, res) => {
@@ -152,7 +205,7 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     if (err.message === 'Invalid email or password.') {
       res.status(401).send(err.message);
-      
+
     } else if (err.message === 'Email not verified.') {
       res.status(403).send(err.message);
     } else {
