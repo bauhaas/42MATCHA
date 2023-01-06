@@ -107,6 +107,18 @@ const ProfileDetails = ({id}) => {
             await axios.get(`http://localhost:3001/users/${currentUser.id}/profile/${id}`)
                 .then(response => {
                     // console.log(response.data);
+
+                    if (response.data.files) {
+                        response.data.files.sort((a, b) => {
+                            if (a.is_profile_pic === true) {
+                                return -1;
+                            } else if (b.is_profile_pic === true) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    }
+
                     setUser(response.data);
                     if(response.data.files && response.data.files.find((file) => file.is_profile_pic === true) )
                         setProfilePic(response.data.files.find((file) => file.is_profile_pic === true).file_path)
@@ -165,33 +177,14 @@ const ProfileDetails = ({id}) => {
                                     </div>
                                 <div className='bg-chess-button rounded-lg m-2 py-2'>
                                     <h1 className='text-center'>Pictures</h1>
-                                    {/* <img src={`http://localhost:3001/src/uploads/6d2db3d104176705c313e47f5682399d`} alt="uploaded file" /> */}
-
-                                    <div className='grid grid-cols-1 sm:grid-cols-2 border-4 border-red-600'>
+                                    <div className='grid grid-cols-1 sm:grid-cols-2'>
                                         {user.files && user.files.map((file, index) => (
-                                            <div key={file.id + index}  className='border-2 border-blue-500'>
-                                                <img className="border-2 border-green-500" src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
+                                            <div key={file.id + index}  className='relative border-2 border-blue-500 rounded-lg m-2'>
+                                                <img className="aspect-square h-full w-full rounded-lg border-2 border-green-500" src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
                                             </div>
                                         ))}
                                     </div>
-                                    {/* <img src={`http://localhost:3001/uploads/a775b82b668f3ba309e651f57e956302`} alt="uploaded file" /> */}
-                                    {/* <div className='grid grid-cols-1 sm:grid-cols-2'>
-                                        <div className='border rounded-lg m-2 py-2'>
-                                            {user.photos ? <img src={user.photos} alt='user photos'/> : null}
-                                        </div>
-                                        <div className='border rounded-lg h-80 w-80'>
-                                            {user.photos ? <img className='rounded-lg object-fill' src={user.photos} alt='user photos' /> : null}
-                                        </div>
-                                        <div className='border rounded-lg m-2 py-2'>
-                                            {user.photos ? <img src={user.photos} alt='user photos' /> : null}
-                                        </div>
-                                        <div className='border rounded-lg m-2 py-2'>
-                                            {user.photos ? <img src={user.photos} alt='user photos' /> : null}
-                                        </div>
-                                        <div className='border rounded-lg m-2 py-2'>
-                                            {user.photos ? <img src={user.photos} alt='user photos' /> : null}
-                                        </div>
-                                    </div> */}
+
                                 </div>
 
 

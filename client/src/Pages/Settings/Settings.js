@@ -352,7 +352,21 @@ const Settings = () => {
                                         onChange={handleFileChange}
                                         multiple
                                     />
-                                    {
+                                    <p>{user.files.length}/5</p>
+
+                                    <div className='grid grid-cols-1 sm:grid-cols-2'>
+                                        {user.files && user.files.map((file, index) => (
+                                            <div key={file.id + index} className='relative border-2 border-blue-500 rounded-lg m-2 group'>
+                                                <button onClick={(event) => deleteImage(event, file)} className="btn btn-circle btn-xs absolute right-0 m-2 invisible group-hover:visible">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+                                                <img className="aspect-square h-full w-full rounded-lg border-2 border-green-500" src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {/* {
                                         <div className="carousel max-h-96 mt-4 mx-4 rounded-lg">
                                             {user.files.map((imageUrl, index) => (
                                                 <div id={index} className="carousel-item relative w-full">
@@ -371,7 +385,7 @@ const Settings = () => {
 
                                         </div>
                                     }
-                                    <p>{user.files.length}/5</p>
+                                    <p>{user.files.length}/5</p> */}
                                 </div>
                                 <button onClick={updateUser} className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500`}>Update</button>
                                 </div>
