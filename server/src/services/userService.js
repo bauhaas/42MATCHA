@@ -8,6 +8,7 @@ import  emailValidator from 'deep-email-validator';
 import  fs from 'fs';
 import request from 'request';
 import { type } from 'os';
+import { faker } from '@faker-js/faker';
 
 // export const downloadAndStoreImageSeeding = async (id, img_number, url) => {
 //   try {
@@ -141,15 +142,25 @@ export const getAllUsers = async () => {
 // Get bachelors from the database
 export const getBachelors = async (id) => {
   try {
+
+    // const t = await client.query(`
+    // SELECT users.*, JSON_AGG(user_files.*) as files
+    // FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+    // WHERE users.id = $1
+    // GROUP BY users.id
+    //     `, [id]);
+
+
     const client = await pool.connect();
     const me = await getUserById(id);
     console.log("getBachelors", me);
     const result = await client.query(`
-      SELECT *, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance
-      FROM users
-      WHERE $1 != id
-      AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) < 50
-      AND active = true
+    SELECT users.*, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance, JSON_AGG(user_files.*) as files
+    FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+    WHERE $1 != users.id
+    AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) < 50
+    AND users.active = true
+    GROUP BY users.id
     `, [me.id, me.longitude, me.latitude]);
 
     var closeUsers = result.rows;
@@ -515,6 +526,25 @@ export const updateUser = async (data) => {
   }
 };
 
+
+
+const downloadFile = async (url, fileName) => {
+  return new Promise((resolve, reject) => {
+    request.head(url, (err, res, body) => {
+      if (err) {
+        reject(err);
+      }
+
+      request(url)
+        .pipe(fs.createWriteStream(`uploads/${fileName}`))
+        .on("close", () => {
+          console.log("File saved");
+          resolve();
+        });
+    });
+  });
+};
+
 // Insert a new user into the database
 export const CreateFakeUser = async (fakeUser, longitude, latitude) => {
   try {
@@ -525,15 +555,30 @@ export const CreateFakeUser = async (fakeUser, longitude, latitude) => {
 
     log.info('[userService]', 'gonna insert the fake user');
     const fakeMail = fakeUser + "@" + fakeUser + ".com" ;
-    const result = await client.query(`
+    const res = await client.query(`
       INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, bio, active, fame_rating, report_count, longitude, latitude)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
       RETURNING *;
     `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "male", "hetero", "Paris", "France", '["test_interets"]', fakeUser, true, 0, 0, longitude, latitude]);
-    log.info('[userService]', JSON.stringify(result.rows[0], null,2));
+    log.info('[userService]', JSON.stringify(res.rows[0], null,2));
+
+    const seed_profile_avatar = faker.image.imageUrl(480, 480, 'man,boy,male') // 'https://loremflickr.com/1234/2345/cat'
+    const url = seed_profile_avatar;
+    const fileName = 'fake_profile_pic_' + res.rows[0].id;
+
+
+    await downloadFile(url, fileName);
+    await client.query(`INSERT INTO user_files (user_id, file_path, is_profile_pic) VALUES ($1, $2, $3) RETURNING *;`, [ res.rows[0].id, 'uploads/'+fileName, true]);
+
+    const t = await client.query(`
+    SELECT users.*, JSON_AGG(user_files.*) as files
+    FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+    WHERE users.id = $1
+    GROUP BY users.id
+        `, [res.rows[0].id]);
 
     client.release();
-    return result.rows[0];
+    return t.rows[0];
   } catch (err) {
     log.error('[userService]', err);
     throw err;

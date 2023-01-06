@@ -204,6 +204,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await getLogin(email, password);
 
+    log.info('onlogin we put that in token:', user);
     const accessToken = generateAccessToken(user);
     res.send(accessToken);
   } catch (err) {

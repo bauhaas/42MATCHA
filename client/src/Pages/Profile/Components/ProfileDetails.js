@@ -108,7 +108,8 @@ const ProfileDetails = ({id}) => {
                 .then(response => {
                     // console.log(response.data);
                     setUser(response.data);
-                    setProfilePic(response.data.files.find((file) => file.is_profile_pic === true).file_path)
+                    if(response.data.files && response.data.files.find((file) => file.is_profile_pic === true) )
+                        setProfilePic(response.data.files.find((file) => file.is_profile_pic === true).file_path)
                 })
                 .catch(error => {
                     console.log(error);

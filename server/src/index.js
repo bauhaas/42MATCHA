@@ -113,13 +113,14 @@ io.on('connection', (socket) => {
 server.listen(port, async () => {
   log.info('[index.js]', `Server listening on port ${port}`);
   await createUsersTable();
-  await seedUsersTable();
+  await createFilesModel();
   await createRelationsTable();
   await createNotificationsTable();
-  await seedNotificationsTable();
   await createConversationTable();
   await createMessagesTable();
-  await createFilesModel();
+
+  await seedUsersTable();
+  await seedNotificationsTable();
 });
 
 app.use('/users', userController);

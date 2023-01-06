@@ -10,13 +10,15 @@ const ProfileCard = ({ user }) => {
 		navigate(`/profile/${user.id}`);
 	}
 
+	console.log(user);
+
 	return (
 		<>
 			<div onClick={gotoprofile} className="rounded-md bg-chess-hover hover:bg-chess-dark group w-full scale-90">
 				{
 					<>
 						<div id='cardRevealed' className="flex flex-col h-full">
-							<img className="w-full min-h-1/2 max-h-1/2 rounded-t-md" src={user.seed_profile_avatar} alt="user" />
+							<img className="w-full min-h-1/2 max-h-1/2 rounded-t-md" src={'http://localhost:3001/' + user.files.find((file) => file.is_profile_pic === true).file_path} alt="user" />
 							<div className="p-2 grow">
 								<div className="flex flex-row items-center w-full">
 									<p className="text-4xl font-bold text-orange-400">{user.first_name}, {user.age}</p>

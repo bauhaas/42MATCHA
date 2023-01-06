@@ -40,6 +40,32 @@ export async function createUsersTable() {
   }
 }
 
+import request from 'request';
+import { setDefaultResultOrder } from 'dns';
+
+const getHobby = async (interestsStr) => {
+  const categories = ["general", "sports_and_outdoors", "education", "collection", "competition", "observation"];
+  const category = categories[Math.floor(Math.random() * categories.length)];
+
+  request.get({
+    url: `https://api.api-ninjas.com/v1/hobbies?category=${category}`,
+    headers: {
+      "X-Api-Key": "YkwtUopPCegHLiExwO50iA==i5sUUacN8j0OxUHs",
+    },
+  }, function (error, response, body) {
+    if (error) return console.error("Request failed:", error);
+    else if (response.statusCode != 200)
+      return console.error("Error:", response.statusCode, body.toString("utf8"));
+    else {
+      interestsStr += "\"" + body.hobby + "\",";
+      const data = JSON.parse(body);
+      console.log('body', data.hobby);
+      return interestsStr;
+    }
+  });
+};
+
+
 export async function seedUsersTable() {
   try {
     const client = await pool.connect();
@@ -51,10 +77,10 @@ export async function seedUsersTable() {
       LIMIT 1;
     `);
 
-    if (tableIsEmpty.rowCount === 0) {
-      // if (!fs.existsSync('pictures')) {
-      //   fs.mkdirSync('pictures');
-      // }
+    // if (tableIsEmpty.rowCount === 0) {
+    //   if (!fs.existsSync('pictures')) {
+    //     fs.mkdirSync('pictures');
+    //   }
 
       var salt = bcrypt.genSaltSync(10);
       var hash = bcrypt.hashSync('42', salt);
@@ -100,7 +126,7 @@ export async function seedUsersTable() {
         `;
       await client.query(testUser);
 
-      for (let i = 0; i < 500; i++) {
+      for (let i = 490; i < 499; i++) {
         const sex = faker.name.sex();
         const first_name = faker.name.firstName(sex).replace('\'', '');
         const last_name = faker.name.lastName(sex).replace('\'', '');
@@ -116,22 +142,50 @@ export async function seedUsersTable() {
         // const birthdate = faker.date.birthdate({refDate: Date});
         const commonHobbies = ["42", "matcha", "super", "chouette", "I am a common hobby", "vitesse"];
         const hobbies = ["sport", "bagarre", "flute", "contrebasse", "trompette", "aviation", "chanter", "danser", "courgette", "livre", "je suis un interet", "je suis un hobby"];
+
         var interestsStr = "[";
         for (let i = 0; i < 4; i++) {
           var j = Math.floor(Math.random() * commonHobbies.length);
           interestsStr += "\"" + commonHobbies[j] + "\",";
         }
         for (let i = 0; i < Math.floor(Math.random() * 6); i++) {
+
+          // const categories = ["general", "sports_and_outdoors", "education", "collection", "competition", "observation"];
+          // const category = categories[Math.floor(Math.random() * categories.length)];
+
+          // request.get({
+          //   url: `https://api.api-ninjas.com/v1/hobbies?category=${category}`,
+          //   headers: {
+          //     "X-Api-Key": "YkwtUopPCegHLiExwO50iA==i5sUUacN8j0OxUHs",
+          //   },
+          // }, function (error, response, body) {
+          //   if (error) return console.error("Request failed:", error);
+          //   else if (response.statusCode != 200)
+          //     return console.error("Error:", response.statusCode, body.toString("utf8"));
+          //   else {
+          //     interestsStr += "\"" + body.hobby + "\",";
+          //     const data = JSON.parse(body);
+          //     console.log('body', data.hobby);
+          //   }
+          // });
+
+            // interestsStr = await getHobby(interestsStr);
+
           var j = Math.floor(Math.random() * hobbies.length);
           interestsStr += "\"" + hobbies[j] + "\",";
+          // console.log(interestsStr, hobbies[j]);
         }
         if (interestsStr !== "[") {
           interestsStr = interestsStr.slice(0, -1);
         }
         interestsStr += "]";
-        const seed_profile_avatar = faker.image.avatar();
+        const avatar_type = sex === "male" ? "man,boy,male" : "woman,girl,female";
+        const seed_profile_avatar = faker.image.imageUrl(480, 480, avatar_type) // 'https://loremflickr.com/1234/2345/cat'
         const bio = faker.lorem.lines(3).replace('\'', '');
         const job = faker.name.jobTitle();
+
+
+
         const query = `
           INSERT INTO users (
             first_name,
@@ -169,15 +223,26 @@ export async function seedUsersTable() {
             '${2.318641 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
             '${48.896561 - (i <= 400 ? 0.3 : 0.8) + ((i <= 400 ? 0.6 : 1.6)*Math.random())}',
             '${true}'
-          );
+          ) RETURNING id;
         `;
-        await client.query(query);
+        const res = await client.query(query);
+
+        const url = seed_profile_avatar;
+        const fileName = 'seed_profile_pic_' + res.rows[0].id;
+        request.head(url, (err, res, body) => {
+          request(url)
+            .pipe(fs.createWriteStream(`uploads/${fileName}`))
+            .on('close', () => console.log('File saved'));
+        });
+
+        await client.query(`INSERT INTO user_files (user_id, file_path, is_profile_pic) VALUES ($1, $2, $3) RETURNING *;`, [ res.rows[0].id, 'uploads/'+fileName, true]);
+
       }
       log.info('[userModel.js]', 'user table seeded');
-    }
-    else {
-      log.info('[userModel.js]', 'user table already seeded - no need to seed');
-    }
+    // }
+    // else {
+    //   log.info('[userModel.js]', 'user table already seeded - no need to seed');
+    // }
     client.release();
   } catch (err) {
     log.error('[userModel.js]', err);
