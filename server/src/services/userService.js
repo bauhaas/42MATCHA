@@ -515,7 +515,15 @@ export const updateUser = async (data) => {
       data.report_count,
       data.id
     ]);
-    const user = result.rows[0];
+    
+    const resultUpdate = await client.query(`
+      SELECT users.*, JSON_AGG(user_files.*) as files
+      FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+      WHERE users.id = $1
+      GROUP BY users.id
+    `, [data.id]);
+
+    const user = resultUpdate.rows[0];
 
     client.release();
     return user;

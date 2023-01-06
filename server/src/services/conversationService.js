@@ -117,10 +117,11 @@ export const deleteConversationOfPair = async (id1, id2) => {
         `
         , [id1, id2]);
         
-        const conversation = convResult.rows[0].id;
-        if (conversation === undefined) {
+        if (convResult.rowCount === 0) {
             return 0;
         }
+
+        const conversation = convResult.rows[0].id;
 
         const messagesResult = await client.query(`
         SELECT id FROM messages
