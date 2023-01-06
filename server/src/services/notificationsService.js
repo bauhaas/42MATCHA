@@ -7,17 +7,17 @@ export const createNotification = async (sender_id, receiver_id, type) => {
     const client = await pool.connect();
 
     const notif = await client.query(`
-WITH new_notification AS (
-    INSERT INTO notifications(sender_id, receiver_id, type, read)
-    VALUES($1, $2, $3, $4)
-    RETURNING *
-)
-SELECT new_notification.*,
-    users.first_name || ' ' || users.last_name as fullname,
-    user_files.file_path as file_path
-FROM new_notification
-JOIN users ON users.id = new_notification.sender_id
-JOIN user_files ON users.id = user_files.user_id AND user_files.is_profile_pic = true
+        WITH new_notification AS (
+            INSERT INTO notifications(sender_id, receiver_id, type, read)
+            VALUES($1, $2, $3, $4)
+            RETURNING *
+        )
+        SELECT new_notification.*,
+            users.first_name || ' ' || users.last_name as fullname,
+            user_files.file_path as file_path
+        FROM new_notification
+        JOIN users ON users.id = new_notification.sender_id
+        JOIN user_files ON users.id = user_files.user_id AND user_files.is_profile_pic = true
     `, [sender_id, receiver_id, type, false]);
 
     const socket = global.map.get(String(receiver_id));
@@ -190,7 +190,9 @@ export const deleteAllNotificationsOfPair = async (sender_id, receiver_id) => {
     OR (sender_id = $2 AND receiver_id = $1)
     `, [sender_id, receiver_id]);
 
-    console.log(result);
+    if (result.rowCount === 0) {
+        return null;
+    }
     const notifs = result.rows;
     console.log(notifs);
 

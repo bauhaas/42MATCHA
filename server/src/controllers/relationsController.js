@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
         throw '400: sender_id and receiver_id must be a number';
     }
 
-    const blocked = await isBlocked(receiver_id, sender_id);
+    const blocked = await isBlocked(sender_id, receiver_id);
     if (blocked) {
       throw 'You are blocked';
     }
@@ -72,7 +72,8 @@ router.post('/', async (req, res) => {
 
     res.send(newRelation);
   } catch (err) {
-    if (err.message === 'You are blocked') {
+    console.log(err);
+    if (err === 'You are blocked') {
       res.status(404).send(err.message);
     } else if (typeof(err) === "string" && err.includes('400')) {
       res.status(400).send(err.message)
