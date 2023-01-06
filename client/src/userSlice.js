@@ -18,6 +18,13 @@ const userSlice = createSlice({
                 state.user.files.push(action.payload);
             }
         },
+        setFiles: (state, action) => {
+            if (!state.user.files) {
+                state.user.files = action.payload;
+            } else {
+                state.user.files = action.payload;
+            }
+        },
         removeFile: (state, action) => {
             const fileIndex = state.user.files.findIndex(file => file.id === action.payload.id);
             if (fileIndex !== -1) {
@@ -27,5 +34,5 @@ const userSlice = createSlice({
     },
 });
 
-export const { setUser, updateFiles, removeFile } = userSlice.actions;
+export const { setUser, updateFiles, removeFile, setFiles } = userSlice.actions;
 export default userSlice.reducer;

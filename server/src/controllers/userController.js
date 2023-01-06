@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
-import { deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
+import { updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
@@ -38,7 +38,7 @@ const errorHandler = (error, req, res, next) => {
 router.post('/:id/upload', async (req, res, next) => {
   // Check if the user has exceeded the maximum number of allowed files
   const userId = req.params.id;
-  console.log(userId, req.file);
+  console.log(userId, req.file, req);
   const maxFiles = 5; // Maximum number of allowed files per user
   const client = await pool.connect();
   const result = await client.query(`
@@ -127,6 +127,24 @@ router.post('/:id/filteredBachelors', async (req, res) => {
 
   } catch (err) {
     if (typeof(err) === "string" && err.includes('400')) {
+      res.status(400).send(err.message)
+      return;
+    }
+    res.status(500).send(err.message);
+  }
+});
+
+
+//   axios.put(`http://localhost:3001/user/setAsProfilePic/${file.id}`, {}
+router.put('/setAsProfilePic/:fileId', async (req, res) => {
+  try {
+    //
+    console.log(req.params.fileId);
+    const files = await updateProfilePicture(req.params.fileId, req.body.userId);
+    console.log(files);
+    res.send(files);
+  } catch (err) {
+    if (typeof (err) === "string" && err.includes('400')) {
       res.status(400).send(err.message)
       return;
     }

@@ -179,8 +179,8 @@ const ProfileDetails = ({id}) => {
                                     <h1 className='text-center'>Pictures</h1>
                                     <div className='grid grid-cols-1 sm:grid-cols-2'>
                                         {user.files && user.files.map((file, index) => (
-                                            <div key={file.id + index}  className='relative border-2 border-blue-500 rounded-lg m-2'>
-                                                <img className="aspect-square h-full w-full rounded-lg border-2 border-green-500" src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
+                                            <div key={file.id + index}  className='relative  rounded-lg m-2 border-2 border-orange-300'>
+                                                <img className="aspect-square h-full w-full rounded-lg " src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
                                             </div>
                                         ))}
                                     </div>
