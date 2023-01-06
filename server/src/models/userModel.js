@@ -77,10 +77,7 @@ export async function seedUsersTable() {
       LIMIT 1;
     `);
 
-    // if (tableIsEmpty.rowCount === 0) {
-    //   if (!fs.existsSync('pictures')) {
-    //     fs.mkdirSync('pictures');
-    //   }
+    if (tableIsEmpty.rowCount === 0) {
 
       var salt = bcrypt.genSaltSync(10);
       var hash = bcrypt.hashSync('42', salt);
@@ -238,10 +235,10 @@ export async function seedUsersTable() {
 
       }
       log.info('[userModel.js]', 'user table seeded');
-    // }
-    // else {
-    //   log.info('[userModel.js]', 'user table already seeded - no need to seed');
-    // }
+    }
+    else {
+      log.info('[userModel.js]', 'user table already seeded - no need to seed');
+    }
     client.release();
   } catch (err) {
     log.error('[userModel.js]', err);

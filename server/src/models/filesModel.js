@@ -8,6 +8,7 @@ export async function createFilesModel() {
         CREATE TABLE IF NOT EXISTS user_files (
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id),
+            FOREIGN KEY (user_id) REFERENCES users (id),
             file_path VARCHAR(255),
             is_profile_pic BOOLEAN NOT NULL DEFAULT FALSE
           );`);
