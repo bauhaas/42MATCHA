@@ -21,7 +21,7 @@ import { Cog6ToothIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 import { useDispatch } from 'react-redux';
 import jwt_decode from "jwt-decode";
-import { removeFile, setUser, updateFiles } from "../../userSlice";
+import { removeFile, setFiles, setUser, updateFiles } from "../../userSlice";
 
 const Settings = () => {
     const dispatch = useDispatch();
@@ -96,10 +96,11 @@ const Settings = () => {
                 };
                 fileReader.readAsDataURL(file);
 
+                console.log(user.id, file);
                 const formData = new FormData();
                 formData.append('file', file); // file is the file that you get from the input element's onChange event
                 formData.append('userId', user.id);
-                formData.append('is_profile_pic', true);
+                formData.append('is_profile_pic', false);
                 axios.post(`http://localhost:3001/users/${user.id}/upload`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -134,7 +135,23 @@ const Settings = () => {
             })
     };
 
-    console.log(pictures);
+    const setAsProfilePic = (event, file) => {
+        event.preventDefault();
+        console.log(file);
+
+        axios.put(`http://localhost:3001/users/setAsProfilePic/${file.id}`, {
+            userId : user.id
+        })
+            .then(response => {
+                console.log(response.data)
+                dispatch(setFiles(response.data));
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+    };
+
+    // console.log(pictures);
     console.log(user);
 
     return (
@@ -341,39 +358,46 @@ const Settings = () => {
 
                                 </div>
 
+                                <button onClick={updateUser} className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500`}>Update</button>
+                                <div className="divider before:bg-chess-bar after:bg-chess-bar"></div>
                                 <div className='mt-2 flex flex-col sm:flex-row  sm:justify-between mb-2'>
                                     <label className="text-white text-sm self-start mb-2">
                                         Pictures
                                     </label>
-                                    <input
-                                        type="file"
-                                        className="file-input file-input-sm w-full max-w-xs m-auto mt-2"
-                                        ref={fileInputRef}
-                                        onChange={handleFileChange}
-                                        multiple
-                                    />
-                                    {
-                                        <div className="carousel max-h-96 mt-4 mx-4 rounded-lg">
-                                            {user.files.map((imageUrl, index) => (
-                                                <div id={index} className="carousel-item relative w-full">
-                                                    <img src={`http://localhost:3001/${imageUrl.file_path}`} className="mx-auto object-center object-contain" alt="randomshit" />
-                                                    <div className={`absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2 ${user.files.length <= 1 ? 'hidden' : null}`}>
-                                                        <a href={'#' + (index - 1)} className="btn btn-circle">❮</a>
-                                                        <a href={'#' + (index + 1)} className="btn btn-circle">❯</a>
-                                                    </div>
-                                                    <button onClick={(event) => deleteImage(event, imageUrl)} className="btn btn-circle btn-xs absolute right-0 m-2">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                            ))}
+                                    <div className='flex flex-col'>
+                                        <input
+                                            type="file"
+                                            className="file-input file-input-sm w-full max-w-xs   bg-chess-placeholder rounded-sm sm:w-64"
+                                            ref={fileInputRef}
+                                            onChange={handleFileChange}
+                                            multiple
+                                        />
+                                        <div className='w-64'>
+                                            <div className='grid grid-cols-1 sm:grid-cols-2'>
+                                                {user.files && user.files.map((file, index) => (
+                                                    <>
+                                                        <div key={file.id + index} className='relative rounded-lg m-2 group'>
+                                                            <button onClick={(event) => deleteImage(event, file)} className="btn btn-circle btn-xs absolute right-0 m-2 invisible group-hover:visible">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </button>
+                                                            <button onClick={(event) => setAsProfilePic(event, file)} className={`rounded-b-lg absolute bottom-0 left-0 w-full text-center text-xs py-1 bg-orange-300 text-black invisible  ${file.is_profile_pic === true ? null : 'group-hover:visible'} `}>
+                                                                set as profile pic</button>
+                                                            <img className={`aspect-square h-full w-full rounded-lg ${file.is_profile_pic === true ? 'border-2 border-orange-300' : null}`} src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
 
+                                                        </div>
+                                                    </>
+
+                                                ))}
+                                            </div>
                                         </div>
-                                    }
-                                    <p>{user.files.length}/5</p>
+
+                                    </div>
+
+
+
                                 </div>
-                                <button onClick={updateUser} className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500`}>Update</button>
                                 </div>
                             </div>
 						</div>

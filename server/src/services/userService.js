@@ -21,6 +21,29 @@ import { faker } from '@faker-js/faker';
 //   }
 // }
 
+export const updateProfilePicture = async (fileId, userId) => {
+  try {
+    const client = await pool.connect();
+
+    await client.query(`
+        UPDATE user_files SET is_profile_pic = $1 WHERE id = $2
+      `, [true, fileId]);
+
+    await client.query(`
+    UPDATE user_files SET is_profile_pic = false WHERE id != $1 AND user_id = $2
+  `, [fileId, userId]);
+
+    const result = await client.query(`
+      SELECT * FROM user_files WHERE user_id = $1
+    `, [userId]);
+
+    client.release();
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getUserFiles = async (userId) => {
   try {
     console.log('get user file of id:', userId);
@@ -34,6 +57,7 @@ export const getUserFiles = async (userId) => {
     throw error;
   }
 };
+
 
 export const deleteFile = async (id, userId) => {
   try {
