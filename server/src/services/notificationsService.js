@@ -7,20 +7,22 @@ export const createNotification = async (sender_id, receiver_id, type) => {
     const client = await pool.connect();
 
     const notif = await client.query(`
-        WITH new_notification AS (
-            INSERT INTO notifications(sender_id, receiver_id, type, read)
-            VALUES($1, $2, $3, $4)
-            RETURNING *
-        )
-        SELECT new_notification.*,
-            users.first_name || ' ' || users.last_name as fullname
-        FROM new_notification
-        JOIN users ON users.id = new_notification.sender_id
+WITH new_notification AS (
+    INSERT INTO notifications(sender_id, receiver_id, type, read)
+    VALUES($1, $2, $3, $4)
+    RETURNING *
+)
+SELECT new_notification.*,
+    users.first_name || ' ' || users.last_name as fullname,
+    user_files.file_path as file_path
+FROM new_notification
+JOIN users ON users.id = new_notification.sender_id
+JOIN user_files ON users.id = user_files.user_id AND user_files.is_profile_pic = true
     `, [sender_id, receiver_id, type, false]);
 
     const socket = global.map.get(String(receiver_id));
     if (socket) {
-        console.log(`has${type}Notif`);
+        console.log(`has${type}Notif from createNotification`);
         socket.emit(`has${type}Notif`, notif.rows[0]);
     }
     client.release();
@@ -62,13 +64,17 @@ export const getNotifById = async (id) => {
 export const getReceivedNotifications = async (id) => {
     const client = await pool.connect();
     const notif = await client.query(`
-    SELECT * FROM notifications
-    WHERE receiver_id = $1
-    `, [id]);
+    SELECT notifications.*, users.first_name || ' ' ||  users.last_name as fullname, user_files.file_path
+    FROM notifications
+    INNER JOIN users ON notifications.sender_id = users.id
+    LEFT JOIN user_files ON users.id = user_files.user_id AND user_files.is_profile_pic = true
+    WHERE notifications.receiver_id = $1
+  `, [id]);
 
     client.release();
     if (notif.rowCount > 0) {
         log.info('[notificationService]', 'return something');
+        console.log(notif.rows[0]);
         return notif.rows
     }
     log.info('[notificationService]', 'return null');
@@ -109,6 +115,7 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
 
         const socket = global.map.get(String(receiver_id));
         if (socket) {
+            console.log(`hasvistNotif from insertNotification`);
             socket.emit('hasVisitNotif', notif.rows[0]);
         }
         return notif.rows[0];
