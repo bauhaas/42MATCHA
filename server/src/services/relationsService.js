@@ -9,11 +9,10 @@ import { createNotification, deleteAllNotificationsOfPair } from './notification
 const createRelation = async (sender_id, receiver_id, type) => {
     try {
         const client = await pool.connect();
-
         const notif = await client.query(`
-        INSERT INTO relations(sender_id, receiver_id, type)
-        VALUES($1, $2, $3)
-        RETURNING *
+            INSERT INTO relations(sender_id, receiver_id, type)
+            VALUES($1, $2, $3)
+            RETURNING *
         `, [sender_id, receiver_id, type]);
         client.release();
         return notif.rows[0];
@@ -130,6 +129,10 @@ const deleteRelationsOfUsers = async (sender_id, receiver_id) => {
 
 
 const createBlockRelation = async (sender_id, receiver_id) => {
+    const block = await getRelation(sender_id, receiver_id, "block");
+    if (block) {
+        return block;
+    }
     await deleteRelationsOfUsers(sender_id, receiver_id);
     await deleteAllNotificationsOfPair(sender_id, receiver_id);
     await deleteConversationOfPair(sender_id, receiver_id);

@@ -45,6 +45,7 @@ export const getNotification = async (sender_id, receiver_id, type) => {
     }
     return null;
 }
+
 export const getNotifById = async (id) => {
     const client = await pool.connect();
     const notif = await client.query(`
@@ -149,8 +150,12 @@ export const getAllNotifications = async () => {
 export const updateTimeNotification = async (id) => {
     try {
         log.info('[notifService]', 'id:', id);
-        const client = await pool.connect();
+        const notif = await getNotifById(id);
+        if (notif === null) {
+            return ;
+        }
 
+        const client = await pool.connect();
         await client.query(`UPDATE notifications SET updated_at = NOW() WHERE id = $1`, [id]);
         client.release();
     } catch (err) {
@@ -162,8 +167,12 @@ export const updateTimeNotification = async (id) => {
 export const updateReadNotification = async (id) => {
     try {
         log.info('[notifService]', 'id:', id);
-        const client = await pool.connect();
+        const notif = await getNotifById(id);
+        if (notif === null) {
+            return ;
+        }
 
+        const client = await pool.connect();
         await client.query(`UPDATE notifications SET read = NOT read WHERE id = $1`, [id]);
         await updateTimeNotification(id);
         client.release();
@@ -176,6 +185,10 @@ export const updateReadNotification = async (id) => {
 // Delete a user from the database
 export const deleteNotification = async (id) => {
     try {
+        const notif = await getNotifById(id);
+        if (notif === null) {
+            return ;
+        }
         const client = await pool.connect();
         const result = await client.query(`DELETE FROM notifications WHERE id = $1`, [id]);
         log.info(result.rows)
@@ -190,9 +203,9 @@ export const deleteAllNotificationsOfPair = async (sender_id, receiver_id) => {
     const client = await pool.connect();
 
     const result = await client.query(`
-    SELECT id FROM notifications
-    WHERE (sender_id = $1 AND receiver_id = $2)
-    OR (sender_id = $2 AND receiver_id = $1)
+        SELECT id FROM notifications
+        WHERE (sender_id = $1 AND receiver_id = $2)
+        OR (sender_id = $2 AND receiver_id = $1)
     `, [sender_id, receiver_id]);
 
     if (result.rowCount === 0) {
