@@ -13,6 +13,10 @@ export const insertMessage2 = async (payload) => {
           [payload.from, payload.to]
         );
 
+        if (conversationResult.rowCount === 0) {
+            return null;
+        }
+
         // If a conversation does exist, retrieve the id of the existing conversation
         const conversationId = conversationResult.rows[0].id;
 
@@ -27,6 +31,10 @@ export const insertMessage2 = async (payload) => {
         SELECT * FROM messages WHERE conversation_id = $1 ORDER BY created_at ASC`,
         [conversationId]
         );
+
+        if (messageHistoryResult.rowCount === 0) {
+            return null;
+        }
 
         const messageHistory = messageHistoryResult.rows;
 
@@ -65,6 +73,11 @@ export const getMessageHistory = async (conversationId) => {
           SELECT * FROM messages WHERE conversation_id = $1 ORDER BY created_at ASC;`,
             [conversationId]
         );
+
+        if (result.rowCount === 0) {
+            return null;
+        }
+
         const messages = result.rows;
 
         client.release();
@@ -107,6 +120,11 @@ export const getMessagesOfConversation = async (sender_id, receiver_id) => {
             OR (sender_id = $2
             AND receiver_id = $1)`,
             [sender_id, receiver_id]);
+
+        if (result.rowCount === 0) {
+            return null;
+        }
+
         client.release();
         return result.rows;
     } catch (err) {

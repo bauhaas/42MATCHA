@@ -133,6 +133,11 @@ export const getAllNotifications = async () => {
         const client = await pool.connect();
         const result = await client.query(`SELECT * FROM notifications`);
         client.release();
+
+        if (result.rowCount === 0) {
+            return null;
+        }
+
         return result.rows;
     } catch (err) {
         throw err;

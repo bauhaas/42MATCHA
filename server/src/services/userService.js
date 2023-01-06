@@ -320,11 +320,11 @@ export const getUserByIdProfile = async (id) => {
     // const result = await client.query(DBgetUserById(id));
 
     const result = await client.query(`
-SELECT users.*, JSON_AGG(user_files.*) as files
-FROM users LEFT JOIN user_files ON users.id = user_files.user_id
-WHERE users.id = $1
-GROUP BY users.id
-`, [id]);
+      SELECT users.*, JSON_AGG(user_files.*) as files
+      FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+      WHERE users.id = $1
+      GROUP BY users.id
+    `, [id]);
 
     const user = result.rows[0];
     if(user.files[0] === null)

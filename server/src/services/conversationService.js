@@ -56,8 +56,8 @@ export const insertConversation = async (userId1, userId2) => {
         // If no conversation exists, insert a new one
         if (result.rowCount === 0) {
             const result = await client.query(`
-            INSERT INTO conversation (userId1, userId2, message_history)
-            VALUES ($1, $2, '{}') RETURNING *;`
+                INSERT INTO conversation (userId1, userId2, message_history)
+                VALUES ($1, $2, '{}') RETURNING *;`
             ,[userId1, userId2]);
             const conversation = result.rows[0];
             client.release();
@@ -98,6 +98,11 @@ export const getConversations = async (id) => {
             WHERE (conversation.userId1 = $1 OR conversation.userId2 = $1);`,
           [id]
         );
+        
+        if (result.rowCount === 0) {
+            return null;
+        }
+
         const conversations = result.rows;
         client.release();
         return conversations;

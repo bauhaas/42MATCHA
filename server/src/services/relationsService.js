@@ -39,10 +39,10 @@ export const getRelation = async (sender_id, receiver_id, type) => {
     try {
         const client = await pool.connect();
         const notif = await client.query(`
-        SELECT * FROM relations
-        WHERE sender_id = $1
-        AND receiver_id = $2
-        AND type = $3
+            SELECT * FROM relations
+            WHERE sender_id = $1
+            AND receiver_id = $2
+            AND type = $3
         `, [sender_id, receiver_id, type]);
 
         client.release();
@@ -63,14 +63,16 @@ export const getRelationTypeOfUsers = async (sender_id, receiver_id) => {
 
         console.log(sender_id, receiver_id)
         const result = await client.query(`
-        SELECT type
-        FROM relations
-        WHERE sender_id = $1
-        AND receiver_id = $2
+            SELECT type
+            FROM relations
+            WHERE sender_id = $1
+            AND receiver_id = $2
         `, [sender_id, receiver_id]);
-        if (result.rows[0] === undefined) {
+
+        if (result.rowCount === 0) {
             return "none";
         }
+
         const type = result.rows[0].type;
         if (type === null) {
             return "none";
