@@ -184,9 +184,8 @@ export const getBachelors = async (id) => {
         return user;
     });
 
-    // sort by increasing distance
-    closeUsers.sort((a, b) => a.distance < b.distance);
-    console.log(closeUsers.length)
+    closeUsers.sort((a, b) => b.distance - a.distance);
+
     client.release();
     return closeUsers;
   } catch (err) {

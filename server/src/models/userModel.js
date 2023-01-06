@@ -126,7 +126,7 @@ export async function seedUsersTable() {
         `;
       await client.query(testUser);
 
-      for (let i = 490; i < 499; i++) {
+      for (let i = 0; i < 499; i++) {
         const sex = faker.name.sex();
         const first_name = faker.name.firstName(sex).replace('\'', '');
         const last_name = faker.name.lastName(sex).replace('\'', '');
@@ -173,7 +173,6 @@ export async function seedUsersTable() {
 
           var j = Math.floor(Math.random() * hobbies.length);
           interestsStr += "\"" + hobbies[j] + "\",";
-          // console.log(interestsStr, hobbies[j]);
         }
         if (interestsStr !== "[") {
           interestsStr = interestsStr.slice(0, -1);
@@ -232,7 +231,7 @@ export async function seedUsersTable() {
         request.head(url, (err, res, body) => {
           request(url)
             .pipe(fs.createWriteStream(`uploads/${fileName}`))
-            .on('close', () => console.log('File saved'));
+            .on('close', () => {});
         });
 
         await client.query(`INSERT INTO user_files (user_id, file_path, is_profile_pic) VALUES ($1, $2, $3) RETURNING *;`, [ res.rows[0].id, 'uploads/'+fileName, true]);
