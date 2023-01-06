@@ -35,7 +35,7 @@ const InteractionButtons = ({user, isMatched, filled}) => {
             userId2: user.id
         })
             .then(response => {
-                console.log(response.data);
+                console.log(response, response.data);
                 navigate(`/chat/${response.data.id}`, {
                     state: {
                         conv: response.data,

@@ -45,6 +45,7 @@ const Chat = () => {
         const getConversations = async () => {
             axios.get(`http://localhost:3001/conversations/${currentUser.id}`)
                 .then(response => {
+                    console.log('get conversationof',response);
                     setConvList(response.data);
                 })
                 .catch(error => {

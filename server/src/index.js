@@ -21,7 +21,7 @@ import { Server } from 'socket.io';
 import { updateStatusUser } from './services/userService.js';
 import { createConversationTable } from './models/conversationModel.js';
 import { insertMessage2 } from './services/messageService.js';
-import { getConversations } from './services/conversationService.js';
+import { getConversationsOf } from './services/conversationService.js';
 import { isBlocked } from './services/relationsService.js';
 import { createFilesModel } from './models/filesModel.js';
 import path, {join, dirname} from 'path';
@@ -104,7 +104,7 @@ io.on('connection', (socket) => {
       log.info('[index.js]', 'send messageHistory to the receiver');
       io.to(toSocket.id).emit('messageHistory', messageHistory);
 
-      const conversation = await getConversations(messagePayload.to);
+      const conversation = await getConversationsOf(messagePayload.to);
       io.to(toSocket.id).emit('convUpdate', conversation);
     }
   });
