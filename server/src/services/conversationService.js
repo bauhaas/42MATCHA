@@ -89,7 +89,9 @@ export const getConversations = async (id) => {
             user2.first_name || ' ' || user2.last_name as user2_name,
             (SELECT message FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message,
             (SELECT sender_id FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_author_id,
-            (SELECT unread FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_unread
+            (SELECT unread FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_unread,
+            (SELECT file_path FROM user_files WHERE user_id = user1.id AND is_profile_pic = true) as user1_file_path,
+            (SELECT file_path FROM user_files WHERE user_id = user2.id AND is_profile_pic = true) as user2_file_path
             FROM conversation
             JOIN users as user1 ON user1.id = conversation.userId1
             JOIN users as user2 ON user2.id = conversation.userId2
@@ -116,7 +118,7 @@ export const deleteConversationOfPair = async (id1, id2) => {
         OR (userId1 = $2 AND userId2 = $1);
         `
         , [id1, id2]);
-        
+
         if (convResult.rowCount === 0) {
             return 0;
         }

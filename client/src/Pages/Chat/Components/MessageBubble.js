@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import Avatar from '../../../SharedComponents/Avatar';
 
-const MessageBubble = ({message}) => {
+const MessageBubble = ({message, picture}) => {
 
     const currentUser = useSelector((state) => state.user.user);
     const date = new Date(message.created_at);
@@ -15,7 +15,7 @@ const MessageBubble = ({message}) => {
                     ?
                         null
                     :
-                        <Avatar imageAttribute={'rounded-full w-12'} attribute={'chat-image avatar ml-1'} />
+                        <Avatar imageAttribute={'rounded-full w-12'} attribute={'chat-image avatar ml-1'} imagePath={picture}/>
                     }
                 <div className="chat-header">
                     <time className="text-xs opacity-50">{date.getHours()}:{date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()}</time>

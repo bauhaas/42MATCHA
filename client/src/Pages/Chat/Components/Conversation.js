@@ -19,6 +19,7 @@ const Conversation = () => {
     const conversation = location.state.conv;
 
     const [convPartner, setConvPartner] = useState('');
+    const [convPartnerPath, setConvPartnerPath] = useState('');
     const [messageToSend, setMessageToSend] = useState("");
     const [messages, setMessages] = useState([]);
     const messagesRef = useRef(null);
@@ -46,9 +47,17 @@ const Conversation = () => {
 
     useEffect(() => {
         if (conversation.userid2 === currentUser.id)
+        {
             setConvPartner(conversation.user1_name);
+            setConvPartnerPath(conversation.user1_file_path);
+
+        }
         else
+        {
             setConvPartner(conversation.user2_name);
+            setConvPartnerPath(conversation.user2_file_path);
+
+        }
 
         const getMessageHistory = async () => {
             axios.get(`http://localhost:3001/messages/history/${conversation.id}`)
@@ -76,6 +85,8 @@ const Conversation = () => {
         messagesRef.current.scrollTo(0, messagesRef.current.scrollHeight);
     }, [messages]);
 
+
+
     console.log(conversation);
     return (
         <>
@@ -93,7 +104,7 @@ const Conversation = () => {
                                 <p>{convPartner}</p>
                                 <div className='indicator'>
                                     <span className="indicator-item badge indicator-bottom indicator-start m-2 bg-blue-500"></span>
-                                    <Avatar imageAttribute={'rounded-full w-12'} attribute={'avatar'} />
+                                    <Avatar imageAttribute={'rounded-full w-12'} attribute={'avatar'} imagePath={convPartnerPath} />
                                 </div>
                             </div>
                         </div>
@@ -103,7 +114,7 @@ const Conversation = () => {
                                     {
                                         messages.map((message, index) => (
                                             <div>
-                                                <MessageBubble message={message}/>
+                                                <MessageBubble message={message} picture={convPartnerPath}/>
                                             </div>
                                         ))
                                     }
