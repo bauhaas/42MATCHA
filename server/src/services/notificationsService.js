@@ -33,11 +33,11 @@ export const createNotification = async (sender_id, receiver_id, type) => {
 export const getNotification = async (sender_id, receiver_id, type) => {
     const client = await pool.connect();
     const notif = await client.query(`
-    SELECT * FROM notifications
-    WHERE sender_id = $1
-    AND receiver_id = $2
-    AND type = $3
-    `, [sender_id, receiver_id, type]);
+        SELECT * FROM notifications
+        WHERE sender_id = $1
+        AND receiver_id = $2
+        AND type = $3
+        `, [sender_id, receiver_id, type]);
 
     client.release();
     if (notif.rowCount > 0) {
@@ -49,9 +49,9 @@ export const getNotification = async (sender_id, receiver_id, type) => {
 export const getNotifById = async (id) => {
     const client = await pool.connect();
     const notif = await client.query(`
-    SELECT * FROM notifications
-    WHERE sender_id = $1 OR receiver_id = $1
-    `, [id]);
+        SELECT * FROM notifications
+        WHERE sender_id = $1 OR receiver_id = $1
+        `, [id]);
 
     client.release();
     if (notif.rowCount > 0) {
@@ -65,12 +65,12 @@ export const getNotifById = async (id) => {
 export const getReceivedNotifications = async (id) => {
     const client = await pool.connect();
     const notif = await client.query(`
-    SELECT notifications.*, users.first_name || ' ' ||  users.last_name as fullname, user_files.file_path
-    FROM notifications
-    INNER JOIN users ON notifications.sender_id = users.id
-    LEFT JOIN user_files ON users.id = user_files.user_id AND user_files.is_profile_pic = true
-    WHERE notifications.receiver_id = $1
-  `, [id]);
+        SELECT notifications.*, users.first_name || ' ' ||  users.last_name as fullname, user_files.file_path
+        FROM notifications
+        INNER JOIN users ON notifications.sender_id = users.id
+        LEFT JOIN user_files ON users.id = user_files.user_id AND user_files.is_profile_pic = true
+        WHERE notifications.receiver_id = $1
+    `, [id]);
 
     client.release();
     if (notif.rowCount > 0) {

@@ -22,13 +22,16 @@ export const insertMessage2 = async (payload) => {
 
         // Insert a new message into the messages table
         await client.query(`
-          INSERT INTO messages (sender_id, message, conversation_id) VALUES ($1, $2, $3);`,
+          INSERT INTO messages (sender_id, message, conversation_id)
+          VALUES ($1, $2, $3);`,
           [payload.from,  payload.content, conversationId]
         );
 
         // Retrieve the message history for the conversation
         const messageHistoryResult = await client.query(`
-        SELECT * FROM messages WHERE conversation_id = $1 ORDER BY created_at ASC`,
+            SELECT * FROM messages
+            WHERE conversation_id = $1
+            ORDER BY created_at ASC`,
         [conversationId]
         );
 
@@ -51,11 +54,10 @@ export const patchMessages = async (id) => {
         const client = await pool.connect();
         log.info('[messageService]', 'patch', id);
         const result = await client.query(`
-        UPDATE messages
-        SET unread = false
-        WHERE conversation_id = $1;`,
-                [id]
-        );
+            UPDATE messages
+            SET unread = false
+            WHERE conversation_id = $1;`,
+            [id]);
         log.info('[messageService]', 'patch done');
         client.release();
     } catch (err) {
@@ -71,7 +73,7 @@ export const getMessageHistory = async (conversationId) => {
 
         const result = await client.query(`
           SELECT * FROM messages WHERE conversation_id = $1 ORDER BY created_at ASC;`,
-            [conversationId]
+        [conversationId]
         );
 
         if (result.rowCount === 0) {

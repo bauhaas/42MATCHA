@@ -87,9 +87,9 @@ export const getRelationsBySenderId = async (id) => {
     try {
         const client = await pool.connect();
         const notif = await client.query(`
-        SELECT * FROM relations
-        WHERE sender_id = $1
-        `, [id]);
+            SELECT * FROM relations
+            WHERE sender_id = $1
+            `, [id]);
 
         client.release();
         if (notif.rowCount > 0) {

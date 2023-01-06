@@ -85,7 +85,10 @@ export const saveFile = async (userId, filePath, is_profile_pic) => {
 
   try {
     // Check if there are any existing rows for the user
-    const result = await client.query(`SELECT COUNT(*) as count FROM user_files WHERE user_id = $1`, [userId]);
+    const result = await client.query(`
+      SELECT COUNT(*) as count FROM user_files
+      WHERE user_id = $1`
+      , [userId]);
     const count = result.rows[0].count;
     console.log(count, result.rows, typeof(count));
     // If it is the first row, set is_profile_pic to true
@@ -97,10 +100,18 @@ export const saveFile = async (userId, filePath, is_profile_pic) => {
     // Update previous rows to set is_profile_pic to false
     if (is_profile_pic == 'true') {
       console.log('gonna change default profile pic');
-      await client.query(`UPDATE user_files SET is_profile_pic = $1 WHERE user_id = $2 AND is_profile_pic = $3`, [false, userId, true]);
+      await client.query(`
+        UPDATE user_files
+        SET is_profile_pic = $1
+        WHERE user_id = $2
+        AND is_profile_pic = $3
+        `, [false, userId, true]);
     }
     // Insert new row
-    const res = await client.query(`INSERT INTO user_files (user_id, file_path, is_profile_pic) VALUES ($1, $2, $3) RETURNING *;`, [userId, filePath, is_profile_pic]);
+    const res = await client.query(`
+      INSERT INTO user_files (user_id, file_path, is_profile_pic) 
+      VALUES ($1, $2, $3) RETURNING *;
+      `, [userId, filePath, is_profile_pic]);
     client.release();
     console.log(res, res.rows);
     return res.rows[0];
@@ -114,8 +125,8 @@ export const isActive = async (id) => {
   try {
     const client = await pool.connect();
     const result = await client.query(`
-    SELECT active from users
-    WHERE id = $1
+      SELECT active from users
+      WHERE id = $1
     `, [id]);
     console.log(result);
     console.log(result.rows);
@@ -155,12 +166,12 @@ export const getBachelors = async (id) => {
     const me = await getUserById(id);
     console.log("getBachelors", me);
     const result = await client.query(`
-    SELECT users.*, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance, JSON_AGG(user_files.*) as files
-    FROM users LEFT JOIN user_files ON users.id = user_files.user_id
-    WHERE $1 != users.id
-    AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) < 50
-    AND users.active = true
-    GROUP BY users.id
+      SELECT users.*, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance, JSON_AGG(user_files.*) as files
+      FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+      WHERE $1 != users.id
+      AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) < 50
+      AND users.active = true
+      GROUP BY users.id
     `, [me.id, me.longitude, me.latitude]);
 
     var closeUsers = result.rows;
@@ -200,16 +211,16 @@ export const getFilteredBachelors = async (id, filters) => {
 
     const me = await getUserById(id);
     const result = await client.query(`
-      SELECT users.*, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance, JSON_AGG(user_files.*) as files
-      FROM users LEFT JOIN user_files ON users.id = user_files.user_id
-      WHERE $1 != users.id
-      AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) >= $4
-      AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) <= $5
-      AND age >= $6
-      AND age <= $7
-      AND fame_rating >= $8
-      AND active = true
-      GROUP BY users.id
+        SELECT users.*, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance, JSON_AGG(user_files.*) as files
+        FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+        WHERE $1 != users.id
+        AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) >= $4
+        AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) <= $5
+        AND age >= $6
+        AND age <= $7
+        AND fame_rating >= $8
+        AND active = true
+        GROUP BY users.id
       `, [me.id, me.longitude, me.latitude, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
 
     var filteredUsers = result.rows;
@@ -264,10 +275,10 @@ export const getLogin = async (email, password) => {
     const id = result.rows[0].id;
 
     const t = await client.query(`
-SELECT users.*, JSON_AGG(user_files.*) as files
-FROM users LEFT JOIN user_files ON users.id = user_files.user_id
-WHERE users.id = $1
-GROUP BY users.id
+      SELECT users.*, JSON_AGG(user_files.*) as files
+      FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+      WHERE users.id = $1
+      GROUP BY users.id
     `, [id]);
 
     const user = t.rows[0];
@@ -299,11 +310,11 @@ export const getUserById = async (id) => {
     console.log(id);
     // const result = await client.query(DBgetUserById(id));
     const result = await client.query(`
-SELECT users.*, JSON_AGG(user_files.*) as files
-FROM users LEFT JOIN user_files ON users.id = user_files.user_id
-WHERE users.id = $1
-GROUP BY users.id
-`, [id]);
+      SELECT users.*, JSON_AGG(user_files.*) as files
+      FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+      WHERE users.id = $1
+      GROUP BY users.id
+    `, [id]);
     const user = result.rows[0];
     client.release();
     return user;
