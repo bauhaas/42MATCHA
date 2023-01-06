@@ -47,12 +47,32 @@ export const getNotification = async (sender_id, receiver_id, type) => {
 }
 
 export const getNotifById = async (id) => {
+    log.info('[notificationService.js]', 'getnotifById',id)
     const client = await pool.connect();
     const notif = await client.query(`
         SELECT * FROM notifications
         WHERE sender_id = $1 OR receiver_id = $1
         `, [id]);
 
+    console.log(notif.rows);
+    client.release();
+    if (notif.rowCount > 0) {
+        log.info('[notificationService]', 'return something');
+        return notif.rows
+    }
+    log.info('[notificationService]', 'return null');
+    return null;
+}
+
+export const getNotifByIdOfNotif = async (id) => {
+    log.info('[notificationService.js]', 'getnotifById', id)
+    const client = await pool.connect();
+    const notif = await client.query(`
+        SELECT * FROM notifications
+        WHERE id = $1
+        `, [id]);
+
+    console.log(notif.rows);
     client.release();
     if (notif.rowCount > 0) {
         log.info('[notificationService]', 'return something');
@@ -106,7 +126,7 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
 
         const id = notif.rows[0].id
         if (notif.read === true) {
-            log.info('[notificationService]', 'updateReadotifcation');
+            log.info('[notificationService]', 'updateReadNotifcation');
             await updateReadNotification(id)
         }
         log.info('[notificationService]', 'updateTimeNotification');
@@ -167,11 +187,9 @@ export const updateTimeNotification = async (id) => {
 export const updateReadNotification = async (id) => {
     try {
         log.info('[notifService]', 'id:', id);
-        const notif = await getNotifById(id);
-        if (notif === null) {
+        const notif = await getNotifByIdOfNotif(id);
+        if (notif === null)
             return ;
-        }
-
         const client = await pool.connect();
         await client.query(`UPDATE notifications SET read = NOT read WHERE id = $1`, [id]);
         await updateTimeNotification(id);
@@ -185,7 +203,7 @@ export const updateReadNotification = async (id) => {
 // Delete a user from the database
 export const deleteNotification = async (id) => {
     try {
-        const notif = await getNotifById(id);
+        const notif = await getNotifByIdOfNotif(id);
         if (notif === null) {
             return ;
         }
