@@ -2,12 +2,11 @@ import React, { useState } from "react"
 import useValidator from '../../../Hooks/useValidator';
 import axios from 'axios';
 import position from '../../../Context/position'
-import jwt_decode from "jwt-decode";
 import { setUser } from "../../../userSlice";
 import { useDispatch } from 'react-redux';
 
 
-const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorToggle, setHasSignedUP}) => {
+const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
 
     const dispatch = useDispatch();
     const [firstName, setFirstName] = useState("");
@@ -23,7 +22,6 @@ const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorTog
                 },
             }
         });
-
 
     const saveToRedux = (data) => {
         console.log('redux data', data);
@@ -47,7 +45,7 @@ const SignUpForm = ({email,setEmail, isErrorToggle, error, setError, setErrorTog
             })
             .catch(error => {
                 console.log(error);
-                setErrorToggle(true);
+                setOpen(true);
                 setError([error.response.status, error.response.data]);
             });
     }

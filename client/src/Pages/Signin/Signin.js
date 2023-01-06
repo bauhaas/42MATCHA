@@ -3,20 +3,20 @@ import {useNavigate} from 'react-router-dom';
 import useToggle from '../../Hooks/useToggle';
 import useIsAuthenticated from '../../Hooks/useIsAuthenticated';
 import axios from 'axios';
-
 import { useDispatch } from 'react-redux';
 import jwt_decode from "jwt-decode";
 import { setUser } from "../../userSlice";
-
 import position from '../../Context/position'
+import CustomAlert from "../../SharedComponents/CustomAlert";
+
 
 function Signin() {
 
   const [fakeUserName, setFakeUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [open, setOpen] = useState(false);
   const [error, setError] = useState([])
-  const [isErrorToggle, setErrorToggle] = useToggle(false);
   const [rememberMe, setRememberMe] = useToggle(false)
   const { isAuthenticated } = useIsAuthenticated();
 
@@ -24,26 +24,14 @@ function Signin() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Check if the user is already logged in
-    if (isAuthenticated) {
-      // Redirect the user to the Home page
-      console.log("go to home cuz already sign")
+    if (isAuthenticated)
       navigate('/home');
-    }
   }, [isAuthenticated, navigate]);
 
   const handleSignUpClick = (event) => {
     event.preventDefault();
     navigate("/signup");
   }
-
-  const saveToRedux = (data) => {
-    const user = jwt_decode(data);
-    console.log('redux save', user);
-    dispatch(setUser(user));
-  }
-
-  const [test, setTest] = useState({});
 
   const handleSignInClick = (event) => {
     event.preventDefault();
@@ -65,15 +53,15 @@ function Signin() {
         }
         else
         {
-          saveToRedux(response.data);
-          setTest(response.data);
+          const user = jwt_decode(response.data);
+          dispatch(setUser(user));
           localStorage.setItem('jwt', response.data);
         }
         navigate("/home");
       })
       .catch(error => {
-        setErrorToggle(true);
         setError([error.response.status, error.response.data]);
+        setOpen(true);
         console.log(error);
       });
   }
@@ -81,38 +69,29 @@ function Signin() {
   const fakeUser = (event) => {
     event.preventDefault();
 
-    console.log(fakeUserName);
-    console.log(position)
     axios.post('http://localhost:3001/users/fake', {
       fakeUserName: fakeUserName,
       position: position
     })
       .then(response => {
-        console.log(response);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
-        saveToRedux(response.data);
+        const user = jwt_decode(response.data);
+        dispatch(setUser(user));
         localStorage.setItem('jwt', response.data);
         navigate("/home");
       })
       .catch(error => {
-        setErrorToggle(true);
         setError([error.response.status, error.response.data]);
         console.log(error);
       });
   }
 
+
   return (
     <>
     <div className="h-screen flex flex-col md:flex-row-reverse items-center content-start">
 
-        <div className={` ${isErrorToggle ? null : "hidden"} w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-b absolute top-0`} role="alert">
-          <p className="font-bold">Error {error[0]}</p>
-          <p className="">{error[1]}</p>
-          <span className="absolute top-0 bottom-0 right-0 px-4 py-3" onClick={setErrorToggle}>
-            <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
-          </span>
-        </div>
-
+        <CustomAlert error={error} open={open} setOpen={setOpen}/>
         <img className="w-screen object-cover h-1/3 md:w-1/2 md:h-screen" src='../bg-signin-signup.jpeg' alt='bg-signin-signup'/>
         <div className="w-full h-full md:w-1/2">
           <div className="w-full min-h-full flex flex-col items-center justify-center px-10 md:px-36">
@@ -140,10 +119,11 @@ function Signin() {
             </button>
             <label className="mt-2 self-start text-sm font-small text-gray-900 dark:text-gray-300">Not registered ? <a href="/signup" onClick={handleSignUpClick} className="text-blue-600 dark:text-blue-500 hover:underline">Create an account</a></label>
 
+
             <input  className="shadow appearance-none border rounded w-full mb-4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="fakeusername" type="text" placeholder="fakeUserSetter"
                     value={fakeUserName}
                     onChange={(event) => setFakeUserName(event.target.value)} />
-          <button onClick={fakeUser} className="h-10 w-full items-center justify-center  gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
+            <button onClick={fakeUser} className="h-10 w-full items-center justify-center  gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
               <span>Generate Fake User for testing</span>
             </button>
           </div>

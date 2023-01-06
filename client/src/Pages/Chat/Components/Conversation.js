@@ -82,12 +82,11 @@ const Conversation = () => {
     }, []);
 
     useEffect(() => {
-        messagesRef.current.scrollTo(0, messagesRef.current.scrollHeight);
+        if(messages)
+            messagesRef.current.scrollTo(0, messagesRef.current.scrollHeight);
     }, [messages]);
 
-
-
-    console.log(conversation);
+    console.log(conversation, messages);
     return (
         <>
             <div className="bg-chess-default min-h-screen">

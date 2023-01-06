@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 import axios from 'axios';
 import Slider, { SliderThumb } from '@mui/material/Slider';
-import { FaStar } from 'react-icons/fa';
 import { AiFillFire } from 'react-icons/ai';
 import { HiArrowUp } from 'react-icons/hi';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
@@ -20,53 +19,39 @@ import Select from '@mui/material/Select';
 
 const CardsMap = () => {
     const [users, setUsers] = useState([]);
+    const [showTopBtn, setShowTopBtn] = useState(false);
 	const currentUser = useSelector((state) => state.user.user);
-
-    useEffect(() => {
-        axios.get(`http://localhost:3001/users/${currentUser.id}/bachelors`)
-            .then(response => {
-                setUsers(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, []);
-
-
     const minDistance = 1;
     const [ageRange, setAgeRange] = useState([18, 34]);
     const [distanceRange, setDistanceRange] = useState([0, 50]);
     const [fameRange, setFameRange] = useState(0);
     const [commonTags, setCommonTags] = useState(0);
+    const [sortDirection, setSortDirection] = useState('ascending');
+    const [sortBy, setSortBy] = useState('');
 
     const handleAgeChange = (event, newValue, activeThumb) => {
-        if (!Array.isArray(newValue)) {
+        if (!Array.isArray(newValue))
             return;
-        }
-
-        if (activeThumb === 0) {
+        if (activeThumb === 0)
             setAgeRange([Math.min(newValue[0], ageRange[1] - minDistance), ageRange[1]]);
-        } else {
+        else
             setAgeRange([ageRange[0], Math.max(newValue[1], ageRange[0] + minDistance)]);
-        }
+
     };
 
     const handleDistanceChange = (event, newValue, activeThumb) => {
-        if (!Array.isArray(newValue)) {
+        if (!Array.isArray(newValue))
             return;
-        }
 
-        if (activeThumb === 0) {
+        if (activeThumb === 0)
             setDistanceRange([Math.min(newValue[0], distanceRange[1] - minDistance), distanceRange[1]]);
-        } else {
+        else
             setDistanceRange([distanceRange[0], Math.max(newValue[1], distanceRange[0] + minDistance)]);
-        }
     };
 
     const handleCommonTagsChange = (event, newValue) => {
         // Find mark object with matching value
         const mark = marks.find(mark => mark.value === newValue);
-
         // Retrieve mark label
         const label = mark ? mark.label : '0';
         setCommonTags(Number(label));
@@ -138,13 +123,9 @@ const CardsMap = () => {
         children: PropTypes.node,
     };
 
-    const [sortBy, setSortBy] = useState('');
-
     const handleSortByChange = (event) => {
         setSortBy(event.target.value);
     };
-
-    const [sortDirection, setSortDirection] = useState('ascending');
 
     useEffect(() => {
         if(sortBy && sortDirection)
@@ -173,28 +154,24 @@ const CardsMap = () => {
                 default:
                     console.log('switch case unknown');
             }
-
         }
     }, [sortBy, sortDirection, users]);
 
-    const [showTopBtn, setShowTopBtn] = useState(false);
-
     useEffect(() => {
         window.addEventListener('scroll', () => {
-            // if (window.scrollY > 400) {
-            //     setShowTopBtn(true);
-            // } else {
-            //     setShowTopBtn(false);
-            // }
             setShowTopBtn(true);
         });
     }, []);
 
-    const gototop = (event) => {
-        console.log('y position:',window.screenY)
-        window.scrollTo({top:0, behavior:'smooth'})
-    };
-
+    useEffect(() => {
+        axios.get(`http://localhost:3001/users/${currentUser.id}/bachelors`)
+            .then(response => {
+                setUsers(response.data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }, [currentUser]);
 
     return (
         <>
@@ -301,7 +278,7 @@ const CardsMap = () => {
 
                 {
                     showTopBtn &&
-                    <button onClick={gototop} className='btn btn-circle bg-orange-500 fixed bottom-5 right-5'>
+                    <button onClick={(event) => { window.scrollTo({ top: 0, behavior: 'smooth' }) }} className='btn btn-circle bg-orange-500 fixed bottom-5 right-5'>
                         <HiArrowUp className='h-6 w-6'/>
                     </button>
                 }

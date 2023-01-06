@@ -1,26 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import NavBar from '../Navbar/NavBar';
 import SettingsMenu from './Components/SettingsMenu';
 import axios from 'axios';
 import SettingsHeader from './Components/SettingsHeader';
 import { useSelector } from 'react-redux';
-import SettingsLayout from './Components/SettingsLayout';
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-
-import { useRadioGroup } from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import { grey, deepOrange } from '@mui/material/colors';
 import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import { Cog6ToothIcon, PlusIcon } from '@heroicons/react/24/outline';
-
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { useDispatch } from 'react-redux';
-import jwt_decode from "jwt-decode";
 import { removeFile, setFiles, setUser, updateFiles } from "../../userSlice";
 
 const Settings = () => {

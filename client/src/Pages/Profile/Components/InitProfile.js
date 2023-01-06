@@ -1,5 +1,4 @@
-import { Navigate } from "react-router-dom";
-import { useLocation, useHistory, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import BioForm from "./BioForm";
 import PreferencesForm from "./PreferencesForm";
@@ -20,11 +19,7 @@ const InitProfile = ({userId}) => {
     const [sexOrientation, setSexOrientation] = useState([]);
     const [pictures, setPictures] = useState([]);
 
-    useEffect(() => {
-        setParams(new URLSearchParams(location.search));
-    }, [location]);
-
-    function handleSubmit() {
+    const handleSubmit = () => {
         console.log(userId);
         axios.put(`http://localhost:3001/users/${userId}/update`, {
             bio:bio,
@@ -44,20 +39,24 @@ const InitProfile = ({userId}) => {
             });
     }
 
-
-    function handleNextClick() {
+    const handleNextClick = () => {
         if (currentStep !== 4)
             setCurrentStep(currentStep + 1);
         else if(currentStep === 4 && pictures.length > 0)
          handleSubmit();
     }
 
-    function handlePreviousClick() {
+    const handlePreviousClick = () => {
         if(currentStep !== 0)
             setCurrentStep(currentStep - 1);
     }
 
+    useEffect(() => {
+        setParams(new URLSearchParams(location.search));
+    }, [location]);
+
     console.log('infos:', "bio:", bio, "interests:", interests, "sexorientation:", sexOrientation, "pictures:", pictures);
+
     return (
         <>
             <div className="bg-emerald-600 min-h-screen">
@@ -70,21 +69,11 @@ const InitProfile = ({userId}) => {
                 )}
                 <div className="flex flex-col absolute bottom-5 left-0 right-0">
                     <ul className="steps steps-horizontal">
-                        <li className={currentStep >= 0 ? 'step step-primary text-sm' : 'step text-sm'}>
-                            Welcome
-                        </li>
-                        <li className={currentStep >= 1 ? 'step step-primary text-sm' : 'step text-sm'}>
-                            Bio
-                        </li>
-                        <li className={currentStep >= 2 ? 'step step-primary text-sm' : 'step text-sm'}>
-                            Orientation
-                        </li>
-                        <li className={currentStep >= 3 ? 'step step-primary text-sm' : 'step text-sm'}>
-                            Hobbies
-                        </li>
-                        <li className={currentStep >= 4 ? 'step step-primary text-sm' : 'step text-sm'}>
-                            Pictures
-                        </li>
+                        <li className={currentStep >= 0 ? 'step step-primary text-sm' : 'step text-sm'}>Welcome</li>
+                        <li className={currentStep >= 1 ? 'step step-primary text-sm' : 'step text-sm'}>Bio</li>
+                        <li className={currentStep >= 2 ? 'step step-primary text-sm' : 'step text-sm'}>Orientation</li>
+                        <li className={currentStep >= 3 ? 'step step-primary text-sm' : 'step text-sm'}>Hobbies</li>
+                        <li className={currentStep >= 4 ? 'step step-primary text-sm' : 'step text-sm'}>Pictures</li>
                     </ul>
                     <div className="flex justify-center gap-10 ">
                         <button onClick={handlePreviousClick} className="btn btn-sm btn-circle bg-indigo-800 hover:bg-indigo-600">
@@ -92,7 +81,8 @@ const InitProfile = ({userId}) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75" />
                             </svg>
                         </button>
-                        {currentStep === 4 ?
+                        {
+                        currentStep === 4 ?
                             <button onClick={handleNextClick} className={`btn btn-sm btn-circle hover:bg-indigo-600 ${pictures.length > 0 ? 'bg-indigo-800' : 'btn-disabled'}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -106,7 +96,6 @@ const InitProfile = ({userId}) => {
                             </button>
 
                         }
-
                     </div>
                 </div>
             </div>

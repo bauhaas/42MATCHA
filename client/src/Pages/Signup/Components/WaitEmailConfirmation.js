@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const WaitEmailConfirmation = ({email, setError, setErrorToggle}) => {
+const WaitEmailConfirmation = ({email, setError, setOpen}) => {
     const handleResendEmail = () => {
         axios.post('http://localhost:3001/users/sendSignupEmail', {
             email: email
@@ -10,7 +10,7 @@ const WaitEmailConfirmation = ({email, setError, setErrorToggle}) => {
             })
             .catch(error => {
                 console.log(error);
-                setErrorToggle(true);
+                setOpen(true);
                 setError([error.response.status, error.response.data]);
             });
     }

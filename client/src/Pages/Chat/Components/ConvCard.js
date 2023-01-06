@@ -20,7 +20,6 @@ const ConvCard = ({conv}) => {
         }
     }, []);
 
-
     return (
         <>
             <div className={`flex bg-chess-dark rounded-lg gap-2 p-2 ${conv.last_message_unread && conv.last_message_author_id !== currentUser.id ? 'bg-red-500' : 'hover:bg-chess-hover'}`}>
@@ -36,7 +35,5 @@ const ConvCard = ({conv}) => {
         </>
     )
 }
-
-
 
 export default ConvCard;

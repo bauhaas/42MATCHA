@@ -216,26 +216,22 @@ function generateRefreshToken(user) {
   return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1y'});
 }
 
-
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await getLogin(email, password);
-
-    log.info('onlogin we put that in token:', user);
     const accessToken = generateAccessToken(user);
     res.send(accessToken);
   } catch (err) {
-    if (err.message === 'Invalid email or password.') {
+    if (err.message === 'Invalid email or password')
       res.status(401).send(err.message);
-
-    } else if (err.message === 'Email not verified.') {
+    else if (err.message === 'Email not verified')
       res.status(403).send(err.message);
-    } else {
+    else
       res.status(500).send(err.message);
     }
   }
-});
+);
 
 router.post('/fake', async (req, res) => {
   try {
@@ -334,17 +330,12 @@ router.post('/', async (req, res) => {
     const user = await insertUser(firstName.trim(), lastName.trim(), email.trim(), password, longitude, latitude);
     res.send(user);
   } catch (err) {
-    console.log(err)
-    console.log(err.message)
-    console.log(err.message === "invalid email")
-    if (err.message === 'A user with the given email already exists.') {
+    if (err.message === 'A user with the given email already exists')
       res.status(403).send(err.message);
-      return;
-    } else if (err.message === "invalid email") {
-      res.send(err);
-      return;
-    }
-    res.status(500).send(err);
+    else if (err.message === "Email format is invalid")
+      res.status(400).send(err.message);
+    else
+      res.status(500).send(err);
   }
 });
 

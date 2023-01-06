@@ -133,7 +133,7 @@ export const saveFile = async (userId, filePath, is_profile_pic) => {
     }
     // Insert new row
     const res = await client.query(`
-      INSERT INTO user_files (user_id, file_path, is_profile_pic) 
+      INSERT INTO user_files (user_id, file_path, is_profile_pic)
       VALUES ($1, $2, $3) RETURNING *;
       `, [userId, filePath, is_profile_pic]);
     client.release();
@@ -292,7 +292,7 @@ export const getLogin = async (email, password) => {
     // If no user was found with the given email, throw an error
     if (result.rowCount === 0) {
       log.error('[userService]', 'didnt find user with that mail');
-      throw new Error('didnt find user with that mail.');
+      throw new Error('Invalid email or password');
     }
 
     // Get the user from the result
@@ -310,7 +310,7 @@ export const getLogin = async (email, password) => {
     // check if email was verified
     if (user.active === false) {
       log.error('[userService]', 'email not verified');
-      throw new Error('Email not verified.');
+      throw new Error('Email not verified');
     }
     // Compare the given password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -440,7 +440,6 @@ const isEmailValid = async (email) => {
 export const insertUser = async (firstName, lastName, email, password, longitude, latitude) => {
   try {
     const client = await pool.connect();
-
     const dupplicateEmailResult = await client.query(`
       SELECT *
       FROM users
@@ -448,12 +447,11 @@ export const insertUser = async (firstName, lastName, email, password, longitude
     `, [email]);
 
     if (dupplicateEmailResult.rowCount > 0)
-      throw new Error('A user with the given email already exists.');
+      throw new Error('A user with the given email already exists');
 
     const emailValidation = await isEmailValid(email);
-    if (emailValidation.valid === false) {
-      throw new Error('invalid email');
-    }
+    if (emailValidation.valid === false)
+      throw new Error('Email format is invalid');
 
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);
@@ -462,16 +460,11 @@ export const insertUser = async (firstName, lastName, email, password, longitude
     const result = await client.query(DBinsertUser(firstName, lastName, email, hash, longitude, latitude));
     log.info('[userService]', JSON.stringify(result.rows[0], null,2));
     const user = result.rows[0];
-
     const accessToken = generateAccessToken(result.rows[0]);
-
     await sendConfirmationEmail(email, firstName, lastName, accessToken);
-
     client.release();
-    console.log(user)
     return user;
   } catch (err) {
-    log.error('[userService]', err);
     throw err;
   }
 };

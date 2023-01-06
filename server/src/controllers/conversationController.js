@@ -4,62 +4,56 @@ import { deleteConversation, insertConversation, getConversations } from '../ser
 
 const router = express.Router();
 
+
+const validateUserId =(id) => {
+    if (isNaN(id))
+        throw new Error('userId must be a number');
+}
+
 // Delete a conv by it's id
 router.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        if (isNaN(id)) {
-            throw '400: id must be a number';
-        }
+        if (isNaN(id))
+            throw new Error('conversation id must be a number');
         log.info('[conversationController]', 'enter in deleteConv');
         await deleteConversation(id);
-        res.send({id});
+        res.send({id}); //TODO maybe just send a 200
     } catch (err) {
-        if (typeof(err) === "string" && err.includes('400')) {
+        if (err.message === 'conversation id must be a number')
             res.status(400).send(err.message)
-            return;
-        }
+        else
         res.status(500).send(err.message);
     }
 });
 
-// Insert a new conv
 router.post('/', async (req, res) => {
     try {
-        log.info('[conversationController]', 'body: ', req.body);
         const { userId1, userId2 } = req.body;
-        if (isNaN(userId1) || isNaN(userId2)) {
-            throw '400: Nan found';
-        }
+        validateUserId(userId1);
+        validateUserId(userId2);
         log.info('[conversationController]', 'enter in insertConv');
         const conversation = await insertConversation(userId1, userId2);
         res.send(conversation);
     } catch (err) {
-        if (typeof(err) === "string" && err.includes('400')) {
+        if (err.message === 'userId must be a number')
             res.status(400).send(err.message)
-            return;
-        }
+        else
         res.status(500).send(err.message);
     }
 });
 
-// Get convs of a user
 router.get('/:userId', async (req, res) => {
     try {
         const id = req.params.userId;
-        if (isNaN(id)) {
-            throw '400: userId must be a number';
-        }
-        log.info('[conversationController]', 'enter in getConv');
+        validateUserId(id);
         const conversations = await getConversations(id);
-        log.info('[conversationController]', conversations);
         res.send(conversations);
     } catch (err) {
-        if (typeof(err) === "string" && err.includes('400')) {
+        if (err.message === 'userId must be a number')
             res.status(400).send(err.message)
-            return;
-        }
-        res.status(500).send(err.message);
+        else
+            res.status(500).send(err.message);
     }
 });
 

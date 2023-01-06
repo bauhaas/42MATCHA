@@ -6,7 +6,6 @@ const MessageBubble = ({message, picture}) => {
     const currentUser = useSelector((state) => state.user.user);
     const date = new Date(message.created_at);
 
-
     return (
         <>
             <div className={`chat ${message.sender_id === currentUser.id ?"chat-end": "chat-start"}`}>

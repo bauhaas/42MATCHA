@@ -17,11 +17,6 @@ const Chat = () => {
 
     const [convlist, setConvList] = useState([]);
 
-    const saveToRedux = (data) => {
-        console.log('redux save', data);
-        dispatch(updateConversation(data));
-    }
-
     const patchMessagesAsRead = (conversation) => {
         axios.patch(`http://localhost:3001/messages/${conversation.id}`)
             .then(response => {
@@ -31,8 +26,7 @@ const Chat = () => {
                 // Modify the copy
                 updatedConversation.last_message_unread = false;
                 console.log(updatedConversation);
-                // Dispatch an action to update the state with the modified object
-                saveToRedux(updatedConversation);
+                dispatch(updateConversation(updatedConversation));
             })
             .catch(error => {
                 console.log(error);
@@ -43,9 +37,7 @@ const Chat = () => {
         event.preventDefault();
         patchMessagesAsRead(conv);
         navigate(`/chat/${conv.id}`, {
-            state: {
-              conv: conv,
-            }
+            state: { conv: conv}
           });
     }
 
@@ -74,7 +66,6 @@ const Chat = () => {
     }, []);
 
     console.log(convlist);
-    //TODO size box
     return (
         <>
             <div className="bg-chess-default min-h-screen">
