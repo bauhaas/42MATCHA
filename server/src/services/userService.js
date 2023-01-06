@@ -200,15 +200,16 @@ export const getFilteredBachelors = async (id, filters) => {
 
     const me = await getUserById(id);
     const result = await client.query(`
-      SELECT *, ABS($2 - longitude) + ABS($3 - latitude) as distance
-      FROM users
-      WHERE $1 != id
+      SELECT users.*, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance, JSON_AGG(user_files.*) as files
+      FROM users LEFT JOIN user_files ON users.id = user_files.user_id
+      WHERE $1 != users.id
       AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) >= $4
       AND SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) <= $5
       AND age >= $6
       AND age <= $7
       AND fame_rating >= $8
       AND active = true
+      GROUP BY users.id
       `, [me.id, me.longitude, me.latitude, filters.min_distance, filters.max_distance, filters.min_age, filters.max_age, filters.min_fame]);
 
     var filteredUsers = result.rows;
@@ -515,7 +516,7 @@ export const updateUser = async (data) => {
       data.report_count,
       data.id
     ]);
-    
+
     const resultUpdate = await client.query(`
       SELECT users.*, JSON_AGG(user_files.*) as files
       FROM users LEFT JOIN user_files ON users.id = user_files.user_id
