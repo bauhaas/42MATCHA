@@ -50,18 +50,17 @@ const Conversation = () => {
         {
             setConvPartner(conversation.user1_name);
             setConvPartnerPath(conversation.user1_file_path);
-
         }
         else
         {
             setConvPartner(conversation.user2_name);
             setConvPartnerPath(conversation.user2_file_path);
-
         }
 
         const getMessageHistory = async () => {
             axios.get(`http://localhost:3001/messages/history/${conversation.id}`)
                 .then(response => {
+                    console.log('ger message history');
                     setMessages(response.data);
                 })
                 .catch(error => {
@@ -73,6 +72,7 @@ const Conversation = () => {
 
     useEffect(() => {
         socket.client.on('messageHistory', (data) => {
+            console.log('receive messagehistory event', data);
             setMessages(data);
             patchMessagesAsRead(conversation);
         })

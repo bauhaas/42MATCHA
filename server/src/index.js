@@ -20,7 +20,7 @@ import log from './config/log.js';
 import { Server } from 'socket.io';
 import { updateStatusUser } from './services/userService.js';
 import { createConversationTable } from './models/conversationModel.js';
-import { insertMessage2 } from './services/messageService.js';
+import { createMessage } from './services/messageService.js';
 import { getConversationsOf } from './services/conversationService.js';
 import { isBlocked } from './services/relationsService.js';
 import { createFilesModel } from './models/filesModel.js';
@@ -88,9 +88,7 @@ io.on('connection', (socket) => {
     log.info('[index.js]', 'receive sendMessage event');
     log.info('[index.js]', 'payload:', messagePayload);
 
-
-    const blocked = await isBlocked()
-    const messageHistory = await insertMessage2(messagePayload);
+    const messageHistory = await createMessage(messagePayload);
     const fromSocket = map.get(String(messagePayload.from));
     const toSocket = map.get(String(messagePayload.to));
 

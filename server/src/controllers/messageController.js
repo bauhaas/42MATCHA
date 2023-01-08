@@ -1,65 +1,27 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import log from '../config/log.js';
-import { deleteConversation, getMessageHistory, patchMessages } from '../services/messageService.js';
+import {getMessageHistory, setMessagesAsRead } from '../services/messageService.js';
+import { validateParamId} from '../middleware/idValidationMiddleware.js'
+import { sendErrorResponse } from '../errors/error.js';
 
 const router = express.Router();
 
 // Get the message history for a conversation
-router.get('/history/:conversationId', async (req, res) => {
+router.get('/history/:id', validateParamId, async (req, res) => {
   try {
-    const conversationId = req.params.conversationId;
-    if (isNaN(conversationId)) {
-        throw '400: conversationId must be a number';
-    }
-    log.info('[messageController]', 'enter in getHistory');
-    const messages = await getMessageHistory(conversationId);
-    res.send(messages);
+    const messageHistory = await getMessageHistory(req.params.id);
+    res.status(200).send(messageHistory);
   } catch (err) {
-    if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message);
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
-
-// Patch conv of a user
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', validateParamId, async (req, res) => {
   try {
-      const id = req.params.id;
-      if (isNaN(id)) {
-          throw '400: id must be a number';
-      }
-      log.info('[messageController]', 'enter in patchMessages of conv:', id);
-      const messages = await patchMessages(id);
-      res.sendStatus(200);
+      await setMessagesAsRead(req.params.id);
+      res.sendStatus(204);
   } catch (err) {
-    if (typeof(err) === "string" && err.includes('400')) {
-        res.status(400).send(err.message);
-      return;
-    }
-    res.status(500).send(err.message);
-  }
-});
-
-// Delete a conversation
-router.delete('/', async (req, res) => {
-  try {
-    const { sender_id, receiver_id } = req.body;
-    if (isNaN(sender_id) || isNaN(receiver_id)) {
-        throw '400: sender_id and receiver_id must be a number';
-    }
-    await deleteConversation(sender_id, receiver_id);
-
-    res.send(sender_id);
-  } catch (err) {
-    if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message)
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 

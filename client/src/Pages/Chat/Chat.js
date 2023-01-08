@@ -43,7 +43,7 @@ const Chat = () => {
 
     useEffect(() => {
         const getConversations = async () => {
-            axios.get(`http://localhost:3001/conversations/${currentUser.id}`)
+            axios.get(`http://localhost:3001/conversations/user/${currentUser.id}`)
                 .then(response => {
                     console.log('get conversationof',response);
                     setConvList(response.data);
