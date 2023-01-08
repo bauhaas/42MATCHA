@@ -128,36 +128,6 @@ const CardsMap = () => {
     };
 
     useEffect(() => {
-        if(sortBy && sortDirection)
-        {
-            const sort = sortBy + ' ' + sortDirection;
-            console.log('gonna switch sort with:', sort)
-            switch(sort){
-                case 'fame descending':
-                    setUsers(users.sort((a, b) => b.fame_rating - a.fame_rating));
-                    break;
-                case 'fame ascending':
-                    setUsers(users.sort((a, b) => a.fame_rating - b.fame_rating));
-                    break;
-                case 'distance descending':
-                    setUsers(users.sort((a, b) => b.distance - a.distance));
-                    break;
-                case 'distance ascending':
-                    setUsers(users.sort((a, b) => a.distance - b.distance));
-                    break;
-                case 'age descending':
-                    setUsers(users.sort((a, b) => b.age - a.age));
-                    break;
-                case 'age ascending':
-                    setUsers(users.sort((a, b) => a.age - b.age));
-                    break;
-                default:
-                    console.log('switch case unknown');
-            }
-        }
-    }, [sortBy, sortDirection, users]);
-
-    useEffect(() => {
         window.addEventListener('scroll', () => {
             setShowTopBtn(true);
         });
@@ -173,6 +143,42 @@ const CardsMap = () => {
             });
     }, [currentUser]);
 
+    useEffect(() => {
+        if(sortBy && sortDirection)
+        {
+            const sort = sortBy + ' ' + sortDirection;
+            console.log('gonna switch sort with:', sort)
+            switch(sort){
+                case 'fame descending':
+                    console.log(sort)
+                    setUsers(users.sort((a, b) => b.fame_rating - a.fame_rating));
+                    break;
+                case 'fame ascending':
+                    console.log(sort)
+                    setUsers(users.sort((a, b) => a.fame_rating - b.fame_rating));
+                    break;
+                case 'distance descending':
+                    console.log(sort)
+                    setUsers(users.sort((a, b) => b.distance - a.distance));
+                    break;
+                case 'distance ascending':
+                    console.log(sort)
+                    setUsers(users.sort((a, b) => a.distance - b.distance));
+                    break;
+                case 'age descending':
+                    console.log(sort)
+                    setUsers(users.sort((a, b) => b.age - a.age));
+                    break;
+                case 'age ascending':
+                    console.log(sort)
+                    setUsers(users.sort((a, b) => a.age - b.age));
+                    break;
+                default:
+                    console.log('switch case unknown');
+            }
+        }
+    }, [sortBy, sortDirection]);
+    console.log(users[0])
     return (
         <>
             <div className='mt-16'>
