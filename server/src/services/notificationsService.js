@@ -1,12 +1,13 @@
 import pool from '../config/db.js';
 import log from '../config/log.js';
+import { NotFoundError } from '../errors/error.js';
 
 import { updateUserFameRating } from './userService.js'
 
 export const createNotification = async (sender_id, receiver_id, type) => {
     const client = await pool.connect();
-
-    const notif = await client.query(`
+    try {
+        const notif = await client.query(`
         WITH new_notification AS (
             INSERT INTO notifications(sender_id, receiver_id, type, read)
             VALUES($1, $2, $3, $4)
@@ -20,33 +21,39 @@ export const createNotification = async (sender_id, receiver_id, type) => {
         JOIN user_files ON users.id = user_files.user_id AND user_files.is_profile_pic = true
     `, [sender_id, receiver_id, type, false]);
 
-    const socket = global.map.get(String(receiver_id));
-    if (socket) {
-        console.log(`has${type}Notif from createNotification`);
-        socket.emit(`has${type}Notif`, notif.rows[0]);
+        const socket = global.map.get(String(receiver_id));
+        if (socket) {
+            console.log(`has${type}Notif from createNotification`);
+            socket.emit(`has${type}Notif`, notif.rows[0]);
+        }
+        return notif.rows[0];
+    } catch {
+        throw err;
+    } finally{
+        client.release();
     }
-    client.release();
-    return notif.rows[0];
 }
 
 
-export const getNotification = async (sender_id, receiver_id, type) => {
-    const client = await pool.connect();
-    const notif = await client.query(`
-        SELECT * FROM notifications
-        WHERE sender_id = $1
-        AND receiver_id = $2
-        AND type = $3
-        `, [sender_id, receiver_id, type]);
+//TODO seems unused, save just in case
+// export const getNotification = async (sender_id, receiver_id, type) => {
+//     const client = await pool.connect();
+//     const notif = await client.query(`
+//         SELECT * FROM notifications
+//         WHERE sender_id = $1
+//         AND receiver_id = $2
+//         AND type = $3
+//         `, [sender_id, receiver_id, type]);
 
-    client.release();
-    if (notif.rowCount > 0) {
-        return notif.rows[0]
-    }
-    return null;
-}
+//     client.release();
+//     if (notif.rowCount > 0) {
+//         return notif.rows[0]
+//     }
+//     return null;
+// }
 
-export const getNotifById = async (id) => {
+//TODO seems useless. I should only need to get the notif where user is receiver
+export const getNotificationsOfUserId = async (id) => {
     log.info('[notificationService.js]', 'getnotifById',id)
     const client = await pool.connect();
     const notif = await client.query(`
@@ -64,42 +71,49 @@ export const getNotifById = async (id) => {
     return null;
 }
 
-export const getNotifByIdOfNotif = async (id) => {
-    log.info('[notificationService.js]', 'getnotifById', id)
+export const getNotificationById = async (id) => {
     const client = await pool.connect();
-    const notif = await client.query(`
-        SELECT * FROM notifications
-        WHERE id = $1
-        `, [id]);
+    try {
+        log.info('[notificationService.js]', 'getNotificationById:', id)
+        const notification = await client.query(`
+            SELECT * FROM notifications
+            WHERE id = $1
+            `, [id]);
 
-    console.log(notif.rows);
-    client.release();
-    if (notif.rowCount > 0) {
-        log.info('[notificationService]', 'return something');
-        return notif.rows
+        console.log(notification.rows);
+        if (notification.rowCount > 0) {
+            log.info('[notificationService]', 'return something');
+            return notification.rows
+        }
+        log.info('[notificationService]', 'return null');
+        return null;
+    } catch {
+        throw err;
+    } finally {
+        client.release();
     }
-    log.info('[notificationService]', 'return null');
-    return null;
 }
 
 export const getReceivedNotifications = async (id) => {
     const client = await pool.connect();
-    const notif = await client.query(`
-        SELECT notifications.*, users.first_name || ' ' ||  users.last_name as fullname, user_files.file_path
-        FROM notifications
-        INNER JOIN users ON notifications.sender_id = users.id
-        LEFT JOIN user_files ON users.id = user_files.user_id AND user_files.is_profile_pic = true
-        WHERE notifications.receiver_id = $1
-    `, [id]);
+    try {
+        log.info('[notificationService]', 'getReceivedNotifications of user:', id);
 
-    client.release();
-    if (notif.rowCount > 0) {
-        log.info('[notificationService]', 'return something');
-        console.log(notif.rows[0]);
-        return notif.rows
+        const notifications = await client.query(`
+            SELECT notifications.*, users.first_name || ' ' ||  users.last_name as fullname, user_files.file_path
+            FROM notifications
+            INNER JOIN users ON notifications.sender_id = users.id
+            LEFT JOIN user_files ON users.id = user_files.user_id AND user_files.is_profile_pic = true
+            WHERE notifications.receiver_id = $1`,
+        [id]);
+
+        return notifications.rows;
+    } catch {
+        throw err
+    } finally {
+        client.release();
     }
-    log.info('[notificationService]', 'return null');
-    return null;
+
 }
 
 
@@ -146,73 +160,72 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
     }
 };
 
-
-
-// Get all notifications from the database
+// Get all notifications from db
 export const getAllNotifications = async () => {
+    const client = await pool.connect();
     try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM notifications`);
-        client.release();
-
-        if (result.rowCount === 0) {
-            return null;
-        }
-
-        return result.rows;
+        const notifications = await client.query(`SELECT * FROM notifications`);
+        if (notifications.rowCount === 0)
+            throw new NotFoundError('There isn\'t notifcations yet')
+        return notifications.rows;
     } catch (err) {
         throw err;
+    } finally {
+        client.release();
     }
 };
 
 
-// Update a notifications's updated_at in the database
+// Update a notifications's updated_at in db
 export const updateTimeNotification = async (id) => {
+    const client = await pool.connect();
     try {
         log.info('[notifService]', 'id:', id);
-        const notif = await getNotifById(id);
+
+        const notif = await getNotificationsOfUserId(id);
         if (notif === null) {
             return ;
         }
-
-        const client = await pool.connect();
         await client.query(`UPDATE notifications SET updated_at = NOW() WHERE id = $1`, [id]);
-        client.release();
     } catch (err) {
         throw err;
+    } finally {
+        client.release();
     }
 };
 
 // Update a notifications's read to its inverse in the database
 export const updateReadNotification = async (id) => {
+    const client = await pool.connect();
     try {
-        log.info('[notifService]', 'id:', id);
-        const notif = await getNotifByIdOfNotif(id);
-        if (notif === null)
-            return ;
-        const client = await pool.connect();
+        log.info('[notifService]', 'updateReadNotification');
+
+        const notification = await getNotificationById(id);
+        if (notification === null)
+            throw new NotFoundError(`Notification ${id} not found`);
         await client.query(`UPDATE notifications SET read = NOT read WHERE id = $1`, [id]);
         await updateTimeNotification(id);
-        client.release();
     } catch (err) {
         throw err;
+    } finally{
+        client.release();
     }
 };
 
 
-// Delete a user from the database
 export const deleteNotification = async (id) => {
+    const client = await pool.connect();
     try {
-        const notif = await getNotifByIdOfNotif(id);
-        if (notif === null) {
-            return ;
-        }
-        const client = await pool.connect();
-        const result = await client.query(`DELETE FROM notifications WHERE id = $1`, [id]);
-        log.info(result.rows)
-        client.release();
+        log.info('[notifService]', 'deleteNotification');
+
+        const notification = await getNotificationById(id);
+        if (notification === null)
+            throw new NotFoundError(`Notification ${id} not found`);
+        await client.query(`DELETE FROM notifications WHERE id = $1`, [id]);
     } catch (err) {
         throw err;
+    } finally {
+        client.release();
     }
 };
 

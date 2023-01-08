@@ -1,131 +1,80 @@
 import jwt from 'jsonwebtoken';
 import express from 'express';
-import { getNotifById, getAllNotifications, getReceivedNotifications, deleteNotification, insertNotification, updateReadNotification, updateTimeNotification } from '../services/notificationsService.js';
+import { getNotificationsOfUserId, getAllNotifications, getReceivedNotifications, deleteNotification, insertNotification, updateReadNotification, updateTimeNotification } from '../services/notificationsService.js';
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
-
+import { sendErrorResponse, ForbiddenError } from '../errors/error.js';
+import { validateBodyMultipleId, validateParamId} from '../middleware/idValidationMiddleware.js'
 
 const router = express.Router();
 
 // Get all notifs
 router.get('/', async (req, res) => {
     try {
-        log.info('[notifController]', 'enter in getAllNotifications');
         const notifications = await getAllNotifications();
         res.send(notifications);
     } catch (err) {
-        res.status(500).send(err.message);
+        sendErrorResponse(res, err);
     }
 });
 
 // Get notifs where user is receiver
-router.get('/:id', async (req, res) => {
+router.get('/:id', validateParamId, async (req, res) => {
     try {
-        const id = req.params.id;
-        if (isNaN(id)) {
-            throw '400: conversationId must be a number';
-        }
-        log.info('[notifController]', 'enter in getNotifById');
-        const notifications = await getNotifById(id);
-        res.send(notifications);
+        const notifications = await getNotificationsOfUserId(req.params.id);
+        res.status(200).send(notifications);
     } catch (err) {
-        if (typeof(err) === "string" && err.includes('400')) {
-            res.status(400).send(err.message)
-        return;
-        }
-        res.status(500).send(err.message);
+       sendErrorResponse(res, err);
     }
 });
 
-
-// Get notifs where user is receiver
-router.get('/:id/receiver', async (req, res) => {
+// Get notifs where user is receiver //TODO seems useless. I should only need to get the notif where user is receiver; here it returns either receiver or sender
+router.get('/:id/receiver', validateParamId, async (req, res) => {
     try {
-        const id = req.params.id;
-        if (isNaN(id)) {
-            throw '400: conversationId must be a number';
-        }
-        log.info('[notifController]', 'enter in getReceivedNotifications');
-        const notifications = await getReceivedNotifications(id);
-        res.send(notifications);
+        const notifications = await getReceivedNotifications(req.params.id);
+        res.status(200).send(notifications);
     } catch (err) {
-        if (typeof(err) === "string" && err.includes('400')) {
-            res.status(400).send(err.message)
-        return;
-        }
-        res.status(500).send(err.message);
+        sendErrorResponse(res, err);
     }
 });
 
 // Delete a notif by its id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', validateParamId, async (req, res) => {
     try {
-        const id = req.params.id;
-        if (isNaN(id)) {
-            throw '400: conversationId must be a number';
-        }
-        log.info('[notifController]', 'enter in deleteNotifications');
-        await deleteNotification(id);
-        res.send({id});
+        await deleteNotification(req.params.id);
+        res.sendStatus(204);
     } catch (err) {
-        if (typeof(err) === "string" && err.includes('400')) {
-            res.status(400).send(err.message)
-        return;
-        }
-        res.status(500).send(err.message);
+        sendErrorResponse(res, err);
     }
 });
 
+//TODO can't use the middleware 2id due to type in the body find another way
 // Insert a new notif
 router.post('/', async (req, res) => {
     try {
         const { sender_id, receiver_id, type } = req.body;
-        if (isNaN(sender_id) || isNaN(receiver_id)) {
-            throw '400: sender_id and receiver_id must be a number';
-        }
 
-        log.info(sender_id, receiver_id, type)
-
+        //TODO move this block logic in the insertNotification
         const blocked = await isBlocked(sender_id, receiver_id);
-        log.info(sender_id, receiver_id, type)
-
         if (blocked) {
             log.error('[notifController]', 'you are blocked');
-          throw 'You are blocked';
+            throw new ForbiddenError('You are blocked');
         }
 
-        log.info('[notifController]', 'enter in insertNotification');
         await insertNotification(sender_id, receiver_id, type);
-        res.sendStatus(200);
+        res.sendStatus(201);
     } catch (err) {
-        if (err.message === 'You are blocked') {
-          res.status(404).send(err.message);
-        return;
-        } else if (typeof(err) === "string" && err.includes('400')) {
-            res.status(400).send(err.message)
-        return;
-        }
-        res.status(500).send(err.message);
+        sendErrorResponse(res, err);
     }
 });
 
 // Update a notification's read_status information
-router.put('/:id/update_read', async (req, res) => {
+router.put('/:id/update_read', validateParamId, async (req, res) => {
     try {
-        const id = req.params.id;
-        if (isNaN(id)) {
-            throw '400: userId must be a number';
-        }
-
-        log.info('[notifController]', 'enter in updateReadNotification');
-        await updateReadNotification(id);
-        res.send({ id });
+        await updateReadNotification(req.params.id);
+        res.sendStatus(204);
     } catch (err) {
-        if (typeof(err) === "string" && err.includes('400')) {
-            res.status(400).send(err.message)
-        return;
-        }
-        res.status(500).send(err.message);
+        sendErrorResponse(res, err);
     }
 });
 
