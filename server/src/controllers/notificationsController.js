@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get notifs where user is receiver
+// Get notifs where user is receiver //TODO seems useless. I should only need to get the notif where user is receiver; here it returns either receiver or sender
 router.get('/:id', validateParamId, async (req, res) => {
     try {
         const notifications = await getNotificationsOfUserId(req.params.id);
@@ -28,7 +28,7 @@ router.get('/:id', validateParamId, async (req, res) => {
     }
 });
 
-// Get notifs where user is receiver //TODO seems useless. I should only need to get the notif where user is receiver; here it returns either receiver or sender
+// Get notifs where user is receiver
 router.get('/:id/receiver', validateParamId, async (req, res) => {
     try {
         const notifications = await getReceivedNotifications(req.params.id);

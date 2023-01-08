@@ -29,22 +29,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-//TODO seems unused, to delete if confirmed
-// // get relation type between users
-// router.get('/type/:sender_id/:receiver_id', async (req, res) => {
-//   try {
-//     const sender_id = req.params.sender_id
-//     const receiver_id = req.params.receiver_id;
-//     if (isNaN(sender_id) || isNaN(receiver_id))
-//       throw new BadRequestError('id must be a number');
-
-//       const type = await getRelationTypeOfUsers(sender_id, receiver_id);
-//     res.send(type);
-//   } catch (err) {
-//     sendErrorResponse(res, err);
-//   }
-// });
-
 router.delete('/', async (req, res) => {
   try {
     log.info('[relationsController]', 'delete relation', req.body);

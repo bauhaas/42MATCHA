@@ -57,35 +57,6 @@ export const getRelation = async (sender_id, receiver_id, type) => {
     }
 }
 
-//TODO seems unused, to delete if confirmed
-// export const getRelationTypeOfUsers = async (sender_id, receiver_id) => {
-//     try {
-//         log.info('[relationService]', "getLikedUsersBySenderId");
-//         const client = await pool.connect();
-
-//         console.log(sender_id, receiver_id)
-//         const result = await client.query(`
-//             SELECT type
-//             FROM relations
-//             WHERE sender_id = $1
-//             AND receiver_id = $2
-//         `, [sender_id, receiver_id]);
-
-//         if (result.rowCount === 0) {
-//             return "none";
-//         }
-
-//         const type = result.rows[0].type;
-//         if (type === null) {
-//             return "none";
-//         }
-//         client.release();
-//         return type;
-//     } catch (err) {
-//         throw err;
-//     }
-// }
-
 export const isBlocked = async (sender_id, receiver_id) => {
     const blocked = await getRelation(receiver_id, sender_id, "block");
     return blocked ? true : false;

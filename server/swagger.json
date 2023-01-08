@@ -731,46 +731,12 @@
         }
       }
     },
-    "/relations/type/{sender_id}/{receiver_id}": {
-      "get": {
-        "tags": ["relations"],
-        "summary": "Get relation type between from sender_id to receiver_id",
-        "description": "Get type of relation from sender_id to receiver_id from the database",
-        "parameters": [
-          {
-          "name": "sender_id",
-          "in": "path",
-          "required": true,
-          "type": "integer"
-          },
-          {"name": "receiver_id",
-          "in": "path",
-          "required": true,
-          "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved type of relation from sender_id to receiver_id",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Relations"
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to retrieve type of relation from sender_id to receiver_id"
-          }
-        }
-      }
-    },
     "/notifications": {
       "get": {
         "tags": [
           "notifications"
         ],
-        "summary": "Get all notifications",
+        "summary": "[NOT USED IN APP, JUST FOR DEBUG]",
         "description": "Get all notifications from the database",
         "parameters": [],
         "responses": {
@@ -834,7 +800,7 @@
         "tags": [
           "notifications"
         ],
-        "summary": "get notifications of user",
+        "summary": "[NOT USED IN APP, JUST FOR DEBUG]",
         "description": "get notifications of user",
         "parameters": [
         {
@@ -944,6 +910,66 @@
           },
           "500": {
             "description": "Failed to retrieve notifications from the database"
+          }
+        }
+      }
+    },
+    "/messages/{id}": {
+      "patch": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "Set messages of conversation {id} as read",
+        "description": "Update messages of a conv as read in the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfully updated messages",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Messages"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to update messages from the database"
+          }
+        }
+      }
+    },
+    "/messages/history/{id}": {
+      "get": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "Retrieve messages of conversatio {id}",
+        "description": "Retrieve messages of conversation {id} in the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }],
+        "responses": {
+          "200": {
+            "description": "Successfullyretrieve messages",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Messages"
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve messages from the database"
           }
         }
       }
