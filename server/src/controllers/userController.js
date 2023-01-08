@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
-import { updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
+import { resendSignupEmail, updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
@@ -135,6 +135,15 @@ router.post('/:id/filteredBachelors', async (req, res) => {
   }
 });
 
+router.post('/sendSignupEmail', async (req, res) => {
+  try {
+    const { email } = req.body.email;
+
+    await resendSignupEmail(email);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 
 //   axios.put(`http://localhost:3001/user/setAsProfilePic/${file.id}`, {}
 router.put('/setAsProfilePic/:fileId', async (req, res) => {

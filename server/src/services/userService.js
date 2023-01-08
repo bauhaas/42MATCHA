@@ -375,6 +375,40 @@ export const getUserByIdProfile = async (id) => {
   }
 };
 
+// Get user from database where email match the paramater
+export const resendSignupEmail = async (email) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(`
+      SELECT *
+      FROM users
+      WHERE email = $1
+    `, [email]);
+
+    // If no user was found with the given email, throw an error
+    if (result.rowCount === 0) {
+      log.error('[userService]', 'didnt find user with that mail');
+      throw new Error('Invalid email or password');
+    }
+
+    const emailValidation = await isEmailValid(email);
+    if (emailValidation.valid === false) {
+      throw new Error('Email format is invalid');
+    }
+
+    log.info('[userService]', "generating token and sending it again");
+    const user = result.rows[0];
+    const accessToken = generateAccessToken(result.rows[0]);
+    await sendConfirmationEmail(email, user.firstName, user.lastName, accessToken);
+
+
+  } catch (err) {
+    throw err;
+  } finally {
+      client.release();
+  }
+}
+  
 export const resetPassword = async (oldPassword, newPassword, user) => {
   try {
     log.info('[userService]', 'resetPassword');
