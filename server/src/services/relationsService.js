@@ -2,122 +2,103 @@ import pool from '../config/db.js';
 import log from '../config/log.js';
 
 import { updateUserFameRating } from './userService.js'
-import { deleteConversationOfPair} from './conversationService.js';
-import { createNotification, deleteAllNotificationsOfPair } from './notificationsService.js';
+import { createConversation, deleteConversationOfPair} from './conversationService.js';
+import { createNotification } from './notificationsService.js';
+import { BadRequestError, ForbiddenError } from '../errors/error.js';
 
 
 const createRelation = async (sender_id, receiver_id, type) => {
+    const client = await pool.connect();
     try {
-        const client = await pool.connect();
-        const notif = await client.query(`
+        const relation = await client.query(`
             INSERT INTO relations(sender_id, receiver_id, type)
             VALUES($1, $2, $3)
-            RETURNING *
-        `, [sender_id, receiver_id, type]);
-        client.release();
-        return notif.rows[0];
+            RETURNING *`,
+        [sender_id, receiver_id, type]);
+
+        return relation.rows[0];
     } catch (err) {
         throw err;
+    } finally {
+        client.release();
     }
 }
 
-// Get all relations from the database
 export const getAllRelations = async () => {
+    const client = await pool.connect();
     try {
-        const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM relations`);
-        client.release();
-        return result.rows;
+        const relations = await client.query(`SELECT * FROM relations`);
+        return relations.rows;
     } catch (err) {
         throw err;
+    } finally {
+        client.release();
     }
 };
 
-
 export const getRelation = async (sender_id, receiver_id, type) => {
+    const client = await pool.connect();
     try {
-        const client = await pool.connect();
-        const notif = await client.query(`
+        const relation = await client.query(`
             SELECT * FROM relations
             WHERE sender_id = $1
             AND receiver_id = $2
-            AND type = $3
-        `, [sender_id, receiver_id, type]);
+            AND type = $3`,
+        [sender_id, receiver_id, type]);
 
-        client.release();
-        if (notif.rowCount > 0) {
-            return notif.rows[0]
+        if (relation.rowCount > 0) {
+            return relation.rows[0]
         }
         return null;
     } catch (err) {
         throw err;
-    }
-}
-
-
-export const getRelationTypeOfUsers = async (sender_id, receiver_id) => {
-    try {
-        log.info('[relationService]', "getLikedUsersBySenderId");
-        const client = await pool.connect();
-
-        console.log(sender_id, receiver_id)
-        const result = await client.query(`
-            SELECT type
-            FROM relations
-            WHERE sender_id = $1
-            AND receiver_id = $2
-        `, [sender_id, receiver_id]);
-
-        if (result.rowCount === 0) {
-            return "none";
-        }
-
-        const type = result.rows[0].type;
-        if (type === null) {
-            return "none";
-        }
+    } finally {
         client.release();
-        return type;
-    } catch (err) {
-        throw err;
     }
 }
 
-export const getRelationsBySenderId = async (id) => {
-    try {
-        const client = await pool.connect();
-        const notif = await client.query(`
-            SELECT * FROM relations
-            WHERE sender_id = $1
-            `, [id]);
+//TODO seems unused, to delete if confirmed
+// export const getRelationTypeOfUsers = async (sender_id, receiver_id) => {
+//     try {
+//         log.info('[relationService]', "getLikedUsersBySenderId");
+//         const client = await pool.connect();
 
-        client.release();
-        if (notif.rowCount > 0) {
-            return notif.rows
-        }
-        return null;
-    } catch (err) {
-        throw err;
-    }
-}
+//         console.log(sender_id, receiver_id)
+//         const result = await client.query(`
+//             SELECT type
+//             FROM relations
+//             WHERE sender_id = $1
+//             AND receiver_id = $2
+//         `, [sender_id, receiver_id]);
+
+//         if (result.rowCount === 0) {
+//             return "none";
+//         }
+
+//         const type = result.rows[0].type;
+//         if (type === null) {
+//             return "none";
+//         }
+//         client.release();
+//         return type;
+//     } catch (err) {
+//         throw err;
+//     }
+// }
 
 export const isBlocked = async (sender_id, receiver_id) => {
     const blocked = await getRelation(receiver_id, sender_id, "block");
-    if (blocked === null) {
-        return false;
-    }
-    return true;
+    return blocked ? true : false;
 }
 
 const deleteRelationsOfUsers = async (sender_id, receiver_id) => {
     const like = await getRelation(sender_id, receiver_id, "like");
-    if (like) {
+    if (like)
         await deleteRelation(like.id);
-    }
+
     const reverseLike = await getRelation(receiver_id, sender_id, "like");
-    if (reverseLike) {
+    if (reverseLike)
         await deleteRelation(reverseLike.id);
-    }
 
     const match = await getRelation(sender_id, receiver_id, "match");
     if (match) {
@@ -127,14 +108,12 @@ const deleteRelationsOfUsers = async (sender_id, receiver_id) => {
     }
 }
 
-
 const createBlockRelation = async (sender_id, receiver_id) => {
     const block = await getRelation(sender_id, receiver_id, "block");
-    if (block) {
+    if (block)
         return block;
-    }
+
     await deleteRelationsOfUsers(sender_id, receiver_id);
-    await deleteAllNotificationsOfPair(sender_id, receiver_id);
     await deleteConversationOfPair(sender_id, receiver_id);
 
     return await createRelation(sender_id, receiver_id, "block");
@@ -142,101 +121,101 @@ const createBlockRelation = async (sender_id, receiver_id) => {
 
 const createLikeRelation = async (sender_id, receiver_id) => {
     const alreadyLiked = await getRelation(sender_id, receiver_id, "like");
-    if (alreadyLiked) {
+    if (alreadyLiked)
         return alreadyLiked;
-    }
 
+    //If there is no match yet
     const liked = await getRelation(receiver_id, sender_id, "like");
     if (liked === null) {
         await createNotification(sender_id, receiver_id, "like");
         return await createRelation(sender_id, receiver_id, "like");
     }
 
+    //Case where is a match
     await updateUserFameRating(sender_id, true);
     await updateUserFameRating(receiver_id, true);
 
     await deleteRelation(liked.id);
 
+    await createRelation(sender_id, receiver_id, "match");
+    const match = await createRelation(receiver_id, sender_id, "match");
+    await createConversation(sender_id, receiver_id); //create conv here instead of onclik profile
     await createNotification(sender_id, receiver_id, "match");
     await createNotification(receiver_id, sender_id, "match");
-
-    await createRelation(sender_id, receiver_id, "match");
-    return await createRelation(receiver_id, sender_id, "match");
+    return match;
 }
 
-// Insert a new notification into the database
+//TODO flemme un peu mais normalement on devrait pas insert d'unlike relation mais
+// passer par la route delete pour ça.
 export const insertRelation = async (sender_id, receiver_id, type) => {
     try {
+
+        const blocked = await isBlocked(sender_id, receiver_id);
+        if (blocked)
+          throw new ForbiddenError('You have been blocked by this user');
+
         const validTypes = ["block", "like", "unlike"];
 
-        if (validTypes.includes(type) === false) {
-            throw 'insertRelation: wrong type ' + type;
-        }
-        var id = 0;
+        if (validTypes.includes(type) === false)
+            throw new BadRequestError('Relation type is invalid')
 
-        if (type === "block") {
+        if (type === "block")
             return await createBlockRelation(sender_id, receiver_id);
-        }
-
-        if (type == "like") {
+        else if (type == "like")
             return await createLikeRelation(sender_id, receiver_id);
+        else if (type == "unlike") {
+            const likeRelation = await getRelation(sender_id, receiver_id, "like");
+            if (likeRelation)
+                return await deleteRelation(likeRelation.id);
+
+            const match = await getRelation(sender_id, receiver_id, "match");
+            if (match === null)
+                return null;
+
+            const reverse = await getRelation(receiver_id, sender_id, "match");
+            if (reverse === null)
+                return null;
+
+            await deleteRelation(match.id);
+            await deleteRelation(reverse.id);
+
+            await updateUserFameRating(sender_id, false);
+            await updateUserFameRating(receiver_id, false);
+
+            await deleteConversationOfPair(sender_id, receiver_id);
+            return await createNotification(sender_id, receiver_id, type);
         }
-
-        const likeNotif = await getRelation(sender_id, receiver_id, "like");
-        if (likeNotif) {
-            return await deleteRelation(likeNotif.id);
-        }
-
-        const match = await getRelation(sender_id, receiver_id, "match");
-        if (match === null) {
-            return id;
-        }
-
-        await updateUserFameRating(sender_id, false);
-        await updateUserFameRating(receiver_id, false);
-
-        const reverse = await getRelation(receiver_id, sender_id, "match");
-        await deleteRelation(match.id);
-        await deleteRelation(reverse.id);
-
-        await deleteConversationOfPair(sender_id, receiver_id);
-        return await createNotification(sender_id, receiver_id, type);
     } catch (err) {
-        log.error('[relationsService]', err);
         throw err;
     }
 };
 
-
-// Delete a user from the database
 export const deleteRelationByContent = async (sender_id, receiver_id, type) => {
+    const client = await pool.connect();
     try {
         log.info('[relationsService]', 'gonna delete relation');
-        const client = await pool.connect();
+
         const result = await client.query(`
-        DELETE FROM relations
-        WHERE sender_id = $1
-        AND receiver_id = $2
-        AND type = $3
-        `, [sender_id, receiver_id, type]);
-        log.info(result.rows)
-        client.release();
+            DELETE FROM relations
+            WHERE sender_id = $1
+            AND receiver_id = $2
+            AND type = $3`,
+        [sender_id, receiver_id, type]);
+
     } catch (err) {
-        log.error('[relationsService]', err);
         throw err;
+    } finally {
+        client.release();
     }
 };
 
-
-// Delete a user from the database
 export const deleteRelation = async (id) => {
+    const client = await pool.connect();
     try {
-        const client = await pool.connect();
-        const result = await client.query(`DELETE FROM relations WHERE id = $1`, [id]);
-        log.info(result.rows)
-        client.release();
+        await client.query(`DELETE FROM relations WHERE id = $1`, [id]);
     } catch (err) {
-        log.error('[relationsService]', err);
         throw err;
+    } finally {
+        client.release();
     }
 };

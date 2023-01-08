@@ -27,6 +27,7 @@ export async function createNotificationsTable() {
 
 
 
+//TODO useless notifs seed no ?
 // Seed the users table with fake data
 export async function seedNotificationsTable() {
     try {

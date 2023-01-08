@@ -11,6 +11,7 @@ import fs from 'fs';
 import multer from 'multer';
 import { fileTypeFromBuffer, fileTypeFromFile } from 'file-type';
 import { readChunk } from 'read-chunk';
+import { BadRequestError, ForbiddenError, NotFoundError, sendErrorResponse } from '../errors/error.js';
 
 
 const router = express.Router();
@@ -285,41 +286,24 @@ router.get('/:id/profile/:visit_id', async (req, res) => {
       throw 'get /users/:id/profile id undefined'
     }
     if (isNaN(req.params.id) || isNaN(req.params.visit_id)) {
-      throw new Error('id must be a number');
+      throw new BadRequestError('id must be a number');
     }
 
     const active = await isActive(req.params.id);
     if (active === false) {
-      throw new Error('Please activate your account by uploading a photo');
+      throw new ForbiddenError('Please activate your account by uploading a photo');
     }
     const blocked = await isBlocked(req.params.id, req.params.visit_id);
     if (blocked) {
-      throw new Error('You are blocked')
+      throw new ForbiddenError('You are blocked');
     }
 
     const user = await getUserByIdProfile(req.params.visit_id);
-    if (user.active === false) {
-      throw new Error('this user is inactive');
-    }
-
-
-
-    console.log('success');
+    if (user.active === false)
+      throw new NotFoundError('this user is inactive');
     res.send(user);
   } catch (err) {
-    console.log(err);
-    console.log(err.message);
-    if (err.message === 'You are blocked') {
-      res.status(404).send(err.message);
-      return;
-    } else if (typeof(err) === "string" && err.includes('number')) {
-      res.status(400).send(err.message)
-      return;
-    } else if (err.message.includes('activ')) {
-      res.status(403).send(err.message)
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 

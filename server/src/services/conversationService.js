@@ -12,13 +12,16 @@ const getConversationWithRecipientDetails = async (id, userId1, userId2) => {
             user1.first_name || ' ' || user1.last_name as user1_name,
             user2.first_name || ' ' || user2.last_name as user2_name,
             (SELECT message FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message,
-            (SELECT unread FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_unread
+            (SELECT unread FROM messages WHERE id = (SELECT max(id) FROM messages WHERE conversation_id = conversation.id)) as last_message_unread,
+            (SELECT file_path FROM user_files WHERE user_id = user1.id AND is_profile_pic = true) as user1_file_path,
+            (SELECT file_path FROM user_files WHERE user_id = user2.id AND is_profile_pic = true) as user2_file_path
             FROM conversation
             JOIN users as user1 ON user1.id = conversation.userId1
             JOIN users as user2 ON user2.id = conversation.userId2
             WHERE conversation.id = $1 AND ((conversation.userId1 = $2 AND conversation.userId2 = $3) OR (conversation.userId1 = $3 AND conversation.userId2 = $2));
         `, [id, userId1, userId2]);
 
+        log.info('[conversationService]', 'gonna return');
         return conversation.rows[0];
     } catch (err) {
         throw err;
@@ -27,15 +30,35 @@ const getConversationWithRecipientDetails = async (id, userId1, userId2) => {
     }
 };
 
-// Need to do the conv check, because we call that function
-// everytime a user click on the chat icon in the profile page
-// of the user he wants to talk to
+
+export const getConversationBetween = async (userId1, userId2) => {
+    const client = await pool.connect();
+    try {
+        log.info('[conversationService]', 'getConversationBetween', userId1,userId2 );
+
+        //TODO duplicate also
+        const conversation = await client.query(' \
+            SELECT * FROM conversation \
+            WHERE (userId1 = $1 AND userId2 = $2) OR (userId1 = $2 AND userId2 = $1)',
+        [userId1, userId2]);
+
+        if (conversation.rowCount === 0)
+           throw new NotFoundError("Conversation does not exist")
+        else
+            return getConversationWithRecipientDetails(conversation.rows[0].id, userId1, userId2);
+    } catch (err) {
+        throw err;
+    } finally {
+        client.release();
+    }
+};
+
 export const createConversation = async (userId1, userId2) => {
     const client = await pool.connect();
     try {
         log.info('[conversationService]', 'createConversation with user:', userId1,userId2 );
 
-        //TODO duplicate also (see)
+        //TODO duplicate also (see deleteconv of pair)
         const conversation = await client.query(' \
             SELECT * FROM conversation \
             WHERE (userId1 = $1 AND userId2 = $2) OR (userId1 = $2 AND userId2 = $1)',
@@ -126,8 +149,7 @@ export const deleteConversationOfPair = async (id1, id2) => {
         [id1, id2]);
 
         if (conversation.rowCount === 0)
-            throw new NotFoundError('conversation between these users does not exist');
-
+            return ;
         await deleteConversation(conversation.rows[0].id);
     } catch (err) {
         throw err;

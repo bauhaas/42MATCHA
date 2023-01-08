@@ -113,7 +113,6 @@ export const getReceivedNotifications = async (id) => {
     } finally {
         client.release();
     }
-
 }
 
 
@@ -175,7 +174,6 @@ export const getAllNotifications = async () => {
     }
 };
 
-
 // Update a notifications's updated_at in db
 export const updateTimeNotification = async (id) => {
     const client = await pool.connect();
@@ -194,17 +192,22 @@ export const updateTimeNotification = async (id) => {
     }
 };
 
-// Update a notifications's read to its inverse in the database
-export const updateReadNotification = async (id) => {
+// Update a notifications as read
+export const setNotificationAsRead = async (id) => {
     const client = await pool.connect();
     try {
-        log.info('[notifService]', 'updateReadNotification');
+        log.info('[notifService]', 'setNotificationAsRead');
 
         const notification = await getNotificationById(id);
         if (notification === null)
             throw new NotFoundError(`Notification ${id} not found`);
-        await client.query(`UPDATE notifications SET read = NOT read WHERE id = $1`, [id]);
-        await updateTimeNotification(id);
+
+        await client.query(`
+            UPDATE notifications
+            SET updated_at = NOW(), read = true
+            WHERE id = $1`,
+        [id]);
+
     } catch (err) {
         throw err;
     } finally{
@@ -229,29 +232,27 @@ export const deleteNotification = async (id) => {
     }
 };
 
-export const deleteAllNotificationsOfPair = async (sender_id, receiver_id) => {
-    try {
-    const client = await pool.connect();
 
-    const result = await client.query(`
-        SELECT id FROM notifications
-        WHERE (sender_id = $1 AND receiver_id = $2)
-        OR (sender_id = $2 AND receiver_id = $1)
-    `, [sender_id, receiver_id]);
+//TODO why do we have to delete notifications on block ? seems unlogic
+// export const deleteAllNotificationsOfPair = async (sender_id, receiver_id) => {
+//     const client = await pool.connect();
+//     try {
+//     const notificationsResult = await client.query(`
+//         SELECT id FROM notifications
+//         WHERE (sender_id = $1 AND receiver_id = $2)
+//         OR (sender_id = $2 AND receiver_id = $1)
+//     `, [sender_id, receiver_id]);
 
-    if (result.rowCount === 0) {
-        return null;
-    }
-    const notifs = result.rows;
-    console.log(notifs);
+//     if (notificationsResult.rowCount === 0)
+//         return null;
+//     const notifications = result.rows;
 
-    for (let i = 0; i < notifs.length; i++) {
-        console.log(i, notifs[i].id)
-        await deleteNotification(notifs[i].id);
-    }
-    client.release();
-    return sender_id;
-    } catch (err) {
-        throw err;
-    }
-}
+//     for (let i = 0; i < notifications.length; i++)
+//         await deleteNotification(notifications[i].id);
+//     return sender_id;
+//     } catch (err) {
+//         throw err;
+//     } finally {
+//         client.release();
+//     }
+// }

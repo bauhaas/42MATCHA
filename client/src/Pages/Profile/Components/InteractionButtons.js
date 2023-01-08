@@ -25,15 +25,13 @@ const InteractionButtons = ({user, isMatched, filled}) => {
     }
 
     const unlikeUser = async (event) => {
+        console.log('unlike user');
         await unlikeUserById(currentUser.id, user.id);
         setFilledIcon(false);
     }
 
     const gotochat = async (event) => {
-        axios.post('http://localhost:3001/conversations', {
-            userId1: currentUser.id,
-            userId2: user.id
-        })
+        await axios.get(`http://localhost:3001/conversations/${currentUser.id}/${user.id}`)
             .then(response => {
                 console.log(response, response.data);
                 navigate(`/chat/${response.data.id}`, {

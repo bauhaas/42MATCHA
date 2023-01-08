@@ -6,27 +6,27 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/conversations": {
-      "post": {
+    "/conversations/{id1}/{id2}": {
+      "get": {
         "tags": ["conversations"],
-        "summary": "Create a new conversation",
-        "description": "Create a conv after 2 user matched",
+        "summary": "Retrieve conversation between 2 users",
+        "description": "Retrieve conversation between 2 users",
         "parameters": [
           {
-            "name": "userId1",
+            "name": "id1",
             "in": "formData",
             "required": true,
             "type": "integer"
           },
           {
-            "name": "userId2",
+            "name": "id2",
             "in": "formData",
             "required": true,
             "type": "integer"
           }],
         "responses": {
           "200": {
-            "description": "Successfully createad a conversation",
+            "description": "Successfully get conversation",
             "schema": {
               "type": "object",
               "items": {
@@ -36,34 +36,6 @@
           },
           "500": {
             "description": "Failed to retrieve conversation from the database"
-          }
-        }
-      }
-    },
-    "/conversations/{id}": {
-      "delete": {
-        "tags": ["conversations"],
-        "summary": "[DEPRECATED] Delete a conversation",
-        "description": "Delete a conversation and all the messages linked to it",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "integer"
-          }],
-        "responses": {
-          "200": {
-            "description": "Successfully deleted the conversation",
-            "schema": {
-              "type": "object",
-              "items": {
-                "$ref": "#/definitions/Conversations"
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to delete conversation from the database"
           }
         }
       }
@@ -666,7 +638,7 @@
     "/relations": {
       "get": {
         "tags": ["relations"],
-        "summary": "Get all relations",
+        "summary": "[NOT USED IN APP, JUST FOR DEBUG]",
         "description": "Get all relations from the database",
         "parameters": [],
         "responses": {
@@ -755,35 +727,6 @@
           },
           "500": {
             "description": "Failed to delete relation from the database"
-          }
-        }
-      }
-    },
-    "/relations/{sender_id}": {
-      "get": {
-        "tags": ["relations"],
-        "summary": "Get all blocked by sender_id",
-        "description": "Get all blocked by sender_id from the database",
-        "parameters": [
-        {
-          "name": "sender_id",
-          "in": "path",
-          "required": true,
-          "type": "integer"
-        }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved all blocked by sender_id",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Relations"
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to retrieve relations from the database"
           }
         }
       }

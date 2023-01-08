@@ -69,12 +69,26 @@ const Navbar = () => {
       console.log('receive a like', data)
       console.log('before update notif:',notifications)
       setNotifications([...notifications, data]);
-      // dispatch(addNotif(data));
+    })
+
+    socket.client.on('hasmatchNotif', (data) => {
+      console.log('receive a match', data)
+      console.log('before update notif:',notifications)
+      setNotifications([...notifications, data]);
+    })
+
+    socket.client.on('hasunlikeNotif', (data) => {
+      console.log('receive a unlike', data)
+      console.log('before update notif:',notifications)
+      setNotifications([...notifications, data]);
     })
 
     return () => {
       socket.client.off('convUpdate');
-      socket.client.off('hasVisitNotif');
+      socket.client.off('hasvisitNotif');
+      socket.client.off('haslikeNotif');
+      socket.client.off('hasmatchNotif');
+      socket.client.off('hasunlikeNotif');
     };
   }, [notifications]);
 
@@ -177,15 +191,11 @@ const Navbar = () => {
     console.log(notification.type);
     switch(notification.type){
       case 'match':
-        return `You got a match with ${notification.fullname}`;
-      case 'unmatch':
+        return `You matched with ${notification.fullname}`;
+      case 'unlike':
         return ` ${notification.fullname} unmatched you`;
       case 'like':
         return ` ${notification.fullname} liked you`;
-      case 'block':
-        return ` ${notification.fullname} blocked you`;
-      case 'unblock':
-        return ` ${notification.fullname} unblocked you`;
       case 'visit':
         return ` ${notification.fullname} visited your profile`;
       default:

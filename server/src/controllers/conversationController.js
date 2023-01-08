@@ -1,8 +1,8 @@
 import log from '../config/log.js';
 import express from 'express';
-import { deleteConversation, createConversation, getConversationsOf } from '../services/conversationService.js';
-import { validateBodyMultipleId, validateParamId } from '../middleware/idValidationMiddleware.js';
-
+import { getConversationsOf, getConversationBetween } from '../services/conversationService.js';
+import { validateParamId } from '../middleware/idValidationMiddleware.js';
+import { sendErrorResponse } from '../errors/error.js';
 const router = express.Router();
 
 router.get('/user/:id', validateParamId, async (req, res) => {
@@ -14,32 +14,13 @@ router.get('/user/:id', validateParamId, async (req, res) => {
     }
 });
 
-router.post('/', validateBodyMultipleId, async (req, res) => {
+router.get('/:id1/:id2', async (req, res) => {
     try {
-        const { userId1, userId2 } = req.body;
-        const conversation = await createConversation(userId1, userId2);
-        res.status(201).send(conversation);
+        const conversation = await getConversationBetween(req.params.id1, req.params.id2);
+        res.status(200).send(conversation);
     } catch (err) {
         sendErrorResponse(res, err);
     }
 });
-
-//TODO to delete, it's unused, we delete conv on the unmatch via relation service
-// router.delete('/:id', async (req, res) => {
-//     try {
-//         const id = req.params.id;
-//         if (isNaN(id))
-//             throw new Error('conversation id must be a number');
-//         await deleteConversation(id);
-//         res.sendStatus(204);
-//     } catch (err) {
-//         if (err.message === 'conversation id must be a number')
-//             res.status(400).send(err.message)
-//         else
-//         res.status(500).send(err.message);
-//     }
-// });
-
-
 
 export default router

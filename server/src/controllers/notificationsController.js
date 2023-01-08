@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import express from 'express';
-import { getNotificationsOfUserId, getAllNotifications, getReceivedNotifications, deleteNotification, insertNotification, updateReadNotification, updateTimeNotification } from '../services/notificationsService.js';
+import { getNotificationsOfUserId, getAllNotifications, getReceivedNotifications, deleteNotification, insertNotification, setNotificationAsRead } from '../services/notificationsService.js';
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
 import { sendErrorResponse, ForbiddenError } from '../errors/error.js';
@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
 // Update a notification's read_status information
 router.put('/:id/update_read', validateParamId, async (req, res) => {
     try {
-        await updateReadNotification(req.params.id);
+        await setNotificationAsRead(req.params.id);
         res.sendStatus(204);
     } catch (err) {
         sendErrorResponse(res, err);
