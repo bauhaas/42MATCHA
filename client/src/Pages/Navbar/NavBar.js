@@ -48,7 +48,7 @@ const Navbar = () => {
 
   useEffect(() => {
     socket.client.on('convUpdate', (data) => {
-      console.log('receive message history event in navbar page', data)
+      console.log('receive convUpdate event in navbar page', data)
 
       //to detect if the user is currently chatting with the other. in that case don't notice him
       const pathParts = window.location.pathname.split('/');

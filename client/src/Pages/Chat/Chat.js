@@ -64,8 +64,9 @@ const Chat = () => {
         return () => {
             socket.client.off('convUpdate');
         };
-    }, []);
+    });
 
+    // console.log(socket.id);
     console.log(convlist);
     return (
         <>

@@ -358,6 +358,7 @@ function changeUserData(user, update) {
     user.bio = update.bio;
   }
   if (update.active) {
+    console.log(update.active);
     user.active = update.active;
   }
   if (update.report_count) {
@@ -376,8 +377,9 @@ router.put('/:id/update', async (req, res) => {
     }
     var user = await getUserById(id);
 
+    console.log(user);
     user = changeUserData(user, req.body);
-
+    console.log(user);
     log.info("[userController]", user);
     const newUser = await updateUser(user);
 

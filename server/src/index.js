@@ -103,6 +103,8 @@ io.on('connection', (socket) => {
       io.to(toSocket.id).emit('messageHistory', messageHistory);
 
       const conversation = await getConversationsOf(messagePayload.to);
+      console.log(conversation)
+      console.log(map.keys,toSocket.id)
       io.to(toSocket.id).emit('convUpdate', conversation);
     }
   });
