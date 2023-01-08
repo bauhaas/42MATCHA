@@ -340,7 +340,7 @@ function changeUserData(user, update) {
   if (update.last_name) {
     user.last_name = update.last_name;
   }
-  if (update.email) {
+  if (update.email && user.email != update.email) {
     user.email = update.email;
     user.active = false;
   }
@@ -360,14 +360,10 @@ function changeUserData(user, update) {
     user.country = update.country;
   }
   if (update.interests) {
-    //TODO foire à cause du format json
     user.interests = update.interests;
   }
   if (update.bio) {
     user.bio = update.bio;
-  }
-  if (update.active) {
-    user.active = update.active;
   }
   if (update.report_count) {
     user.report_count += 1;
