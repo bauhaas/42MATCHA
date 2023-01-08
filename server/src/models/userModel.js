@@ -80,48 +80,6 @@ export async function seedUsersTable() {
     if (tableIsEmpty.rowCount === 0) {
 
       var salt = bcrypt.genSaltSync(10);
-      var hash = bcrypt.hashSync('42', salt);
-      // await downloadAndStoreImageSeeding(1, 1, 'https://pbs.twimg.com/media/Db8uqDaX4AE6vA3.jpg');
-      const testUser = `
-          INSERT INTO users (
-            first_name,
-            last_name,
-            sex,
-            sex_orientation,
-            city,
-            country,
-            age,
-            email,
-            password,
-            fame_rating,
-            seed_profile_avatar,
-            bio,
-            job,
-            interests,
-            longitude,
-            latitude,
-            active
-          ) VALUES (
-            'Cat',
-            'Norminet',
-            'male',
-            'hetero',
-            'Paris',
-            'France',
-            '42',
-            '42@42.com',
-            '${hash}',
-            '0',
-            'https://pbs.twimg.com/media/Db8uqDaX4AE6vA3.jpg:large',
-            'Impossible to not like me',
-            'Executive Cat',
-            '["Sleeping"]',
-            '2.318641',
-            '48.896561',
-            '1'
-          );
-        `;
-      await client.query(testUser);
 
       for (let i = 0; i < 499; i++) {
         const sex = faker.name.sex();
