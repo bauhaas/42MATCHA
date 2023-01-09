@@ -276,7 +276,6 @@ router.get('/:id', async (req, res) => {
     console.log('get a user by id');
     const user = await getUserById(req.params.id);
 
-
     res.send(user);
   } catch (err) {
     console.log(err)
@@ -398,7 +397,7 @@ router.put('/:id/update', async (req, res) => {
   }
 });
 
-// Update user
+// Reset password send pin via mail
 router.put('/resetpassword', async (req, res) => {
   try {
     log.info('[userController]', 'resetpassword');
@@ -425,22 +424,21 @@ router.put('/resetpassword', async (req, res) => {
   }
 });
 
-// Delete a user by their ID
-router.delete('/:id', async (req, res) => {
+// verif pin and set new password
+router.put('/pin', async (req, res) => {
   try {
-    const id = req.params.id;
+    log.info('[userController]', 'pin');
+    log.info('[userController]', req.body);
+    const {newPassword, pin, id} = req.body;
     if (isNaN(id)) {
         throw '400: id must be a number';
     }
-    await deleteUser(id);
-    res.send({ id });
-  } catch (err) {
-    if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message);
-      return;
+    if (isNaN(pin)) {
+        throw '400: pin must be a number';
     }
-    res.status(500).send(err.message);
-  }
-});
+    const user = await getUserById(id);
 
-export default router
+    await verif(newPassword, pin, user);
+
+    
+   res
