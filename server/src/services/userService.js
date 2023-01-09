@@ -208,18 +208,18 @@ export const getBachelors = async (id) => {
     }
 
     closeUsers.map(function (user) {
-        const fameFactor = Math.max(1 - (0.01 * user.fame_rating), 0.5);
+        const fameFactor = Math.max(1 - (0.02 * user.fame_rating), 0.5);
         const commonInterests = me.interests.filter(value => user.interests.includes(value));
         const interestsFactor = Math.max(1 - (0.1 * commonInterests.length), 0.5);
 
-        const ageFactor = 1 + (Math.abs(me.age - user.age) / 100);
+        const ageFactor = 1 - (Math.abs(me.age - user.age) / 100);
 
-        user.distance = user.distance * fameFactor * interestsFactor * ageFactor;
+        user.attractivity = user.distance * fameFactor * interestsFactor * ageFactor;
 
         return user;
     });
 
-    closeUsers.sort((a, b) => b.distance - a.distance);
+    closeUsers.sort((a, b) => a.attractivity - b.attractivity);
 
     client.release();
     return closeUsers;
