@@ -1,14 +1,15 @@
 import { useState, useEffect, Fragment } from "react"
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { BellIcon, ChatBubbleLeftRightIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
+import { BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 
 import  socket  from '../../Context/socket'
 import axios from 'axios';
 import Avatar from "../../SharedComponents/Avatar";
 import { setConvs } from "../../convSlice";
+import { persistor } from "../../store";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -24,11 +25,12 @@ const Navbar = () => {
   const [convlist, setConvList] = useState([]);
 
 	useEffect(() => {
+    console.log('try to connect');
 		if (socket.client === undefined || socket.client.connected === false) {
       console.log('connect socket with:', user.id);
 			socket.connect(user.id);
 		}
-	}, []);
+	}, [user]);
 
   useEffect(() => {
       axios.get(`http://localhost:3001/notifications/${user.id}/receiver`, {
@@ -42,7 +44,7 @@ const Navbar = () => {
           // handle error
           console.log(error);
         });
-    }, []);
+    }, [user]);
 
 
   useEffect(() => {
@@ -89,7 +91,7 @@ const Navbar = () => {
       socket.client.off('hasmatchNotif');
       socket.client.off('hasunlikeNotif');
     };
-  }, [notifications]);
+  }, [notifications, dispatch]);
 
   useEffect(() => {
     console.log('redux convs value:', convs);
@@ -97,8 +99,15 @@ const Navbar = () => {
   }, [convs]);
 
   const logout = (event) => {
+    console.log('logout')
     event.preventDefault();
     localStorage.removeItem('jwt');
+
+    persistor.pause();
+    persistor.flush().then(() => {
+      return persistor.purge();
+    });
+
     if (socket.client && socket.client.connected === true) {
       socket.disconnect();
     }
@@ -148,7 +157,6 @@ const Navbar = () => {
     if(!notifToUpdate.read)
     {
       console.log('notif has been read');
-      // dispatch(updateNotif({ id: notifToUpdate.id }));
       axios.put(`http://localhost:3001/notifications/${notifToUpdate.id}/update_read`, {
         id: notifToUpdate.id
       })
@@ -179,7 +187,6 @@ const Navbar = () => {
 
   }
 
-
   const sortedNotifications = notifications && notifications.sort((a, b) => {
     const dateA = new Date(a.created_at);
     const dateB = new Date(b.created_at);
@@ -201,7 +208,7 @@ const Navbar = () => {
     }
   }
 
-  console.log('render navbar');
+  console.log('render navbar', convs);
 
 return (
   <Disclosure as="nav" className="bg-chess-hover fixed top-0 min-w-full z-40">
@@ -211,7 +218,7 @@ return (
           <div className="relative flex h-16 items-center justify-between">
             <img onClick={(event) => gotomenu(event)} className="block h-8 w-auto" src="../logo.png" alt="logo"/>
             <div id="navbarRightButtons" className="flex items-center gap-4">
-              <div id="TODELETELATER" className="border-2 border-red-500 text-white">id:{user.id}, name:{user.first_name} {user.last_name}, status:{user.status ? 'offline':'online'}</div>
+              <div id="TODELETELATER" className="border-2 border-red-500 text-white">{user.id} {user.first_name} {user.last_name}</div>
               <Menu as="div">
                 <Menu.Button onClick={gotochat} className="relative rounded-ful pt-2 text-gray-400 hover:text-white">
                   <ChatBubbleLeftRightIcon className={`h-8 w-8`} aria-hidden="true" />

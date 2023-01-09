@@ -1,124 +1,121 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { RiSendPlaneFill } from 'react-icons/ri'
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import socket from '../../../Context/socket';
 import axios from 'axios';
 
 import Avatar from '../../../SharedComponents/Avatar';
 import MessageBubble from './MessageBubble';
 import NavBar from '../../Navbar/NavBar';
+import Conversation2 from './Conversation2';
 
 const Conversation = () => {
 
-    const navigate = useNavigate();
-    const location = useLocation();
+    // const navigate = useNavigate();
+    // const location = useLocation();
 
-    const currentUser = useSelector((state) => state.user.user);
-    const conversation = location.state.conv;
+    // const currentUser = useSelector((state) => state.user.user);
+    // const conversation = location.state.conv;
 
-    const [convPartner, setConvPartner] = useState('');
-    const [convPartnerPath, setConvPartnerPath] = useState('');
-    const [partnerStatus, setpartnerStatus] = useState(false);
-    const [partnerID, setpartnerID] = useState(false);
-    const [messageToSend, setMessageToSend] = useState("");
-    const [messages, setMessages] = useState([]);
-    const messagesRef = useRef(null);
+    // const [convPartner, setConvPartner] = useState('');
+    // const [convPartnerPath, setConvPartnerPath] = useState('');
+    // const [partnerStatus, setpartnerStatus] = useState(false);
+    // const [partnerID, setpartnerID] = useState(false);
+    // const [messageToSend, setMessageToSend] = useState("");
+    // const [messages, setMessages] = useState([]);
+    // const messagesRef = useRef(null);
 
-    const gobacktoconv = (event) => {
-        event.preventDefault();
-        navigate('/chat');
-    }
+    // const gobacktoconv = (event) => {
+    //     event.preventDefault();
+    //     navigate('/chat');
+    // }
 
-    const sendMessage = (event, message) => {
-        const otherUserId = (currentUser.id === conversation.userid2 ? conversation.userid1 : conversation.userid2)
-        socket.emit('sendMessage', { from: currentUser.id, to: otherUserId, content: message });
-    }
+    // const sendMessage = (event, message) => {
+    //     const otherUserId = (currentUser.id === conversation.userid2 ? conversation.userid1 : conversation.userid2)
+    //     socket.emit('sendMessage', { from: currentUser.id, to: otherUserId, content: message });
+    // }
 
-    const patchMessagesAsRead = (conversation) => {
-        console.log('patchMessagesAsRead')
-        axios.patch(`http://localhost:3001/messages/${conversation.id}`)
-            .then(response => {
-                console.log('success patch messages');
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }
+    // const patchMessagesAsRead = (conversation) => {
+    //     console.log('patchMessagesAsRead')
+    //     axios.patch(`http://localhost:3001/messages/${conversation.id}`)
+    //         .then(response => {
+    //             console.log('set messages as read');
+    //         })
+    //         .catch(error => {
+    //             console.log(error);
+    //         });
+    // }
 
-    useEffect(() => {
-        if (conversation.userid2 === currentUser.id)
-        {
-            setConvPartner(conversation.user1_name);
-            setConvPartnerPath(conversation.user1_file_path);
-            setpartnerID(conversation.userid1);
-            if (conversation.user1_status === null)
-                setpartnerStatus(true);
-        }
-        else
-        {
-            setConvPartner(conversation.user2_name);
-            setConvPartnerPath(conversation.user2_file_path);
-            setpartnerID(conversation.userid2);
-            if (conversation.user2_status === null)
-                setpartnerStatus(true);
-        }
+    // useEffect(() => {
+    //     if (conversation.userid2 === currentUser.id)
+    //     {
+    //         setConvPartner(conversation.user1_name);
+    //         setConvPartnerPath(conversation.user1_file_path);
+    //         setpartnerID(conversation.userid1);
+    //         if (conversation.user1_status === null)
+    //             setpartnerStatus(true);
+    //     }
+    //     else
+    //     {
+    //         setConvPartner(conversation.user2_name);
+    //         setConvPartnerPath(conversation.user2_file_path);
+    //         setpartnerID(conversation.userid2);
+    //         if (conversation.user2_status === null)
+    //             setpartnerStatus(true);
+    //     }
 
-        const getMessageHistory = async () => {
-            axios.get(`http://localhost:3001/messages/history/${conversation.id}`)
-                .then(response => {
-                    console.log('ger message history');
-                    setMessages(response.data);
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        }
-        getMessageHistory();
-    }, []);
+    //     const getMessageHistory = async () => {
+    //         axios.get(`http://localhost:3001/messages/history/${conversation.id}`)
+    //             .then(response => {
+    //                 setMessages(response.data);
+    //             })
+    //             .catch(error => {
+    //                 console.log(error);
+    //             });
+    //     }
+    //     getMessageHistory();
+    // }, []);
 
-    useEffect(() => {
-        socket.client.on('messageHistory', (data) => {
-            console.log('receive messagehistory event', data);
-            setMessages(data);
-            patchMessagesAsRead(conversation);
-        })
+    // useEffect(() => {
+    //     socket.client.on('messageHistory', (data) => {
+    //         console.log('receive messagehistory event', data);
+    //         setMessages(data);
+    //         patchMessagesAsRead(conversation);
+    //     })
 
-        socket.client.on('userDisconnect', (data) => {
-            if (partnerID == data) {
-                setpartnerStatus(false);
-                console.log('user has disconnect', data)
-            }
-        })
+    //     socket.client.on('userDisconnect', (data) => {
+    //         if (partnerID == data) {
+    //             setpartnerStatus(false);
+    //         }
+    //     })
 
-        socket.client.on('userConnect', (data) => {
-            console.log(partnerID, data);
-            if (partnerID == data) {
-                setpartnerStatus(true);
-                console.log('user has connect', data)
-            }
-        })
+    //     socket.client.on('userConnect', (data) => {
+    //         if (partnerID == data) {
+    //             setpartnerStatus(true);
+    //         }
+    //     })
 
-        return () => {
-            socket.client.off('messageHistory');
-            socket.client.off('userDisconnect');
-            socket.client.off('userConnect');
-        };
-    }, []);
+    //     return () => {
+    //         socket.client.off('messageHistory');
+    //         socket.client.off('userDisconnect');
+    //         socket.client.off('userConnect');
+    //     };
+    // }, []);
 
-    console.log(conversation);
-    useEffect(() => {
-        if(messages)
-            messagesRef.current.scrollTo(0, messagesRef.current.scrollHeight);
-    }, [messages]);
+    // useEffect(() => {
+    //     if(messages)
+    //         messagesRef.current.scrollTo(0, messagesRef.current.scrollHeight);
+    // }, [messages]);
 
-    console.log(conversation, messages);
+    // console.log('render conversation');
+
     return (
         <>
             <div className="bg-chess-default min-h-screen">
                 <NavBar />
-                <div className='flex gap-2 mx-2 pt-16 h-screen'>
+                <Conversation2 />
+                {/* <div className='flex gap-2 mx-2 pt-16 h-screen'>
                     <div className='flex  flex-col grow relative bg-chess-place-text m-2 rounded-lg border-gray-600 border-2'>
                         <div className='bg-white p-2 rounded-t-lg'>
                             <div className='flex  items-center gap-2'>
@@ -161,7 +158,7 @@ const Conversation = () => {
                             <RiSendPlaneFill onClick={(event) => { sendMessage(event, messageToSend); document.querySelector('.input').value = ''; }}className={`h-8 w-8 text-white`} aria-hidden="true" />
                         </div>
                     </div>
-                </div>
+                </div> */}
 
             </div>
         </>
