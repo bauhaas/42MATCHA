@@ -123,8 +123,53 @@ const CardsMap = () => {
         children: PropTypes.node,
     };
 
+    const handleSortByDirection = (event, direction) => {
+        setSortDirection(direction);
+        console.log(sortBy, direction);
+        const sort = sortBy + ' ' + direction;
+        executeSort(sort);
+    }
+
+    const executeSort = (sort) => {
+        switch (sort) {
+            case 'fame descending':
+                console.log(sort)
+                setUsers(users.sort((a, b) => b.fame_rating - a.fame_rating));
+                break;
+            case 'fame ascending':
+                console.log(sort)
+                setUsers(users.sort((a, b) => a.fame_rating - b.fame_rating));
+                break;
+            case 'distance descending':
+                console.log(sort)
+                setUsers(users.sort((a, b) => b.distance - a.distance));
+                break;
+            case 'distance ascending':
+                console.log(sort)
+                setUsers(users.sort((a, b) => a.distance - b.distance));
+                break;
+            case 'age descending':
+                console.log(sort)
+                console.log(users[0]);
+                setUsers(users.sort((a, b) => b.age - a.age));
+                console.log(users[0]);
+                break;
+            case 'age ascending':
+                console.log(sort)
+                console.log(users[0]);
+                setUsers(users.sort((a, b) => a.age - b.age));
+                console.log(users[0]);
+                break;
+            default:
+                console.log('switch case unknown');
+        }
+    }
+
     const handleSortByChange = (event) => {
         setSortBy(event.target.value);
+        console.log(event.target.value, sortDirection);
+        const sort = event.target.value + ' ' + sortDirection;
+        executeSort(sort);
     };
 
     useEffect(() => {
@@ -143,42 +188,6 @@ const CardsMap = () => {
             });
     }, [currentUser]);
 
-    useEffect(() => {
-        if(sortBy && sortDirection)
-        {
-            const sort = sortBy + ' ' + sortDirection;
-            console.log('gonna switch sort with:', sort)
-            switch(sort){
-                case 'fame descending':
-                    console.log(sort)
-                    setUsers(users.sort((a, b) => b.fame_rating - a.fame_rating));
-                    break;
-                case 'fame ascending':
-                    console.log(sort)
-                    setUsers(users.sort((a, b) => a.fame_rating - b.fame_rating));
-                    break;
-                case 'distance descending':
-                    console.log(sort)
-                    setUsers(users.sort((a, b) => b.distance - a.distance));
-                    break;
-                case 'distance ascending':
-                    console.log(sort)
-                    setUsers(users.sort((a, b) => a.distance - b.distance));
-                    break;
-                case 'age descending':
-                    console.log(sort)
-                    setUsers(users.sort((a, b) => b.age - a.age));
-                    break;
-                case 'age ascending':
-                    console.log(sort)
-                    setUsers(users.sort((a, b) => a.age - b.age));
-                    break;
-                default:
-                    console.log('switch case unknown');
-            }
-        }
-    }, [sortBy, sortDirection]);
-    console.log(users[0])
     return (
         <>
             <div className='mt-16'>
@@ -253,10 +262,10 @@ const CardsMap = () => {
                     </div>
 
                     <div className='h-fit'>
-                        {sortDirection === 'ascending' ? (
-                            <BiSortDown className={`btn ${sortBy ? null : 'btn-disabled text-chess-hover'} bg-chess-dark  h-16 w-16`} onClick={() => setSortDirection('descending')} />
+                        {sortDirection === 'descending' ? (
+                            <BiSortDown className={`btn ${sortBy ? null : 'btn-disabled text-chess-hover'} bg-chess-dark  h-16 w-16`} onClick={(event) => handleSortByDirection(event, 'ascending')} />
                         ) : (
-                                <BiSortUp className={`btn ${sortBy ? null : 'btn-disabled text-chess-hover'} bg-chess-dark h-16 w-16`} onClick={() => setSortDirection('ascending')} />
+                                <BiSortUp className={`btn ${sortBy ? null : 'btn-disabled text-chess-hover'} bg-chess-dark h-16 w-16`} onClick={(event) => handleSortByDirection(event, 'descending')} />
                         )}
                     </div>
 

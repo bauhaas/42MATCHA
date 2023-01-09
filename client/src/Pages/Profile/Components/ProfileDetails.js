@@ -135,17 +135,35 @@ const ProfileDetails = ({id}) => {
     }, []);
 
 
-    // useEffect(() => {
-    //     socket.client.on('userDisconnect', (data) => {
-    //         console.log('user has disconnect', data)
-    //     })
+    useEffect(() => {
+        socket.client.on('userDisconnect', (data) => {
+            if (user.id == data)
+            {
+                setUser({
+                    ...user,
+                    status: true,
+                });
+                console.log('user has disconnect', data)
+            }
+        })
 
-    //     return () => {
-    //         socket.client.off('userDisconnect');
-    //     };
-    // });
+        socket.client.on('userConnect', (data) => {
+            console.log(user.id, data);
+            if (user.id == data) {
+                console.log('user has connect', data)
+                setUser({
+                    ...user,
+                    status: null,
+                });
+            }
+        })
 
-    // console.log(user, user.files, profilePic);
+        return () => {
+            socket.client.off('userDisconnect');
+            socket.client.off('userConnect');
+        };
+    });
+
     return (
         <>
             <div className='mx-2 pt-16 h-screen'>
