@@ -8,11 +8,13 @@ import { AdjustmentsVerticalIcon, HeartIcon as HeartOutlineIcon, NoSymbolIcon } 
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
+import socket from '../../../Context/socket'
 
 const InteractionButtons = ({user, isMatched, filled}) => {
 
     const currentUser = useSelector((state) => state.user.user);
     const [filledIcon, setFilledIcon] = useState(false);
+    const [match, setMatch] = useState(false);
     const navigate = useNavigate();
 
     const blockUser = async () => {
@@ -20,14 +22,16 @@ const InteractionButtons = ({user, isMatched, filled}) => {
     }
 
     const likeUser = async (event) => {
-        await likeUserById(currentUser.id, user.id);
+        const relation = await likeUserById(currentUser.id, user.id);
+        if(relation.type === 'match')
+            setMatch(true);
         setFilledIcon(true);
     }
 
     const unlikeUser = async (event) => {
-        console.log('unlike user');
         await unlikeUserById(currentUser.id, user.id);
         setFilledIcon(false);
+        setMatch(false);
     }
 
     const gotochat = async (event) => {
@@ -44,6 +48,33 @@ const InteractionButtons = ({user, isMatched, filled}) => {
                 console.log(error);
             });
     }
+
+    useEffect(() => {
+        socket.client.on('hasmatchNotif', (data) => {
+            console.log('receive a match', data)
+            setMatch(true);
+        })
+
+        socket.client.on('hasunlikeNotif', (data) => {
+            console.log('receive a unlike', data)
+            setMatch(false);
+            setFilledIcon(false);
+        })
+
+        socket.client.on('userDisconnect', (data) => {
+            console.log('user has disconnect', data)
+            if(user.id === data)
+                user.status = true;
+        })
+
+        return () => {
+            socket.client.off('hasmatchNotif');
+            socket.client.off('hasunlikehNotif');
+            socket.client.off('userDisconnect');
+        };
+    });
+
+    console.log(user);
 
     return (
         <>
@@ -81,7 +112,7 @@ const InteractionButtons = ({user, isMatched, filled}) => {
                                 <ExclamationCircleIcon className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />
                             </div>
                             {
-                                isMatched
+                                isMatched || match
                                     ?
                                     <div className="tooltip" data-tip="Start chatting">
                                         <ChatBubbleLeftIcon onClick={(event) => gotochat(event)} className='h-6 w-6 text-red-500 hover:text-blue-700 hover:cursor-pointer' />

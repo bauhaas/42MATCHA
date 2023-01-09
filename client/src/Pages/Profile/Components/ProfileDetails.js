@@ -7,6 +7,7 @@ import Avatar from "../../../SharedComponents/Avatar";
 import axios from 'axios';
 import InteractionButtons from './InteractionButtons';
 import { AiFillFire } from 'react-icons/ai';
+import socket from '../../../Context/socket'
 
 //TODO when match happend, add animation
 const ProfileDetails = ({id}) => {
@@ -85,6 +86,8 @@ const ProfileDetails = ({id}) => {
     }, [user]);
 
 
+
+
     const sendVisitNotification = async () => {
             await axios.post('http://localhost:3001/notifications', {
                 sender_id: currentUser.id,
@@ -131,7 +134,18 @@ const ProfileDetails = ({id}) => {
         getUser();
     }, []);
 
-    console.log(user, user.files, profilePic);
+
+    // useEffect(() => {
+    //     socket.client.on('userDisconnect', (data) => {
+    //         console.log('user has disconnect', data)
+    //     })
+
+    //     return () => {
+    //         socket.client.off('userDisconnect');
+    //     };
+    // });
+
+    // console.log(user, user.files, profilePic);
     return (
         <>
             <div className='mx-2 pt-16 h-screen'>
@@ -150,8 +164,8 @@ const ProfileDetails = ({id}) => {
                                             <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
                                                 <p className='text-4xl font-bold text-orange-400'>{user.first_name} {user.last_name}</p>
                                                 <div className='absolute top-0 sm:top-auto right-8 sm:right-auto sm:relative sm:ml-auto sm:mb-12 sm:mr-10' >
-                                                    <AiFillFire className='absolute w-12 h-12 text-center text-red-600'>{" "}</AiFillFire>
-                                                    <p className='absolute ml-4 mt-4 text-white'>{user.fame_rating}</p>
+                                                <AiFillFire className='absolute w-12 h-12 text-center text-red-600'>{" "}</AiFillFire>
+                                                <p className='flex absolute text-center pt-2 justify-center items-center  w-12 h-12 text-white'>{user.fame_rating}</p>
                                                 </div>
                                             </div>
                                             <p>{user.job}</p>
@@ -186,12 +200,6 @@ const ProfileDetails = ({id}) => {
                                     </div>
 
                                 </div>
-
-
-
-
-
-
                             </>
                     }
                 </div>

@@ -320,11 +320,11 @@ const Settings = () => {
                                     </div>
 
                                 <div className='mt-2 flex flex-col sm:flex-row  sm:justify-between mb-2'>
-                                    <label className="text-white text-sm self-start mb-2">
+                                    <label className="text-white text-sm self-start">
                                         Interests
                                     </label>
                                     <div className='flex flex-col'>
-                                        <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64 self-end mb-2'>
+                                        <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64 h-fit mb-2'>
                                                 <input className="w-full bg-transparent text-white focus:outline-none focus:shadow-outline" id="currentPass"
                                                     placeholder="Add interest..."
                                                     onChange={(event) => setNewInterest(event.target.value)}

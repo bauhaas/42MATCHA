@@ -331,6 +331,7 @@ export const getLogin = async (email, password) => {
 export const getUserById = async (id) => {
   try {
     const client = await pool.connect();
+
     console.log(id);
     // const result = await client.query(DBgetUserById(id));
     const result = await client.query(`
@@ -340,6 +341,7 @@ export const getUserById = async (id) => {
       GROUP BY users.id
     `, [id]);
     const user = result.rows[0];
+
     client.release();
     return user;
   } catch (err) {
@@ -408,7 +410,7 @@ export const resendSignupEmail = async (email) => {
       client.release();
   }
 }
-  
+
 export const resetPassword = async (oldPassword, newPassword, user) => {
   try {
     log.info('[userService]', 'resetPassword');

@@ -82,6 +82,7 @@ io.on('connection', (socket) => {
     console.log(user_id, "disconnecting");
     map.delete(user_id, socket);
     updateStatusUser(user_id, false)
+    io.emit('userDisconnect', user_id);
   });
 
   socket.on('sendMessage', async (messagePayload) => {

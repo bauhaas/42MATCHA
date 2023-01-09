@@ -13,6 +13,7 @@ router.post('/', async (req, res) => {
         throw new BadRequestError('id must be a number');
 
     const newRelation = await insertRelation(sender_id, receiver_id, type.trim());
+    console.log('newRelation',newRelation);
     res.send(newRelation);
   } catch (err) {
     sendErrorResponse(res, err);
