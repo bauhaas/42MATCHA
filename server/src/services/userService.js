@@ -599,7 +599,6 @@ export const updateUser = async (data) => {
 };
 
 
-
 const downloadFile = async (url, fileName) => {
   return new Promise((resolve, reject) => {
     request.head(url, (err, res, body) => {

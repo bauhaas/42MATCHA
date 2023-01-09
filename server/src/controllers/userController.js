@@ -414,13 +414,13 @@ router.put('/resetpassword', async (req, res) => {
 
    res.sendStatus(200);
   } catch (err) {
-    if (err.message === 'A user with the given email already exists.') {
+    if (err.message === 'A user with the given email already exists.' || err.message === 'Invalid email or password .') {
       res.status(403).send(err.message);
       return;
     } else if (typeof(err) === "string" && err.includes('400')) {
       res.status(400).send(err.message);
       return;
-    }
+    } 
     res.status(500).send(err.message);
   }
 });
