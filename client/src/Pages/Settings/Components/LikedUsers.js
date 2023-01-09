@@ -59,7 +59,7 @@ const LikedUsers = () => {
 											<table className="text-white w-full text-left">
 												<tbody>
 													{likedUsers.map((user, index) => (
-														<tr className="border-b border-chess-bar text-xs">
+														<tr key={index} className="border-b border-chess-bar text-xs">
 															<td>
 																{user.first_name} {user.last_name}
 															</td>

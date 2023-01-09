@@ -201,6 +201,8 @@ const Navbar = () => {
     }
   }
 
+  console.log('render navbar');
+
 return (
   <Disclosure as="nav" className="bg-chess-hover fixed top-0 min-w-full z-40">
     {({ open }) => (

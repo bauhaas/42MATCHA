@@ -139,7 +139,7 @@ const Conversation = () => {
                                 <div className='overflow-y-auto scrollbar-hide h-full w-full' ref={messagesRef}>
                                     {
                                         messages.map((message, index) => (
-                                            <div>
+                                            <div key={index}>
                                                 <MessageBubble message={message} picture={convPartnerPath}/>
                                             </div>
                                         ))

@@ -61,7 +61,7 @@ const MatchedUsers = () => {
 										<table className="text-white w-full text-left">
 											<tbody>
 												{matchedUsers.map((user, index) => (
-													<tr className="border-b border-chess-bar text-xs">
+													<tr key={index} className="border-b border-chess-bar text-xs">
 														<td>
 															{user.first_name} {user.last_name}
 														</td>
