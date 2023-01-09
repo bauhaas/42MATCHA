@@ -25,6 +25,7 @@ const Settings = () => {
     const [gender, setGender] = useState(user.sex);
     const [orientation, setOrientation] = useState(user.sex_orientation);
     const [bio, setBio] = useState(user.bio);
+    const [age, setAge] = useState(user.age);
     const [interests, setInterests] = useState(user.interests);
     const [newInterest, setNewInterest] = useState('');
 
@@ -58,7 +59,8 @@ const Settings = () => {
             sex:gender,
             sex_orientation:orientation,
             interests:interests,
-            bio:bio
+            bio:bio,
+            age:age
         })
             .then(response => {
                 console.log(response);
@@ -274,7 +276,18 @@ const Settings = () => {
                                             </RadioGroup>
                                         </FormControl>
                                     </div>
-
+                                <div className='mt-2 flex flex-col sm:flex-row  sm:justify-between mb-2'>
+                                    <label className="text-white text-sm self-start">
+                                        Age
+                                    </label>
+                                    <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
+                                        <input className="w-full bg-transparent text-white focus:outline-none focus:shadow-outline" id="currentPass"
+                                            default={user.age}
+                                            value={age}
+                                            placeholder={user.age}
+                                            onChange={(event) => setAge(event.target.value)} />
+                                    </div>
+                                </div>
                                     <div className='mt-2 flex flex-col sm:flex-row  sm:justify-between mb-2'>
                                         <label className="text-white text-sm self-start">
                                             Bio

@@ -365,13 +365,6 @@ function changeUserData(user, update) {
   if (update.bio) {
     user.bio = update.bio;
   }
-<<<<<<< HEAD
-  if (update.active) {
-    console.log(update.active);
-    user.active = update.active;
-  }
-=======
->>>>>>> 5f9fd89c9450404dda68f50fa414077d2bc59298
   if (update.report_count) {
     user.report_count += 1;
   }
