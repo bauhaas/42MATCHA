@@ -142,16 +142,16 @@ const ProfileDetails = ({id}) => {
                             <div>You have been blocked by that user</div>
                         :
                             <>
-                                    <div className='m-2 grid grid-cols-2  sm:flex sm:gap-2'>
+                                    <div className='relative m-2 grid grid-cols-2  sm:flex sm:gap-2'>
                                         <div>
                                         <Avatar imageAttribute={'rounded-full w-30 sm:w-40'} attribute={`avatar`} imagePath={profilePic} from='profiledetails' />
                                         </div>
                                         <div className='flex flex-col'>
                                             <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
                                                 <p className='text-4xl font-bold text-orange-400'>{user.first_name} {user.last_name}</p>
-                                                <div className='flex items-center relative'>
-                                                    <p className='absolute ml-3 mt-2'>{user.fame_rating}</p>
-                                                    <AiFillFire className='w-9 h-9 text-red-700 bg-transparent'></AiFillFire>
+                                                <div className='absolute top-0 sm:top-auto right-8 sm:right-auto sm:relative sm:ml-auto sm:mb-12 sm:mr-10' >
+                                                    <AiFillFire className='absolute w-12 h-12 text-center text-red-600'>{" "}</AiFillFire>
+                                                    <p className='absolute ml-4 mt-4 text-white'>{user.fame_rating}</p>
                                                 </div>
                                             </div>
                                             <p>{user.job}</p>
