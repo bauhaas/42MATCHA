@@ -1,6 +1,6 @@
 import pool from '../config/db.js';
 import log from '../config/log.js';
-import {} from '../errors/error.js';
+import { NotFoundError } from '../errors/error.js';
 
 const GET_MESSAGE_HISTORY =
     'SELECT * \
