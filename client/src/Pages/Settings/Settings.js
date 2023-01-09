@@ -40,7 +40,7 @@ const Settings = () => {
 
     const addInterest = () => {
         console.info('You clicked the add interest and want to add:', newInterest);
-        if(newInterest !== '')
+        if(newInterest !== '' && interests.includes(newInterest) === false)
             setInterests((prevInterests) => [...prevInterests, newInterest]);
     };
 

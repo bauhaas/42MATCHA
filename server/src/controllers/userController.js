@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
-import { updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
+import { resendSignupEmail, updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
@@ -135,6 +135,15 @@ router.post('/:id/filteredBachelors', async (req, res) => {
   }
 });
 
+router.post('/sendSignupEmail', async (req, res) => {
+  try {
+    const { email } = req.body.email;
+
+    await resendSignupEmail(email);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 
 //   axios.put(`http://localhost:3001/user/setAsProfilePic/${file.id}`, {}
 router.put('/setAsProfilePic/:fileId', async (req, res) => {
@@ -331,7 +340,7 @@ function changeUserData(user, update) {
   if (update.last_name) {
     user.last_name = update.last_name;
   }
-  if (update.email) {
+  if (update.email && user.email != update.email) {
     user.email = update.email;
     user.active = false;
   }
@@ -351,16 +360,18 @@ function changeUserData(user, update) {
     user.country = update.country;
   }
   if (update.interests) {
-    //TODO foire à cause du format json
     user.interests = update.interests;
   }
   if (update.bio) {
     user.bio = update.bio;
   }
+<<<<<<< HEAD
   if (update.active) {
     console.log(update.active);
     user.active = update.active;
   }
+=======
+>>>>>>> 5f9fd89c9450404dda68f50fa414077d2bc59298
   if (update.report_count) {
     user.report_count += 1;
   }
