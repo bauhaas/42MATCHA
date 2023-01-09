@@ -90,6 +90,9 @@ io.on('connection', (socket) => {
     log.info('[index.js]', 'payload:', messagePayload);
 
     const messageHistory = await createMessage(messagePayload);
+    if (messageHistory === null) {
+      return ;
+    }
     const fromSocket = map.get(String(messagePayload.from));
     const toSocket = map.get(String(messagePayload.to));
 
