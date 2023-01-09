@@ -24,7 +24,6 @@ const Navbar = () => {
   const [convlist, setConvList] = useState([]);
 
 	useEffect(() => {
-    console.log(socket.client, socket)
 		if (socket.client === undefined || socket.client.connected === false) {
       console.log('connect socket with:', user.id);
 			socket.connect(user.id);
@@ -37,7 +36,6 @@ const Navbar = () => {
       })
         .then(response => {
           // handle success
-          console.log(response.data);
           setNotifications(response.data);
         })
         .catch(error => {
@@ -189,7 +187,6 @@ const Navbar = () => {
   });
 
   const getNotifText = (notification) => {
-    console.log(notification.type);
     switch(notification.type){
       case 'match':
         return `You matched with ${notification.fullname}`;

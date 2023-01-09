@@ -66,7 +66,6 @@ const Chat = () => {
         };
     });
 
-    // console.log(socket.id);
     console.log(convlist);
     return (
         <>

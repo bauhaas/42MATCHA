@@ -20,6 +20,8 @@ const Conversation = () => {
 
     const [convPartner, setConvPartner] = useState('');
     const [convPartnerPath, setConvPartnerPath] = useState('');
+    const [partnerStatus, setpartnerStatus] = useState(false);
+    const [partnerID, setpartnerID] = useState(false);
     const [messageToSend, setMessageToSend] = useState("");
     const [messages, setMessages] = useState([]);
     const messagesRef = useRef(null);
@@ -50,11 +52,17 @@ const Conversation = () => {
         {
             setConvPartner(conversation.user1_name);
             setConvPartnerPath(conversation.user1_file_path);
+            setpartnerID(conversation.userid1);
+            if (conversation.user1_status === null)
+                setpartnerStatus(true);
         }
         else
         {
             setConvPartner(conversation.user2_name);
             setConvPartnerPath(conversation.user2_file_path);
+            setpartnerID(conversation.userid2);
+            if (conversation.user2_status === null)
+                setpartnerStatus(true);
         }
 
         const getMessageHistory = async () => {
@@ -76,11 +84,30 @@ const Conversation = () => {
             setMessages(data);
             patchMessagesAsRead(conversation);
         })
+
+        socket.client.on('userDisconnect', (data) => {
+            if (partnerID == data) {
+                setpartnerStatus(false);
+                console.log('user has disconnect', data)
+            }
+        })
+
+        socket.client.on('userConnect', (data) => {
+            console.log(partnerID, data);
+            if (partnerID == data) {
+                setpartnerStatus(true);
+                console.log('user has connect', data)
+            }
+        })
+
         return () => {
             socket.client.off('messageHistory');
+            socket.client.off('userDisconnect');
+            socket.client.off('userConnect');
         };
     }, []);
 
+    console.log(conversation);
     useEffect(() => {
         if(messages)
             messagesRef.current.scrollTo(0, messagesRef.current.scrollHeight);
@@ -102,7 +129,7 @@ const Conversation = () => {
                                 </button>
                                 <p>{convPartner}</p>
                                 <div className='indicator'>
-                                    <span className="indicator-item badge indicator-bottom indicator-start m-2 bg-blue-500"></span>
+                                    <span className={`indicator-item badge indicator-bottom indicator-start m-2 ${partnerStatus ? 'bg-green-600' : 'bg-gray-400'}`}></span>
                                     <Avatar imageAttribute={'rounded-full w-12'} attribute={'avatar'} imagePath={convPartnerPath} />
                                 </div>
                             </div>
