@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
   updateStatusUser(user_id, true)
   map.set(user_id, socket);
   log.info('[index.js]', 'total sockets connected:', map.size);
-
+  io.emit('userConnect', user_id);
   socket.on('disconnect', () => {
     console.log(user_id, "disconnecting");
     map.delete(user_id, socket);

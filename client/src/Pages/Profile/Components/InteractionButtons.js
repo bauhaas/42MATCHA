@@ -61,21 +61,31 @@ const InteractionButtons = ({user, isMatched, filled}) => {
             setFilledIcon(false);
         })
 
-        socket.client.on('userDisconnect', (data) => {
-            console.log('user has disconnect', data)
-            if(user.id === data)
-                user.status = true;
-        })
+        // socket.client.on('userDisconnect', (data) => {
+        //     if(user.id == data)
+        //         console.log('user has disconnect', data)
+        //         user.status = true;
+        // })
+
+        // socket.client.on('userConnect', (data) => {
+        //     console.log(user.id, data);
+        //     if (user.id == data)
+        //     {
+        //         console.log('user has connect', data)
+        //         user.status = null;
+        //     }
+        // })
 
         return () => {
             socket.client.off('hasmatchNotif');
             socket.client.off('hasunlikehNotif');
-            socket.client.off('userDisconnect');
+            // socket.client.off('userDisconnect');
+            // socket.client.off('userConnect');
         };
-    });
+    }, [user]);
 
     console.log(user);
-
+    console.log('rerender');
     return (
         <>
             {

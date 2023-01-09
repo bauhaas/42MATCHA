@@ -321,6 +321,11 @@ export const getLogin = async (email, password) => {
       throw new Error('Invalid email or password .');
     }
 
+    // await client.query(
+    //   'UPDATE users SET status = null WHERE id = $1',
+    //   [user.id]
+    // );
+
     return user;
   } catch (err) {
     throw err;

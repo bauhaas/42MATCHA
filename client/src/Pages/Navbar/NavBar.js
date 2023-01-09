@@ -24,7 +24,8 @@ const Navbar = () => {
   const [convlist, setConvList] = useState([]);
 
 	useEffect(() => {
-		if (socket.client === undefined) {
+    console.log(socket.client, socket)
+		if (socket.client === undefined || socket.client.connected === false) {
       console.log('connect socket with:', user.id);
 			socket.connect(user.id);
 		}
