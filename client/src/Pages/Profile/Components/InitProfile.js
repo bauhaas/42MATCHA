@@ -39,6 +39,7 @@ const InitProfile = ({userId}) => {
 
                 // Remove the token and setup parameters from the URL
                 params.delete('token');
+                dispatch(setUser(response.data));
                 navigate(`/profile/${userId}`)
             })
             .catch(error => {
