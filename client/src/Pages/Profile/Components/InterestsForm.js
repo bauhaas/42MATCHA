@@ -7,7 +7,9 @@ const InterestsForm = ({ interests, setInterests }) => {
 
     function addToInterests(event, interest) {
         event.preventDefault();
-        setInterests((prevInterests) => [...prevInterests, interest]);
+        if (interests.includes(interest) === false) {
+            setInterests((prevInterests) => [...prevInterests, interest]);
+        }
     }
 
     //random test data
@@ -52,7 +54,7 @@ const InterestsForm = ({ interests, setInterests }) => {
                     <div className='font-bold text-xl text-center'>Popular point of interests</div>
                     <p className='text-center'>Click to add them to your profile</p>
                     <br />
-                    <ul className="flex gap-2 justify-center flex-wrap">
+                    <ul className="flex gap-2 justify-center flex-wrap cursor-pointer">
                         {example.map((interest, index) => (
                             <li key={`${interest}-${index}`} id={interest} className="flex">
                                 <div onClick={(event) => addToInterests(event, interest)} className="badge badge-lg bg-emerald-300 text-black hover:text-white hover:bg-indigo-700">{interest}</div>

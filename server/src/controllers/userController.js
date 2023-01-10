@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
-import { resendSignupEmail, updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
+import { validateNewPassword, resendSignupEmail, updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
@@ -137,8 +137,7 @@ router.post('/:id/filteredBachelors', async (req, res) => {
 
 router.post('/sendSignupEmail', async (req, res) => {
   try {
-    const { email } = req.body.email;
-
+    const { email } = req.body;
     await resendSignupEmail(email);
   } catch (err) {
     res.status(500).send(err.message);
@@ -319,9 +318,11 @@ router.get('/:id/profile/:visit_id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { firstName, lastName, email, password, longitude, latitude } = req.body;
+    console.log(email);
     const user = await insertUser(firstName.trim(), lastName.trim(), email.trim(), password, longitude, latitude);
     res.send(user);
   } catch (err) {
+    console.log(err)
     if (err.message === 'A user with the given email already exists')
       res.status(403).send(err.message);
     else if (err.message === "Email format is invalid")
@@ -367,6 +368,9 @@ function changeUserData(user, update) {
   if (update.report_count) {
     user.report_count += 1;
   }
+  if (typeof update.active !== 'undefined') {
+    user.active = update.active;
+  }
   return user
 }
 
@@ -402,14 +406,13 @@ router.put('/resetpassword', async (req, res) => {
   try {
     log.info('[userController]', 'resetpassword');
     log.info('[userController]', req.body);
-    const {currentPassword, newPassword, id} = req.body;
+    const {currentPassword, id} = req.body;
     if (isNaN(id)) {
         throw '400: id must be a number';
     }
     const user = await getUserById(id);
 
-    console.log('lol')
-    await resetPassword(currentPassword, newPassword, user);
+    await resetPassword(currentPassword, user);
 
    res.sendStatus(200);
   } catch (err) {
@@ -438,7 +441,13 @@ router.put('/pin', async (req, res) => {
     }
     const user = await getUserById(id);
 
-    await verif(newPassword, pin, user);
+    await validateNewPassword(newPassword, pin, user);
+  } catch (err) {
+    if (err.message === "wrong PIN") {
+      res.status(400).send(err.message);
+    }
+    res.status(500).send(err.message)
+  }
+});
 
-    
-   res
+export default router;

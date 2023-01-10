@@ -372,7 +372,7 @@ const Settings = () => {
                                     <div className='flex flex-col'>
                                         <input
                                             type="file"
-                                            className="file-input file-input-sm w-full max-w-xs   bg-chess-placeholder rounded-sm sm:w-64"
+                                            className="file-input file-input-sm w-full max-w-xs bg-chess-placeholder rounded-sm sm:w-64"
                                             ref={fileInputRef}
                                             onChange={handleFileChange}
                                             multiple
@@ -397,11 +397,7 @@ const Settings = () => {
                                                 ))}
                                             </div>
                                         </div>
-
                                     </div>
-
-
-
                                 </div>
                                 </div>
                             </div>

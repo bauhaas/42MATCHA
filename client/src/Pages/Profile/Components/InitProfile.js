@@ -6,8 +6,11 @@ import InterestsForm from "./InterestsForm";
 import PictureForm from "./PictureForm";
 import IntroForm from "./IntroForm";
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { removeFile, setFiles, setUser, updateFiles } from "../../../userSlice";
 
 const InitProfile = ({userId}) => {
+    const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -16,16 +19,20 @@ const InitProfile = ({userId}) => {
 
     const [bio, setBio] = useState("");
     const [interests, setInterests] = useState([]);
+    const [age, setAge] = useState([]);
+    const [sex, setSex] = useState([]);
     const [sexOrientation, setSexOrientation] = useState([]);
     const [pictures, setPictures] = useState([]);
 
     const handleSubmit = () => {
         console.log(userId);
         axios.put(`http://localhost:3001/users/${userId}/update`, {
-            bio:bio,
+            bio: bio,
+            age: age,
+            sex: sex,
+            sex_orientation:sexOrientation,
             interests:interests,
-            sexOrientation:sexOrientation,
-            pictures:pictures
+            active: true
         })
             .then(response => {
                 console.log(response);
@@ -37,13 +44,47 @@ const InitProfile = ({userId}) => {
             .catch(error => {
                 console.log(error);
             });
+        
+        if (pictures.length > 0) {
+            const newImageUrls = [];
+            for (let i = 0; i < pictures.length; i++) {
+                const file = pictures[i];
+                const fileReader = new FileReader();
+                fileReader.onload = (event) => {
+                    newImageUrls.push(event.target.result);
+                    if (newImageUrls.length === pictures.length) {
+                        setPictures((prevPictures) => [...prevPictures, ...newImageUrls]);
+                    }
+                };
+                fileReader.readAsDataURL(file);
+
+                console.log(userId, file);
+                const formData = new FormData();
+                formData.append('file', file); // file is the file that you get from the input element's onChange event
+                formData.append('userId', userId);
+                formData.append('is_profile_pic', false);
+                axios.post(`http://localhost:3001/users/${userId}/upload`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                    .then((response) => {
+                        console.log(response);
+                        console.log('redux save', response);
+                        dispatch(updateFiles(response.data));
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        }
     }
 
     const handleNextClick = () => {
         if (currentStep !== 4)
             setCurrentStep(currentStep + 1);
         else if(currentStep === 4 && pictures.length > 0)
-         handleSubmit();
+            handleSubmit();
     }
 
     const handlePreviousClick = () => {
@@ -55,15 +96,15 @@ const InitProfile = ({userId}) => {
         setParams(new URLSearchParams(location.search));
     }, [location]);
 
-    console.log('infos:', "bio:", bio, "interests:", interests, "sexorientation:", sexOrientation, "pictures:", pictures);
+    console.log('infos:', "bio:", bio, "age", age, "sex", sex, "interests:", interests, "sexorientation:", sexOrientation, "pictures:", pictures);
 
     return (
         <>
             <div className="bg-emerald-600 min-h-screen">
                 {currentStep === 0 && <IntroForm />}
                 {currentStep === 1 && <BioForm setBio={setBio}/>}
-                {currentStep === 2 && <PreferencesForm  setSexOrientation={setSexOrientation}/>}
-                {currentStep === 3 && <InterestsForm interests={interests} setInterests={setInterests}/>}
+                {currentStep === 2 && <PreferencesForm  setAge={setAge} setSex={setSex} setSexOrientation={setSexOrientation} />}
+                {currentStep === 3 && <InterestsForm interests={interests} setInterests={setInterests} />}
                 {currentStep === 4 && (
                         <PictureForm pictures={pictures} setPictures={setPictures}/>
                 )}
@@ -71,7 +112,7 @@ const InitProfile = ({userId}) => {
                     <ul className="steps steps-horizontal">
                         <li className={currentStep >= 0 ? 'step step-primary text-sm' : 'step text-sm'}>Welcome</li>
                         <li className={currentStep >= 1 ? 'step step-primary text-sm' : 'step text-sm'}>Bio</li>
-                        <li className={currentStep >= 2 ? 'step step-primary text-sm' : 'step text-sm'}>Orientation</li>
+                        <li className={currentStep >= 2 ? 'step step-primary text-sm' : 'step text-sm'}>Age and Orientation</li>
                         <li className={currentStep >= 3 ? 'step step-primary text-sm' : 'step text-sm'}>Hobbies</li>
                         <li className={currentStep >= 4 ? 'step step-primary text-sm' : 'step text-sm'}>Pictures</li>
                     </ul>
@@ -94,7 +135,6 @@ const InitProfile = ({userId}) => {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
                                 </svg>
                             </button>
-
                         }
                     </div>
                 </div>
