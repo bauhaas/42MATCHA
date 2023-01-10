@@ -4,6 +4,7 @@ import SettingsHeader from './SettingsHeader';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import SettingsPageLayout from './SettingsPageLayout';
 
 const MatchedUsers = () => {
 
@@ -44,43 +45,37 @@ const MatchedUsers = () => {
 
 	return (
 		<>
-			<div className="bg-chess-default min-h-screen">
-				<NavBar/>
-				<div className='mx-2 pt-16 h-screen'>
-					<SettingsHeader />
-					<div className='flex gap-4 mt-2'>
-						<SettingsMenu/>
-						<div className='text-white bg-chess-dark p-4 rounded-lg max-w-3xl'>
-							<span className='font-bold'>Matched Users</span>
-							<p className='text-sm py-2 break-words'>
-								A matched user is able to see your profile and send you messages. Unmatch a user will delete your chat history with him but you are able rematch
-							</p>
-							<div className="pt-2">
-								{
-									matchedUsers.length > 0 ?
-										<table className="text-white w-full text-left">
-											<tbody>
-												{matchedUsers.map((user, index) => (
-													<tr className="border-b border-chess-bar text-xs">
-														<td>
-															{user.first_name} {user.last_name}
-														</td>
-														<td className="text-right">
-															<button onClick={(event) => unmatchUser(event, user.id)}>Unmatch</button>
-														</td>
-													</tr>
-												))}
-											</tbody>
-										</table>
+			<SettingsPageLayout>
+					<SettingsMenu />
+					<div className='text-white bg-chess-dark p-4 rounded-lg max-w-3xl'>
+						<span className='font-bold'>Matched Users</span>
+						<p className='text-sm py-2 break-words'>
+							A matched user is able to see your profile and send you messages. Unmatch a user will delete your chat history with him but you are able rematch
+						</p>
+						<div className="pt-2">
+							{
+								matchedUsers.length > 0 ?
+									<table className="text-white w-full text-left">
+										<tbody>
+											{matchedUsers.map((user, index) => (
+												<tr key={index} className="border-b border-chess-bar text-xs">
+													<td>
+														{user.first_name} {user.last_name}
+													</td>
+													<td className="text-right">
+														<button onClick={(event) => unmatchUser(event, user.id)}>Unmatch</button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
 									:
-										<div>No users matched yet</div>
-								}
+									<div>No users matched yet</div>
+							}
 
-							</div>
 						</div>
 					</div>
-				</div>
-			</div>
+			</SettingsPageLayout>
 		</>
 	)
 }

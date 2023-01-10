@@ -6,6 +6,7 @@ import { useState } from 'react';
 import SettingsHeader from './SettingsHeader';
 
 import { useSelector } from 'react-redux';
+import SettingsPageLayout from './SettingsPageLayout';
 
 
 const Password = () => {
@@ -125,10 +126,9 @@ const Password = () => {
                                     <button onClick={validateNewPassword}  className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500 ${ password !== passwordConfirm || password.length <= 0 ? 'btn-disabled': ''}`}>Change password</button>
                                 </div>}
                             </div>
-						</div>
-					</div>
-				</div>
-			</div>
+                        </div>
+                    </div>
+            </SettingsPageLayout>
 		</>
 	)
 }

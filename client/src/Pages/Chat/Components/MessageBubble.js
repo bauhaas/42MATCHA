@@ -19,7 +19,7 @@ const MessageBubble = ({message, picture}) => {
                 <div className="chat-header">
                     <time className="text-xs opacity-50">{date.getHours()}:{date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()}</time>
                 </div>
-                <div className={`chat-bubble  ${message.sender_id === currentUser.id ? "bg-red-400" : "bg-chess-placeholder"}`}>{message.message}</div>
+                <div className={`chat-bubble  ${message.sender_id === currentUser.id ? "bg-bot-logo" : "bg-chess-placeholder"} break-words`}>{message.message}</div>
             </div>
         </>
     )

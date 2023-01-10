@@ -2,14 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import Chip from '@mui/material/Chip';
-import Avatar from "../../../SharedComponents/Avatar";
-import axios from 'axios';
-import InteractionButtons from './InteractionButtons';
 import { AiFillFire } from 'react-icons/ai';
+import Chip from '@mui/material/Chip';
+import axios from 'axios';
+
+import Avatar from "../../../SharedComponents/Avatar";
+import InteractionButtons from './InteractionButtons';
 import socket from '../../../Context/socket'
 
-//TODO when match happend, add animation
 const ProfileDetails = ({id}) => {
 
     const currentUser = useSelector((state) => state.user.user);
@@ -85,9 +85,6 @@ const ProfileDetails = ({id}) => {
         }
     }, [user]);
 
-
-
-
     const sendVisitNotification = async () => {
             await axios.post('http://localhost:3001/notifications', {
                 sender_id: currentUser.id,
@@ -103,7 +100,6 @@ const ProfileDetails = ({id}) => {
     }
 
     const [profilePic, setProfilePic] = useState('');
-
 
     useEffect(() => {
         const getUser = async () => {
@@ -134,18 +130,35 @@ const ProfileDetails = ({id}) => {
         getUser();
     }, []);
 
+    useEffect(() => {
+        socket.client.on('userDisconnect', (data) => {
+            if (user.id == data)
+            {
+                setUser({
+                    ...user,
+                    status: true,
+                });
+                console.log('user has disconnect', data)
+            }
+        })
 
-    // useEffect(() => {
-    //     socket.client.on('userDisconnect', (data) => {
-    //         console.log('user has disconnect', data)
-    //     })
+        socket.client.on('userConnect', (data) => {
+            console.log(user.id, data);
+            if (user.id == data) {
+                console.log('user has connect', data)
+                setUser({
+                    ...user,
+                    status: null,
+                });
+            }
+        })
 
-    //     return () => {
-    //         socket.client.off('userDisconnect');
-    //     };
-    // });
+        return () => {
+            socket.client.off('userDisconnect');
+            socket.client.off('userConnect');
+        };
+    });
 
-    // console.log(user, user.files, profilePic);
     return (
         <>
             <div className='mx-2 pt-16 h-screen'>
