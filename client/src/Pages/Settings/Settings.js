@@ -395,11 +395,45 @@ const Settings = () => {
                                     </div>
                                 </div>
 
+                                <button onClick={updateUser} className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500`}>Update</button>
+                                <div className="divider before:bg-chess-bar after:bg-chess-bar"></div>
+                                <div className='mt-2 flex flex-col sm:flex-row  sm:justify-between mb-2'>
+                                    <label className="text-white text-sm self-start mb-2">
+                                        Pictures
+                                    </label>
+                                    <div className='flex flex-col'>
+                                        <input
+                                            type="file"
+                                            className="file-input file-input-sm w-full max-w-xs bg-chess-placeholder rounded-sm sm:w-64"
+                                            ref={fileInputRef}
+                                            onChange={handleFileChange}
+                                            multiple
+                                        />
+                                        <div className='w-64'>
+                                            <div className='grid grid-cols-1 sm:grid-cols-2'>
+                                                {user.files && user.files.map((file, index) => (
+                                                    <>
+                                                        <div key={file.id + index} className='relative rounded-lg m-2 group'>
+                                                            <button onClick={(event) => deleteImage(event, file)} className="btn btn-circle btn-xs absolute right-0 m-2 invisible group-hover:visible">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </button>
+                                                            <button onClick={(event) => setAsProfilePic(event, file)} className={`rounded-b-lg absolute bottom-0 left-0 w-full text-center text-xs py-1 bg-orange-300 text-black invisible  ${file.is_profile_pic === true ? null : 'group-hover:visible'} `}>
+                                                                set as profile pic</button>
+                                                            <img className={`aspect-square h-full w-full rounded-lg ${file.is_profile_pic === true ? 'border-2 border-orange-300' : null}`} src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
+
+                                                        </div>
+                                                    </>
+
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
                             </div>
-
-
-
-                        </div>
+					            	</div>
                     </div>
                 </div>
             </SettingsPageLayout>

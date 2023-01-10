@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const WaitEmailConfirmation = ({email, setError, setOpen}) => {
     const handleResendEmail = () => {
+        console.log(email)
         axios.post('http://localhost:3001/users/sendSignupEmail', {
             email: email
         })

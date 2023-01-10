@@ -216,6 +216,10 @@ export const getBachelors = async (id) => {
 
         user.attractivity = user.distance * fameFactor * interestsFactor * ageFactor;
 
+        delete(user.pin);
+        delete(user.email);
+        delete(user.password);
+        delete(user.report_count);
         return user;
     });
 
@@ -257,6 +261,11 @@ export const getFilteredBachelors = async (id, filters) => {
     }
 
     filteredUsers = filteredUsers.filter(function (user) {
+        delete(user.pin);
+        delete(user.email);
+        delete(user.password);
+        delete(user.report_count);
+
         const commonInterests = me.interests.filter(value => user.interests.includes(value));
         if (commonInterests.length >= filters.min_common_interests) {
           return true;
@@ -375,6 +384,7 @@ export const getUserByIdProfile = async (id) => {
     delete(user.email);
     delete(user.password);
     delete(user.report_count);
+    delete(user.pin);
     client.release();
     return user;
   } catch (err) {
@@ -398,17 +408,16 @@ export const resendSignupEmail = async (email) => {
       throw new Error('Invalid email or password');
     }
 
-    const emailValidation = await isEmailValid(email);
-    if (emailValidation.valid === false) {
-      throw new Error('Email format is invalid');
-    }
+    // const emailValidation = await isEmailValid(email);
+    // if (emailValidation.valid === false) {
+    //   throw new Error('Email format is invalid');
+    // }
 
     log.info('[userService]', "generating token and sending it again");
     const user = result.rows[0];
     const accessToken = generateAccessToken(result.rows[0]);
     await sendConfirmationEmail(email, user.firstName, user.lastName, accessToken);
-
-
+    log.info(("email resend to", email));
   } catch (err) {
     throw err;
   } finally {
@@ -416,28 +425,84 @@ export const resendSignupEmail = async (email) => {
   }
 }
 
-export const resetPassword = async (oldPassword, newPassword, user) => {
+const sendResetPIN = async (email, firstName, lastName, id) => {
+  const transporter = nodemailer.createTransport(
+    {
+      service: 'gmail',
+      auth: {
+        user: process.env.NODEMAILER_USER,
+        pass: process.env.NODEMAILER_PASS
+      }
+    }
+  );
+
+  const pin = Math.floor(Math.random() * 9999);
+  // send mail with defined transport object
+  await transporter.sendMail({
+    from: '"Matcha" <matcha@noreply.com>',
+    to: email,
+    subject: "Matcha password change",
+    text: "Hi " + firstName + " " + lastName + `,\n\nHere is your code to validate your new password ${pin}\n— Matcha`,
+  });
+
+  log.info('[userService]', "Email sent to ", email);
+
+  const result = await client.query(`
+    UPDATE users SET
+    pin = $1
+    WHERE id = $2
+    RETURNING *;
+    `, [pin, id]);
+};
+
+export const resetPassword = async (oldPassword, user) => {
   try {
     log.info('[userService]', 'resetPassword');
 
     // Compare the given password with the hashed password in the database
-    log.info('[userService]', 'old:',oldPassword, ', new:', newPassword);
+    log.info('[userService]', 'old:', oldPassword);
     const passwordMatch = await bcrypt.compare(oldPassword, user.password);
 
     // If the passwords don't match, throw an error
     if (!passwordMatch) {
       log.error('[userService]', 'pass didnt match');
       throw new Error('Invalid email or password .');
+    } else {
+      await sendResetPIN(user.email, user.first_name, user.last_name);
     }
-    else
-    {
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const validateNewPassword = async (newPassword, pin, user) => {
+  try {
+    log.info('[userService]', 'resetPassword');
+
+    // Compare the given password with the hashed password in the database
+    log.info('[userService]', ', new:', newPassword);
+
+    // If the passwords don't match, throw an error
+    if (pin !== user.pin) {
+      throw new Error('wrong PIN');
+    } else {
+      const client = await pool.connect();
+
       var salt = bcrypt.genSaltSync(10);
       var newHash = bcrypt.hashSync(newPassword, salt);
-      const client = await pool.connect();
       const result = await client.query(
-        'UPDATE users SET password = $1 WHERE id = $2',
+        'UPDATE users \
+        SET password = $1 \
+        WHERE id = $2',
         [newHash, user.id]
       );
+
+      const result2 = await client.query(' \
+        UPDATE users SET \
+        pin = NULL \
+        WHERE id = $1 \
+        RETURNING *;',
+        [id]);
       client.release();
     }
   } catch (err) {
@@ -467,7 +532,6 @@ export const sendConfirmationEmail = async (email, firstName, lastName, accessTo
     to: email,
     subject: "Confirm your Matcha account",
     text: "Hi " + firstName + " " + lastName + `,\n\nIn order to get full access to Matcha features, you need to confirm your email address by following the link below.\nhttp://localhost:3000/profile?token=${accessToken}\n— Matcha`,
-    // html: "<b>Hello world?</b>", // html body
   });
 
   log.info('[userService]', "Email sent to ", email);
@@ -490,9 +554,11 @@ export const insertUser = async (firstName, lastName, email, password, longitude
     if (dupplicateEmailResult.rowCount > 0)
       throw new Error('A user with the given email already exists');
 
-    const emailValidation = await isEmailValid(email);
-    if (emailValidation.valid === false)
-      throw new Error('Email format is invalid');
+    // const emailValidation = await isEmailValid(email);
+    // if (emailValidation.valid === false) {
+    //   console.log(emailValidation)
+    //   throw new Error('Email format is invalid');
+    // }
 
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);
@@ -718,7 +784,7 @@ export const getLikedUsers = async (id) => {
   try {
     const client = await pool.connect();
     const result = await client.query(`
-      SELECT * FROM users
+      SELECT id, first_name FROM users
       WHERE id IN (
         SELECT receiver_id FROM relations
         WHERE sender_id = $1 AND type = 'like'

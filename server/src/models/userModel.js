@@ -30,7 +30,8 @@ export async function createUsersTable() {
         latitude FLOAT,
         fame_rating INT,
         report_count INT,
-        status TIMESTAMPTZ NULL DEFAULT NOW()
+        status TIMESTAMPTZ NULL DEFAULT NOW(),
+        pin INTEGER DEFAULT NULL
       );
     `);
     log.info('[userModel.js]', 'user table have been created');
