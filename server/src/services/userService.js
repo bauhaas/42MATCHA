@@ -570,7 +570,7 @@ export const insertUser = async (firstName, lastName, email, password, longitude
     const accessToken = generateAccessToken(result.rows[0]);
     await sendConfirmationEmail(email, firstName, lastName, accessToken);
     client.release();
-    return user;
+    return accessToken;
   } catch (err) {
     throw err;
   }

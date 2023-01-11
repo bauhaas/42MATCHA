@@ -17,16 +17,15 @@ function Signin() {
   const [password, setPassword] = useState("");
   const [open, setOpen] = useState(false);
   const [error, setError] = useState([])
-  const [rememberMe, setRememberMe] = useToggle(false)
-  const { isAuthenticated } = useIsAuthenticated();
+  // const { isAuthenticated } = useIsAuthenticated();
 
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (isAuthenticated)
-      navigate('/home');
-  }, [isAuthenticated, navigate]);
+  // useEffect(() => {
+  //   if (isAuthenticated)
+  //     navigate('/home');
+  // }, [isAuthenticated, navigate]);
 
   const handleSignUpClick = (event) => {
     event.preventDefault();
@@ -41,22 +40,10 @@ function Signin() {
       password: password
     })
       .then(response => {
-        console.log(response);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
-
-        if(rememberMe)
-        {
-          // TODO had issue with cookies lib
-          // Set the JWT in a cookie that will be stored for 30 days
-          console.log('toodo');
-          // setCookie('jwt', response.data, { maxAge: 60 * 60 * 24 * 30 });
-        }
-        else
-        {
-          const user = jwt_decode(response.data);
-          dispatch(setUser(user));
-          localStorage.setItem('jwt', response.data);
-        }
+        const user = jwt_decode(response.data);
+        dispatch(setUser(user));
+        localStorage.setItem('jwt', response.data);
         navigate("/home");
       })
       .catch(error => {
@@ -110,8 +97,6 @@ function Signin() {
               value={password}
               onChange={(event) => setPassword(event.target.value)} />
             <div className="w-full flex items-center  mb-4">
-              <input type="checkbox" value="" className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-              <label className="ml-2 text-sm font-medium text-gray-400 dark:text-gray-500">Remember me</label>
               <label className="grow  text-end ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"><a href="#" className="text-blue-600 dark:text-blue-500 hover:underline">Forgot your password ?</a></label>
             </div>
             <button onClick={handleSignInClick} className="h-10 w-full items-center justify-center  gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">

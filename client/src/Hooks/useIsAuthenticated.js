@@ -35,6 +35,7 @@ function useIsAuthenticated() {
     }
   }, []);
 
+  console.log(isAuthenticated);
   // Return the `isAuthenticated` state variable
   return { isAuthenticated };
 }

@@ -4,6 +4,7 @@ import axios from 'axios';
 import position from '../../../Context/position'
 import { setUser } from "../../../userSlice";
 import { useDispatch } from 'react-redux';
+import jwt_decode from "jwt-decode";
 
 
 const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
@@ -38,8 +39,9 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
         })
             .then(response => {
                 console.log(response);
+                const user = jwt_decode(response.data);
                 setHasSignedUP(true);
-                saveToRedux(response.data);
+                saveToRedux(user);
                 localStorage.setItem('jwt', response.data);
                 return ;
             })

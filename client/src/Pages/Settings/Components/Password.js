@@ -58,11 +58,7 @@ const Password = () => {
 
 	return (
 		<>
-			<div className="bg-chess-default min-h-screen overflow-y-auto">
-				<NavBar/>
-				<div className='mx-2 pt-16 h-screen'>
-                    <SettingsHeader/>
-					<div className='flex gap-4 mt-2'>
+            <SettingsPageLayout>
 						<SettingsMenu/>
                         <div className=' text-white bg-chess-dark p-4 rounded-lg w-full max-w-3xl flex flex-col'>
 							<span className='font-bold'>Change password</span>
@@ -127,7 +123,6 @@ const Password = () => {
                                 </div>}
                             </div>
                         </div>
-                    </div>
             </SettingsPageLayout>
 		</>
 	)

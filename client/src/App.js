@@ -8,8 +8,8 @@ import Profile from './Pages/Profile/Profile';
 import Chat from './Pages/Chat/Chat';
 import Conversation from './Pages/Chat/Components/Conversation';
 import Settings from './Pages/Settings/Settings';
-import { Route, Routes, Navigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { Route, Routes, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { useContext, useState } from 'react';
 import socket from './Context/socket';
 import Password from './Pages/Settings/Components/Password';
 import LikedUsers from './Pages/Settings/Components/LikedUsers';
@@ -25,13 +25,58 @@ import  { successCallback, errorCallback } from './Context/position'
 navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
 
 function App() {
-    useEffect(() => {
+  const unauthenticatedRoutes = ['/signin', '/signup', '*'];
+
+  useEffect(() => {
         return () => {
           if (socket.client && socket.client.connected === true) {
             socket.disconnect();
           }
       }
     }, [])
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // useEffect(() => {
+    //   const token = localStorage.getItem("jwtToken");
+    //   console.log(token, location.pathname, unauthenticatedRoutes.includes(location.pathname));
+    //   if (!token && !unauthenticatedRoutes.includes(location.pathname)) {
+    //     navigate("/signin", { replace: true });
+    //   }
+    // }, []);
+
+    const [isAuth, setIsAuth] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [params, setParams] = useState(new URLSearchParams(location.search));
+
+    useEffect(() => {
+      setParams(new URLSearchParams(location.search));
+  }, [location]);
+
+
+    console.log(params);
+    useEffect(() => {
+      const token = localStorage.getItem("jwt");
+
+
+      if (!token) {
+          setIsAuth(false)
+          setLoading(false)
+      } else {
+        setIsAuth(true)
+        setLoading(false)
+      }
+    }, [isAuth]);
+
+    // if (loading) {
+    //   return <div>Loading a...</div>;
+    // }
+
+    // if (!isAuth && !unauthenticatedRoutes.includes(location.pathname)) {
+    //   navigate("/signin", { replace: true });
+    //   return <div>Loading (u not auth and not in authorized routes)...</div>;
+    // }
 
     return (
     <>

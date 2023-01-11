@@ -422,7 +422,7 @@ router.put('/resetpassword', async (req, res) => {
     } else if (typeof(err) === "string" && err.includes('400')) {
       res.status(400).send(err.message);
       return;
-    } 
+    }
     res.status(500).send(err.message);
   }
 });
