@@ -412,9 +412,9 @@ router.put('/resetpassword', async (req, res) => {
     }
     const user = await getUserById(id);
 
-    await resetPassword(currentPassword, user);
-
-   res.sendStatus(200);
+    const result = await resetPassword(currentPassword, user);
+    console.log(result)
+    res.sendStatus(200);
   } catch (err) {
     if (err.message === 'A user with the given email already exists.' || err.message === 'Invalid email or password .') {
       res.status(403).send(err.message);
@@ -442,9 +442,11 @@ router.put('/pin', async (req, res) => {
     const user = await getUserById(id);
 
     await validateNewPassword(newPassword, pin, user);
+    res.send(200);
   } catch (err) {
     if (err.message === "wrong PIN") {
       res.status(400).send(err.message);
+      return ;
     }
     res.status(500).send(err.message)
   }
