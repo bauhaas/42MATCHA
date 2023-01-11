@@ -21,11 +21,12 @@ import {store, persistor} from './store';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import  { successCallback, errorCallback } from './Context/position'
+import Activation from './Pages/Activation/Activation';
 
 navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
 
 function App() {
-  const unauthenticatedRoutes = ['/signin', '/signup', '*'];
+  const unauthenticatedRoutes = ['/signin', '/signup', '/activation', '*'];
 
   useEffect(() => {
         return () => {
@@ -38,54 +39,53 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // useEffect(() => {
-    //   const token = localStorage.getItem("jwtToken");
-    //   console.log(token, location.pathname, unauthenticatedRoutes.includes(location.pathname));
-    //   if (!token && !unauthenticatedRoutes.includes(location.pathname)) {
-    //     navigate("/signin", { replace: true });
-    //   }
-    // }, []);
+  //   useEffect(() => {
+  //     const token = localStorage.getItem("jwtToken");
+  //     console.log(token, location.pathname, unauthenticatedRoutes.includes(location.pathname));
+  //     if (!token && !unauthenticatedRoutes.includes(location.pathname)) {
+  //       navigate("/signin", { replace: true });
+  //     }
+  //   }, []);
 
-    const [isAuth, setIsAuth] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [params, setParams] = useState(new URLSearchParams(location.search));
+  //   const [isAuth, setIsAuth] = useState(false);
+  //   const [loading, setLoading] = useState(true);
+  //   const [params, setParams] = useState(new URLSearchParams(location.search));
 
-    useEffect(() => {
-      setParams(new URLSearchParams(location.search));
-  }, [location]);
+  //   useEffect(() => {
+  //     setParams(new URLSearchParams(location.search));
+  // }, [location]);
 
-
-    console.log(params);
-    useEffect(() => {
-      const token = localStorage.getItem("jwt");
+  //   useEffect(() => {
+  //     const token = localStorage.getItem("jwt");
 
 
-      if (!token) {
-          setIsAuth(false)
-          setLoading(false)
-      } else {
-        setIsAuth(true)
-        setLoading(false)
-      }
-    }, [isAuth]);
+  //     if (!token) {
+  //         setIsAuth(false)
+  //         setLoading(false)
+  //     } else {
+  //       setIsAuth(true)
+  //       setLoading(false)
+  //     }
+  //   }, [isAuth]);
 
-    // if (loading) {
-    //   return <div>Loading a...</div>;
-    // }
+  //   if (loading) {
+  //     return <div>Loading a...</div>;
+  //   }
 
-    // if (!isAuth && !unauthenticatedRoutes.includes(location.pathname)) {
-    //   navigate("/signin", { replace: true });
-    //   return <div>Loading (u not auth and not in authorized routes)...</div>;
-    // }
+  //   if (!isAuth && !unauthenticatedRoutes.includes(location.pathname)) {
+  //     navigate("/signin", { replace: true });
+  //     return <div>Loading (u not auth and not in authorized routes)...</div>;
+  //   }
 
     return (
     <>
       <Provider store={store}>
           <PersistGate persistor={persistor}>
             <Routes>
-              <Route exact path='/signin' element={<Signin />} />
-              <Route exact path='/signup' element={<Signup />} />
               <Route index element={<Navigate to="/home" />} />
+              <Route path='/signin' element={<Signin />} />
+              <Route path='/signup' element={<Signup />} />
+              <Route path="/activation" element={<Activation />} />
               <Route path='/home' element={<Home />} />
               <Route path='/profile/:id' element={<Profile />} />
               <Route path='/profile/' element={<Profile />} />

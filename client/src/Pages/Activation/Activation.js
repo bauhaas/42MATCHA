@@ -2,37 +2,32 @@ import { useParams, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 import jwt_decode from "jwt-decode";
+import InitProfile from './Components/InitProfile';
 
-import ProfileDetails from './Components/ProfileDetails';
-import NavBar from '../Navbar/NavBar';
-
-const Profile = () => {
+const Activation = () => {
     const location = useLocation();
-    const { id } = useParams();
 
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
+    const [user, setUser] = useState();
 
-
-    const [userId, setUserId] = useState();
     useEffect(() => {
         if (token) {
             localStorage.setItem('jwt', token);
             const user = jwt_decode(token);
-            setUserId(user.id);
+            console.log('ddddd');
+            setUser(user);
         }
     }, [token]);
+
 
     return (
         <>
             <div className="bg-chess-default min-h-screen overflow-y-auto">
-                        <>
-                            <NavBar />
-                            <ProfileDetails id={id}/>
-                        </>
+                <InitProfile user={user} />
             </div>
         </>
     )
 }
 
-export default Profile;
+export default Activation;

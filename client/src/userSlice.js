@@ -15,6 +15,9 @@ const userSlice = createSlice({
             if (!state.user.files) {
                 state.user.files = [action.payload];
             } else {
+                if(state.user.files[0] === null)
+                    state.user.files[0] = action.payload;
+                else
                 state.user.files.push(action.payload);
             }
         },

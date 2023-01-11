@@ -1,16 +1,18 @@
 import React from 'react';
 import { useEffect, useState, useRef } from 'react';
 
-const PictureForm = ({pictures, setPictures }) => {
+const PictureForm = ({pictures, setPictures, setToUpload }) => {
     const fileInputRef = useRef(null);
 
     const handleFileChange = (event) => {
         const files = event.target.files;
 
+        console.log(files);
         if (files.length > 0) {
             const newImageUrls = [];
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
+                console.log(file);
                 const fileReader = new FileReader();
                 fileReader.onload = (event) => {
                     newImageUrls.push(event.target.result);
@@ -19,6 +21,10 @@ const PictureForm = ({pictures, setPictures }) => {
                     }
                 };
                 fileReader.readAsDataURL(file);
+                console.log(file);
+                setToUpload((prevState) => {
+                    return [...prevState, file];
+                });
             }
         }
     };
@@ -27,8 +33,6 @@ const PictureForm = ({pictures, setPictures }) => {
         event.preventDefault();
         setPictures(pictures.filter((url) => url !== imageUrl));
     };
-
-    // console.log(imageUrls);
 
     return (
         <>
