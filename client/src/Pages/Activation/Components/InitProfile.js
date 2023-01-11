@@ -18,6 +18,9 @@ const InitProfile = ({user}) => {
     const [currentStep, setCurrentStep] = useState(0);
 
     const [bio, setBio] = useState("");
+    const [job, setJob] = useState('');
+    const [city, setCity] = useState('');
+    const [country, setCountry] = useState('');
     const [interests, setInterests] = useState([]);
     const [age, setAge] = useState(0);
     const [sex, setSex] = useState('');
@@ -34,6 +37,9 @@ const InitProfile = ({user}) => {
             bio: bio,
             age: age,
             sex: sex,
+            city: city,
+            job: job,
+            country: country,
             sex_orientation:sexOrientation,
             interests:interests,
             active: true
@@ -94,14 +100,13 @@ const InitProfile = ({user}) => {
         setParams(new URLSearchParams(location.search));
     }, [location]);
 
-    // console.log('infos:', "bio:", bio, "age", age, "sex", sex, "interests:", interests, "sexorientation:", sexOrientation, "pictures:", pictures);
 
     return (
         <>
             <div className="bg-chess-default text-white min-h-screen">
                 {currentStep === 0 && <IntroForm />}
                 {currentStep === 1 && <BioForm bio={bio} setBio={setBio}/>}
-                {currentStep === 2 && <PreferencesForm  age={age} setAge={setAge} sex={sex} setSex={setSex}  sexOrientation={sexOrientation} setSexOrientation={setSexOrientation} />}
+                {currentStep === 2 && <PreferencesForm age={age} setAge={setAge} sex={sex} setSex={setSex} sexOrientation={sexOrientation} setSexOrientation={setSexOrientation} job={job} setJob={setJob} city={city} setCity={setCity} country={country} setCountry={setCountry} />}
                 {currentStep === 3 && <InterestsForm interests={interests} setInterests={setInterests} />}
                 {currentStep === 4 && (
                     <PictureForm pictures={pictures} setPictures={setPictures} setToUpload={setToUpload}/>
@@ -110,7 +115,7 @@ const InitProfile = ({user}) => {
                     <ul className="steps steps-horizontal">
                         <li className={currentStep >= 0 ? 'step  step-error text-sm' : 'step text-sm'}>Welcome</li>
                         <li className={currentStep >= 1 ? 'step step-error text-sm' : 'step text-sm'}>Bio</li>
-                        <li className={currentStep >= 2 ? 'step step-error text-sm' : 'step text-sm'}>Age and Orientation</li>
+                        <li className={currentStep >= 2 ? 'step step-error text-sm' : 'step text-sm'}>Details</li>
                         <li className={currentStep >= 3 ? 'step step-error text-sm' : 'step text-sm'}>Hobbies</li>
                         <li className={currentStep >= 4 ? 'step step-error text-sm' : 'step text-sm'}>Pictures</li>
                     </ul>
