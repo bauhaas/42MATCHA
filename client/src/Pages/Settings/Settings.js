@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
-import NavBar from '../Navbar/NavBar';
 import SettingsMenu from './Components/SettingsMenu';
 import axios from 'axios';
-import SettingsHeader from './Components/SettingsHeader';
 import { useSelector } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import Radio from '@mui/material/Radio';
@@ -73,25 +71,14 @@ const Settings = () => {
     };
 
     const fileInputRef = useRef(null);
-    const [pictures, setPictures] = useState([]);
+    // const [pictures, setPictures] = useState([]);
 
     const handleFileChange = (event) => {
         const files = event.target.files;
 
         if (files.length > 0) {
-            const newImageUrls = [];
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                const fileReader = new FileReader();
-                fileReader.onload = (event) => {
-                    newImageUrls.push(event.target.result);
-                    if (newImageUrls.length === files.length) {
-                        setPictures((prevPictures) => [...prevPictures, ...newImageUrls]);
-                    }
-                };
-                fileReader.readAsDataURL(file);
-
-                console.log(user.id, file);
                 const formData = new FormData();
                 formData.append('file', file); // file is the file that you get from the input element's onChange event
                 formData.append('userId', user.id);
@@ -103,7 +90,6 @@ const Settings = () => {
                 })
                     .then((response) => {
                         console.log(response);
-                        console.log('redux save', response);
                         dispatch(updateFiles(response.data));
                     })
                     .catch((error) => {
@@ -116,11 +102,7 @@ const Settings = () => {
     const deleteImage = (event, file) => {
         event.preventDefault();
         if(user.files.length === 1)
-        {
-            console.log('you must have at least 1 pics');
             return;
-        }
-        console.log(file);
         axios.delete(`http://localhost:3001/users/files/${file.id}/${user.id}`)
             .then(response => {
                 dispatch(removeFile(file));
@@ -132,8 +114,6 @@ const Settings = () => {
 
     const setAsProfilePic = (event, file) => {
         event.preventDefault();
-        console.log(file);
-
         axios.put(`http://localhost:3001/users/setAsProfilePic/${file.id}`, {
             userId : user.id
         })
@@ -145,9 +125,6 @@ const Settings = () => {
                 console.error(error);
             })
     };
-
-    // console.log(pictures);
-    console.log(user);
 
     return (
         <>

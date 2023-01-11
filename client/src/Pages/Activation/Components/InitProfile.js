@@ -19,15 +19,18 @@ const InitProfile = ({user}) => {
 
     const [bio, setBio] = useState("");
     const [interests, setInterests] = useState([]);
-    const [age, setAge] = useState([]);
-    const [sex, setSex] = useState([]);
-    const [sexOrientation, setSexOrientation] = useState([]);
+    const [age, setAge] = useState(0);
+    const [sex, setSex] = useState('');
+    const [sexOrientation, setSexOrientation] = useState('');
     const [pictures, setPictures] = useState([]);
+    const [upload, setToUpload] = useState([]);
 
-    console.log(user);
-    const handleSubmit = () => {
+    console.log(user, pictures,'upload:', upload);
+    // const uploadPhoto = async () => {}
+
+    const handleSubmit = async () => {
         console.log(user.id);
-        axios.put(`http://localhost:3001/users/${user.id}/update`, {
+        await axios.put(`http://localhost:3001/users/${user.id}/update`, {
             bio: bio,
             age: age,
             sex: sex,
@@ -35,51 +38,44 @@ const InitProfile = ({user}) => {
             interests:interests,
             active: true
         })
-            .then(response => {
+            .then(async response => {
                 console.log(response);
+                console.log(upload);
+                dispatch(setUser(response.data));
 
+                if (upload.length > 0) {
+                    for (let i = 0; i < upload.length; i++) {
+                        const file = upload[i];
+
+                        console.log(user.id, file);
+                        const formData = new FormData();
+                        formData.append('file', file); // file is the file that you get from the input element's onChange event
+                        formData.append('user.id', user.id);
+                        formData.append('is_profile_pic', true);
+                        await axios.post(`http://localhost:3001/users/${user.id}/upload`, formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                            .then((response) => {
+                                console.log(response);
+                                console.log('redux save', response);
+                                dispatch(updateFiles(response.data));
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                            });
+                    }
+                }
                 // Remove the token and setup parameters from the URL
                 params.delete('token');
-                dispatch(setUser(response.data));
                 navigate(`/profile/${user.id}`)
             })
             .catch(error => {
                 console.log(error);
             });
 
-        if (pictures.length > 0) {
-            const newImageUrls = [];
-            for (let i = 0; i < pictures.length; i++) {
-                const file = pictures[i];
-                const fileReader = new FileReader();
-                fileReader.onload = (event) => {
-                    newImageUrls.push(event.target.result);
-                    if (newImageUrls.length === pictures.length) {
-                        setPictures((prevPictures) => [...prevPictures, ...newImageUrls]);
-                    }
-                };
-                fileReader.readAsDataURL(file);
 
-                console.log(user.id, file);
-                const formData = new FormData();
-                formData.append('file', file); // file is the file that you get from the input element's onChange event
-                formData.append('user.id', user.id);
-                formData.append('is_profile_pic', false);
-                axios.post(`http://localhost:3001/users/${user.id}/upload`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                    .then((response) => {
-                        console.log(response);
-                        console.log('redux save', response);
-                        dispatch(updateFiles(response.data));
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            }
-        }
     }
 
     const handleNextClick = () => {
@@ -98,7 +94,7 @@ const InitProfile = ({user}) => {
         setParams(new URLSearchParams(location.search));
     }, [location]);
 
-    console.log('infos:', "bio:", bio, "age", age, "sex", sex, "interests:", interests, "sexorientation:", sexOrientation, "pictures:", pictures);
+    // console.log('infos:', "bio:", bio, "age", age, "sex", sex, "interests:", interests, "sexorientation:", sexOrientation, "pictures:", pictures);
 
     return (
         <>
@@ -108,7 +104,7 @@ const InitProfile = ({user}) => {
                 {currentStep === 2 && <PreferencesForm  age={age} setAge={setAge} sex={sex} setSex={setSex}  sexOrientation={sexOrientation} setSexOrientation={setSexOrientation} />}
                 {currentStep === 3 && <InterestsForm interests={interests} setInterests={setInterests} />}
                 {currentStep === 4 && (
-                        <PictureForm pictures={pictures} setPictures={setPictures}/>
+                    <PictureForm pictures={pictures} setPictures={setPictures} setToUpload={setToUpload}/>
                 )}
                 <div className="flex flex-col absolute bottom-5 left-0 right-0">
                     <ul className="steps steps-horizontal">

@@ -5,44 +5,15 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import { grey, deepOrange } from '@mui/material/colors';
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-// import { makeStyles } from '@mui/styles';
 
-// const useStyles = makeStyles((theme) => ({
-//     formControl: {
-//         margin: theme.spacing(1),
-//         minWidth: 120,
-//     },
-//     selectEmpty: {
-//         marginTop: theme.spacing(2),
-//     },
-//     selectMenu: {
-//         maxHeight: '20px',
-//         overflowY: 'scroll',
-//     }
-// }));
 
 const PreferencesForm = ({age, setAge, sex, setSex, sexOrientation, setSexOrientation }) => {
-    const [selectedSex, setSelectedSex] = useState(null);
-    const [selectedOri, setSelectedOri] = useState(null);
-
-    const handleSexChange = (event) => {
-        setSelectedSex(event.target.value);
-        setSex(event.target.value);
-    };
-
-    const handleOriChange = (event) => {
-        setSelectedOri(event.target.value);
-        setSexOrientation(event.target.value);
-    };
-
-    console.log(selectedOri);
     const ageRange = Array.from({ length: 99 - 18 + 1 }, (_, i) => 18 + i);
     return (
         <>
-            <div className='min-h-screen flex flex-col items-center justify-center px-2 gap-2'>
+            <div className='min-h-screen flex flex-col items-center px-2 sm:justify-center'>
                 <div className='font-bold text-2xl'>What's your age ?</div>
                 <FormControl >
                     <Select
@@ -60,37 +31,7 @@ const PreferencesForm = ({age, setAge, sex, setSex, sexOrientation, setSexOrient
                         ))}
                     </Select>
                 </FormControl>
-
                 <div className='font-bold text-2xl'>You are </div>
-                {/* <div className=''>
-                    <div className="form-control">
-                        <label className="label cursor-pointer gap-16">
-                            <span className="label-text font-bold">Male</span>
-
-                        </label>
-                        <input
-                            type="radio"
-                            name="radio-sex"
-                            value="male"
-                            className="radio checked:bg-blue-500"
-                            checked={selectedSex === 'male'}
-                            onChange={handleSexChange}
-                        />
-                    </div>
-                    <div className="form-control">
-                        <label className="label cursor-pointer">
-                            <span className="label-text font-bold">Female</span>
-                            <input
-                                type="radio"
-                                name="radio-sex"
-                                value="female"
-                                className="radio checked:bg-blue-500"
-                                checked={selectedSex === 'female'}
-                                onChange={handleSexChange}
-                            />
-                        </label>
-                    </div>
-                </div> */}
                 <FormControl>
                     <RadioGroup
                         row
@@ -121,7 +62,9 @@ const PreferencesForm = ({age, setAge, sex, setSex, sexOrientation, setSexOrient
                             className='grow' />
                     </RadioGroup>
                 </FormControl>
-                <div className='font-bold text-2xl'>Sexual orientation</div>
+                <label className="text-white text-sm sm:self-center">
+                    Orientation
+                </label>
                 <FormControl>
                     <RadioGroup
                         row
@@ -159,47 +102,42 @@ const PreferencesForm = ({age, setAge, sex, setSex, sexOrientation, setSexOrient
                         />
                     </RadioGroup>
                 </FormControl>
-                {/* <div className=''>
-                    <div className="form-control">
-                        <label className="label cursor-pointer gap-16">
-                            <span className="label-text font-bold">Male</span>
-                            <input
-                                type="radio"
-                                name="radio-ori"
-                                value="male"
-                                className="radio checked:bg-blue-500"
-                                checked={selectedOri === 'male'}
-                                onChange={handleOriChange}
-                            />
+                <div className='flex flex-col w-1/2 h-full'>
+                    <div className='mt-2 flex flex-col sm:flex-row  sm:justify-between mb-2'>
+                        <label className="text-white text-sm self-start">
+                            Country
                         </label>
-                    </div>
-                    <div className="form-control">
-                        <label className="label cursor-pointer">
-                            <span className="label-text font-bold">Female</span>
-                            <input
-                                type="radio"
-                                name="radio-ori"
-                                value="female"
-                                className="radio checked:bg-blue-500"
-                                checked={selectedOri === 'female'}
-                                onChange={handleOriChange}
+                        <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
+                            <input className="w-full bg-transparent text-white focus:outline-none focus:shadow-outline" id="currentPass"
+                                value={'test'}
+                                placeholder={'test'}
                             />
-                        </label>
+                        </div>
                     </div>
-                    <div className="form-control">
-                        <label className="label cursor-pointer">
-                            <span className="label-text font-bold">Both</span>
-                            <input
-                                type="radio"
-                                name="radio-ori"
-                                value="both"
-                                className="radio checked:bg-blue-500"
-                                checked={selectedOri === 'both'}
-                                onChange={handleOriChange}
+                    <div className='mt-2 flex flex-col sm:flex-row  sm:justify-between mb-2'>
+                        <label className="text-white text-sm self-start">
+                            City
+                        </label>
+                        <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
+                            <input className="w-full bg-transparent text-white focus:outline-none focus:shadow-outline" id="currentPass"
+                                value={'test'}
+                                placeholder={'test'}
                             />
-                        </label>
+                        </div>
                     </div>
-                </div> */}
+                    <div className='mt-2 flex flex-col sm:flex-row  sm:justify-between mb-2'>
+                        <label className="text-white text-sm self-start">
+                            Job
+                        </label>
+                        <div className='pl-2 bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
+                            <input className="w-full bg-transparent text-white focus:outline-none focus:shadow-outline" id="currentPass"
+                                value={'test'}
+                                placeholder={'test'}
+                            />
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </>
     );
