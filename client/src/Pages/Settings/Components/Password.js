@@ -42,9 +42,9 @@ const Password = () => {
     }
 
     const validateNewPassword = () => {
-        console.log('reset password clicked');
+        console.log('validate new password clicked');
         axios.put(`http://localhost:3001/users/pin`, {
-            pin: pin,
+            pin: Number(pin),
             newPassword: password,
             id: user.id
         })
@@ -76,7 +76,7 @@ const Password = () => {
                                                 onChange={(event) => setCurrentPassword(event.target.value)} />
                                         </div>
                                     </div>
-                                    <button onClick={resetPassword}  className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500 ${ password !== passwordConfirm || password.length <= 0 ? 'btn-disabled': ''}`}>Change password</button>
+                                    <button onClick={resetPassword}  className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500 ${ currentPassword <= 0 ? 'btn-disabled': ''}`}>Change password</button>
                                 </div>
                                 :
                                 <div>
@@ -115,7 +115,8 @@ const Password = () => {
                                             <div className='bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
                                                 <input className="w-full pl-2 bg-transparent text-white rounded-sm focus:outline-none focus:shadow-outline" id="passwordConfirm"
                                                     type={'text'}
-                                                    value={passwordConfirm}
+                                                    value={pin}
+                                                    input={'number'}
                                                     onChange={(event) => setPIN(event.target.value)} />
                                             </div>
                                     </div>

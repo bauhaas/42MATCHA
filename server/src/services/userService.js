@@ -452,12 +452,19 @@ const sendResetPIN = async (email, firstName, lastName, id) => {
 
   log.info('[userService]', "Email sent to ", email);
 
-  const result = await client.query(`
-    UPDATE users SET
-    pin = $1
-    WHERE id = $2
-    RETURNING *;
+  const client = await pool.connect();
+  try {
+    const result = await client.query(`
+      UPDATE users
+      SET pin = $1
+      WHERE id = $2
+      RETURNING *;
     `, [pin, id]);
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
 };
 
 export const resetPassword = async (oldPassword, user) => {
@@ -471,9 +478,10 @@ export const resetPassword = async (oldPassword, user) => {
     // If the passwords don't match, throw an error
     if (!passwordMatch) {
       log.error('[userService]', 'pass didnt match');
-      throw new Error('Invalid email or password .');
+      throw new Error('Invalid  password .');
     } else {
-      await sendResetPIN(user.email, user.first_name, user.last_name);
+      await sendResetPIN(user.email, user.first_name, user.last_name, user.id);
+      return "ok";
     }
   } catch (err) {
     throw err;
@@ -485,7 +493,6 @@ export const validateNewPassword = async (newPassword, pin, user) => {
     log.info('[userService]', 'resetPassword');
 
     // Compare the given password with the hashed password in the database
-    log.info('[userService]', ', new:', newPassword);
 
     // If the passwords don't match, throw an error
     if (pin !== user.pin) {
@@ -495,6 +502,7 @@ export const validateNewPassword = async (newPassword, pin, user) => {
 
       var salt = bcrypt.genSaltSync(10);
       var newHash = bcrypt.hashSync(newPassword, salt);
+      console.log("salt");
       const result = await client.query(
         'UPDATE users \
         SET password = $1 \
@@ -502,14 +510,16 @@ export const validateNewPassword = async (newPassword, pin, user) => {
         [newHash, user.id]
       );
 
+      console.log("f");
       const result2 = await client.query(' \
         UPDATE users SET \
         pin = NULL \
         WHERE id = $1 \
         RETURNING *;',
-        [id]);
+        [user.id]);
       client.release();
     }
+    return ;
   } catch (err) {
     throw err;
   }
