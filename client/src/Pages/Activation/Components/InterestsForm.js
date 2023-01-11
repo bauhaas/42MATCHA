@@ -50,14 +50,14 @@ const InterestsForm = ({ interests, setInterests }) => {
                 </div>
                 <br />
                 <p className='font-bold text-2xl'>Out of ideas ? </p>
-                <div className='bg-emerald-800 rounded-lg p-4 my-4 mx-4'>
+                <div className='bg-chess-dark rounded-lg p-4 my-4 mx-4'>
                     <div className='font-bold text-xl text-center'>Popular point of interests</div>
                     <p className='text-center'>Click to add them to your profile</p>
                     <br />
                     <ul className="flex gap-2 justify-center flex-wrap cursor-pointer">
                         {example.map((interest, index) => (
                             <li key={`${interest}-${index}`} id={interest} className="flex">
-                                <div onClick={(event) => addToInterests(event, interest)} className="badge badge-lg bg-emerald-300 text-black hover:text-white hover:bg-indigo-700">{interest}</div>
+                                <div onClick={(event) => addToInterests(event, interest)} className="badge badge-lg bg-orange-300 text-chess-default hover:bg-orange-400">{interest}</div>
                             </li>
                         ))}
                     </ul>

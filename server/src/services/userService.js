@@ -531,7 +531,7 @@ export const sendConfirmationEmail = async (email, firstName, lastName, accessTo
     from: '"Matcha" <matcha@noreply.com>',
     to: email,
     subject: "Confirm your Matcha account",
-    text: "Hi " + firstName + " " + lastName + `,\n\nIn order to get full access to Matcha features, you need to confirm your email address by following the link below.\nhttp://localhost:3000/profile?token=${accessToken}\n— Matcha`,
+    text: "Hi " + firstName + " " + lastName + `,\n\nIn order to get full access to Matcha features, you need to confirm your email address by following the link below.\nhttp://localhost:3000/activation?token=${accessToken}\n— Matcha`,
   });
 
   log.info('[userService]', "Email sent to ", email);
