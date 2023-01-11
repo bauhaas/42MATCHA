@@ -9,6 +9,7 @@ import  fs from 'fs';
 import request from 'request';
 import { type } from 'os';
 import { faker } from '@faker-js/faker';
+import { ForbiddenError, NotFoundError } from '../errors/error.js';
 
 // export const downloadAndStoreImageSeeding = async (id, img_number, url) => {
 //   try {
@@ -316,11 +317,13 @@ export const getLogin = async (email, password) => {
 
     const user = t.rows[0];
 
-    // check if email was verified
-    if (user.active === false) {
-      log.error('[userService]', 'email not verified');
-      throw new Error('Email not verified');
-    }
+
+    // If the user isn't active (no profile pic)
+    // if (!user.active) {
+    //   log.error('[userService]', 'no profile pic on signin');
+    //   throw new ForbiddenError('No profile picture uploaded via the email link');
+    // }
+
     // Compare the given password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password);
 
@@ -329,6 +332,8 @@ export const getLogin = async (email, password) => {
       log.error('[userService]', 'pass didnt match');
       throw new Error('Invalid email or password .');
     }
+
+
 
     // await client.query(
     //   'UPDATE users SET status = null WHERE id = $1',

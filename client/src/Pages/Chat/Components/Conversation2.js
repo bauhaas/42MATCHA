@@ -84,12 +84,14 @@ const Conversation2 = () => {
         })
 
         socket.client.on('userDisconnect', (data) => {
+            console.log('receive userDisconect:', data, partnerID)
             if (partnerID == data) {
                 setpartnerStatus(false);
             }
         })
 
         socket.client.on('userConnect', (data) => {
+            console.log('receive userDisconect:', data, partnerID)
             if (partnerID == data) {
                 setpartnerStatus(true);
             }

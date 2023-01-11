@@ -35,12 +35,14 @@ function Signin() {
   const handleSignInClick = (event) => {
     event.preventDefault();
 
+    console.log('post login');
     axios.post('http://localhost:3001/users/login', {
       email: email,
       password: password
     })
       .then(response => {
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
+        console.log('post login success');
         const user = jwt_decode(response.data);
         dispatch(setUser(user));
         localStorage.setItem('jwt', response.data);
@@ -80,8 +82,8 @@ function Signin() {
 
         <CustomAlert error={error} open={open} setOpen={setOpen}/>
         <img className="w-screen object-cover h-1/3 md:w-1/2 md:h-screen" src='../bg-signin-signup.jpeg' alt='bg-signin-signup'/>
-        <div className="w-full h-full md:w-1/2">
-          <div className="w-full min-h-full flex flex-col items-center justify-center px-10 md:px-36">
+        <div className="w-full h-full md:w-1/2 flex justify-center">
+          <div className="w-3/4 sm:w-1/2 min-h-full flex flex-col items-center justify-center">
             <img className="w-1/5 self-start" src='../logo.png' alt='logo'/>
             <h1 className="self-start text-2xl font-bold mb-4">Sign in to your account</h1>
             <label className="block text-gray-700 text-sm font-bold self-start mb-2">
@@ -96,16 +98,16 @@ function Signin() {
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="***********"
               value={password}
               onChange={(event) => setPassword(event.target.value)} />
-            <div className="w-full flex items-center  mb-4">
+            {/* <div className="w-full flex items-center  mb-4">
               <label className="grow  text-end ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"><a href="#" className="text-blue-600 dark:text-blue-500 hover:underline">Forgot your password ?</a></label>
-            </div>
+            </div> */}
             <button onClick={handleSignInClick} className="h-10 w-full items-center justify-center  gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
               <span>Sign in</span>
             </button>
             <label className="mt-2 self-start text-sm font-small text-gray-900 dark:text-gray-300">Not registered ? <a href="/signup" onClick={handleSignUpClick} className="text-blue-600 dark:text-blue-500 hover:underline">Create an account</a></label>
 
 
-            <input  className="shadow appearance-none border rounded w-full mb-4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="fakeusername" type="text" placeholder="fakeUserSetter"
+            <input  className="shadow appearance-none border rounded w-full mb-2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="fakeusername" type="text" placeholder="fake username"
                     value={fakeUserName}
                     onChange={(event) => setFakeUserName(event.target.value)} />
             <button onClick={fakeUser} className="h-10 w-full items-center justify-center  gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
