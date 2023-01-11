@@ -10,7 +10,7 @@ import axios from 'axios';
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
 import socket from '../../../Context/socket'
 
-const InteractionButtons = ({user, isMatched, filled}) => {
+const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
 
     const currentUser = useSelector((state) => state.user.user);
     const [filledIcon, setFilledIcon] = useState(false);
@@ -32,6 +32,7 @@ const InteractionButtons = ({user, isMatched, filled}) => {
         await unlikeUserById(currentUser.id, user.id);
         setFilledIcon(false);
         setMatch(false);
+        setFilledIconp(false);
     }
 
     const gotochat = async (event) => {

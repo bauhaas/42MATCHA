@@ -187,7 +187,7 @@ const ProfileDetails = ({id}) => {
                                             <p>{user.sex_orientation} {user.sex}</p>
 
                                         </div>
-                                        <InteractionButtons user={user} isMatched={isMatched} filled={filledIcon} />
+                                    <InteractionButtons user={user} isMatched={isMatched} filled={filledIcon} setFilledIconp={setFilledIcon} />
                                     </div>
                                     <div className='bg-chess-button rounded-lg m-2 py-2'>
                                         <h1 className='text-center'>Interests</h1>
