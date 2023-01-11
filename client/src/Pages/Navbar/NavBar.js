@@ -241,9 +241,9 @@ return (
                 >
                   <Menu.Items className="h-80 w-full absolute right-0 z-10 mt-2 rounded-md  bg-white py-1 shadow-lg overflow-auto scrollbar">
                     {sortedNotifications && sortedNotifications.map((notification) => (
-                      <Menu.Item key={notification.id}>
-                        <div onMouseEnter={(event) => setNotifRead(event, notification)} className={classNames(notification.read ? '' : 'bg-blue-100', 'px-4 py-2 text-sm text-gray-700 flex items-center gap-1')}>
-                          <Avatar imageAttribute={'rounded-full w-8'} attribute={'avatar'} imagePath={notification.file_path} onClick={(event) => gotoprofile(event, notification.sender_id)} />
+                      <Menu.Item key={notification.id} onClick={(event) => gotoprofile(event, notification.sender_id)}>
+                        <div  onMouseEnter={(event) => setNotifRead(event, notification)} className={classNames(notification.read ? '' : 'bg-blue-100', 'px-4 py-2 text-sm text-gray-700 flex items-center gap-1')}>
+                          <Avatar imageAttribute={'rounded-full w-8'} attribute={'avatar'} imagePath={notification.file_path} />
                             <div className="flex-1">{getNotifText(notification)}</div>
                             <svg onClick={(event) =>deleteNotifs(event, notification)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 rounded-full hover:bg-blue-200">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

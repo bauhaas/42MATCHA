@@ -10,7 +10,7 @@ const ProfileCard = ({ user }) => {
 		navigate(`/profile/${user.id}`);
 	}
 
-	// console.log('t');
+	console.log(user);
 	return (
 		<>
 			<div onClick={gotoprofile} className="rounded-md bg-chess-hover hover:bg-chess-dark group w-full scale-90">

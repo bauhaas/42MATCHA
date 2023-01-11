@@ -24,10 +24,8 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
             }
         });
 
-    // const saveToRedux = (data) => {
-    //     console.log('redux data', data);
-    //     dispatch(setUser(data));
-    // }
+
+        //TODO should return user, not token
     const addUser = () => {
         axios.post('http://localhost:3001/users', {
             firstName: firstName,
@@ -39,10 +37,8 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
         })
             .then(response => {
                 console.log(response);
-                // const user = jwt_decode(response.data);
                 setHasSignedUP(true);
-                // saveToRedux(user);
-                localStorage.setItem('jwt', response.data);
+                // localStorage.setItem('jwt', response.data);
                 return ;
             })
             .catch(error => {

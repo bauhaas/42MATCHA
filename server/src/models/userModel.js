@@ -28,8 +28,8 @@ export async function createUsersTable() {
         active BOOLEAN DEFAULT false,
         longitude FLOAT,
         latitude FLOAT,
-        fame_rating INT,
-        report_count INT,
+        fame_rating INT DEFAULT 0,
+        report_count INT DEFAULT 0,
         status TIMESTAMPTZ NULL DEFAULT NOW(),
         pin INTEGER DEFAULT NULL
       );
