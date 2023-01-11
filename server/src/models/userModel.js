@@ -95,50 +95,31 @@ export async function seedUsersTable() {
         let country = faker.address.country().replace('\'', '');
         country = country.replace('\'', '');
         const fame_rating = Math.floor(Math.random() * 20);
-        // const birthdate = faker.date.birthdate({refDate: Date});
-        const commonHobbies = ["42", "matcha", "super", "chouette", "I am a common hobby", "vitesse"];
-        const hobbies = ["sport", "bagarre", "flute", "contrebasse", "trompette", "aviation", "chanter", "danser", "courgette", "livre", "je suis un interet", "je suis un hobby"];
+
 
         var interestsStr = "[";
-        for (let i = 0; i < 4; i++) {
-          var j = Math.floor(Math.random() * commonHobbies.length);
-          interestsStr += "\"" + commonHobbies[j] + "\",";
+
+        const commonHobbies = ["42", "matcha", "super", "chouette", "I am a common hobby", "vitesse"];
+        let randomCommon = commonHobbies.sort(() => .5 - Math.random()).slice(0,4)
+        for (let i = 0; i < randomCommon.length; i++) {
+          interestsStr += "\"" + randomCommon[i] + "\",";
         }
-        for (let i = 0; i < Math.floor(Math.random() * 6); i++) {
 
-          // const categories = ["general", "sports_and_outdoors", "education", "collection", "competition", "observation"];
-          // const category = categories[Math.floor(Math.random() * categories.length)];
-
-          // request.get({
-          //   url: `https://api.api-ninjas.com/v1/hobbies?category=${category}`,
-          //   headers: {
-          //     "X-Api-Key": "YkwtUopPCegHLiExwO50iA==i5sUUacN8j0OxUHs",
-          //   },
-          // }, function (error, response, body) {
-          //   if (error) return console.error("Request failed:", error);
-          //   else if (response.statusCode != 200)
-          //     return console.error("Error:", response.statusCode, body.toString("utf8"));
-          //   else {
-          //     interestsStr += "\"" + body.hobby + "\",";
-          //     const data = JSON.parse(body);
-          //     console.log('body', data.hobby);
-          //   }
-          // });
-
-            // interestsStr = await getHobby(interestsStr);
-
-          var j = Math.floor(Math.random() * hobbies.length);
-          interestsStr += "\"" + hobbies[j] + "\",";
+        const hobbies = ["sport", "bagarre", "flute", "contrebasse", "trompette", "aviation", "chanter", "danser", "courgette", "livre", "je suis un interet", "je suis un hobby"];
+        let randomOther = hobbies.sort(() => .5 - Math.random()).slice(0,Math.floor(Math.random() * 6))
+        for (let i = 0; i < randomOther.length; i++) {
+          interestsStr += "\"" + randomOther[i] + "\",";
         }
+
         if (interestsStr !== "[") {
           interestsStr = interestsStr.slice(0, -1);
         }
         interestsStr += "]";
+
         const avatar_type = sex === "male" ? "man,boy,male" : "woman,girl,female";
         const seed_profile_avatar = faker.image.imageUrl(480, 480, avatar_type) // 'https://loremflickr.com/1234/2345/cat'
         const bio = faker.lorem.lines(3).replace('\'', '');
         const job = faker.name.jobTitle();
-
 
 
         const query = `
