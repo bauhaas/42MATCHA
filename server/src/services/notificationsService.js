@@ -2,8 +2,6 @@ import pool from '../config/db.js';
 import log from '../config/log.js';
 import { NotFoundError } from '../errors/error.js';
 
-import { updateUserFameRating } from './userService.js'
-
 export const createNotification = async (sender_id, receiver_id, type) => {
     const client = await pool.connect();
     try {
@@ -33,24 +31,6 @@ export const createNotification = async (sender_id, receiver_id, type) => {
         client.release();
     }
 }
-
-
-//TODO seems unused, save just in case
-// export const getNotification = async (sender_id, receiver_id, type) => {
-//     const client = await pool.connect();
-//     const notif = await client.query(`
-//         SELECT * FROM notifications
-//         WHERE sender_id = $1
-//         AND receiver_id = $2
-//         AND type = $3
-//         `, [sender_id, receiver_id, type]);
-
-//     client.release();
-//     if (notif.rowCount > 0) {
-//         return notif.rows[0]
-//     }
-//     return null;
-// }
 
 //TODO seems useless. I should only need to get the notif where user is receiver
 export const getNotificationsOfUserId = async (id) => {

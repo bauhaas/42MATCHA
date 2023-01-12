@@ -3,9 +3,11 @@ import express from 'express';
 import { getConversationsOf, getConversationBetween } from '../services/conversationService.js';
 import { validateParamId } from '../middleware/idValidationMiddleware.js';
 import { sendErrorResponse } from '../errors/error.js';
+import { authenticateToken } from '../middleware/authMiddleware.js';
+
 const router = express.Router();
 
-router.get('/user/:id', validateParamId, async (req, res) => {
+router.get('/user/:id', authenticateToken, validateParamId, async (req, res) => {
     try {
         const conversations = await getConversationsOf(req.params.id);
         res.status(200).send(conversations);
@@ -14,7 +16,7 @@ router.get('/user/:id', validateParamId, async (req, res) => {
     }
 });
 
-router.get('/:id1/:id2', async (req, res) => {
+router.get('/:id1/:id2', authenticateToken, async (req, res) => {
     try {
         const conversation = await getConversationBetween(req.params.id1, req.params.id2);
         res.status(200).send(conversation);

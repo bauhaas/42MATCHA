@@ -2,10 +2,11 @@ import express from 'express';
 import { getAllRelations, insertRelation, deleteRelationByContent } from '../services/relationsService.js';
 import log from '../config/log.js';
 import { BadRequestError, sendErrorResponse } from '../errors/error.js';
+import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     log.info('[relationsController]', 'post relation');
     const { sender_id, receiver_id, type } = req.body;
@@ -20,7 +21,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     log.info('[relationsController]', 'get all relations');
     const relations = await getAllRelations();
@@ -30,7 +31,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/', authenticateToken, async (req, res) => {
   try {
     log.info('[relationsController]', 'delete relation', req.body);
 
