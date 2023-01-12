@@ -48,6 +48,7 @@ export const getNotificationsOfUserId = async (id) => {
             return notif.rows
         }
         log.info('[notificationService]', 'return null');
+        return null;
     } catch {
         throw err;
     } finally {

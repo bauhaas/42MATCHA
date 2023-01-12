@@ -40,7 +40,8 @@ function App() {
     const location = useLocation();
 
     useEffect(() => {
-      const token = localStorage.getItem("jwtToken");
+      const token = localStorage.getItem("jwt");
+      console.log('u dont wait for token')
       console.log(token, location.pathname, unauthenticatedRoutes.includes(location.pathname));
       if (!token && !unauthenticatedRoutes.includes(location.pathname)) {
         navigate("/signin", { replace: true });
@@ -73,6 +74,7 @@ function App() {
     }
 
     if (!isAuth && !unauthenticatedRoutes.includes(location.pathname)) {
+      console.log('u not auth')
       navigate("/signin", { replace: true });
       return <div>Loading (u not auth and not in authorized routes)...</div>;
     }

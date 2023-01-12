@@ -661,31 +661,31 @@ export const updateUserFameRating = async (id, bool) => {
   const client = await pool.connect();
 
   try {
-  const user = await getUserById(id);
-  var newFame = user.fame_rating;
-  if (bool === true) {
-    newFame++
-  } else {
-    newFame--;
-  }
-  log.info('[userService]', 'gonna update the fame_rating user');
-  const result = await client.query(`
-  UPDATE users SET
-  fame_rating = $1
-  WHERE id = $2
-  RETURNING *;`, [
-    newFame,
-    id
-  ]);
-  const newUser = result.rows[0];
-  console.log(newUser);
-  return newUser;
-} catch (err) {
-  log.error('[userService]', err);
-  throw err;
-} finally {
-    client.release();
 
+    const user = await getUserById(id);
+    var newFame = user.fame_rating;
+    if (bool === true) {
+      newFame++
+    } else {
+      newFame--;
+    }
+    log.info('[userService]', 'gonna update the fame_rating user');
+    const result = await client.query(`
+    UPDATE users SET
+    fame_rating = $1
+    WHERE id = $2
+    RETURNING *;`, [
+      newFame,
+      id
+    ]);
+    const newUser = result.rows[0];
+    console.log(newUser);
+    return newUser;
+  } catch (err) {
+    log.error('[userService]', err);
+    throw err;
+  } finally {
+    client.release();
 }
 };
 
@@ -888,7 +888,6 @@ export const getLikedUsers = async (id) => {
     throw err;
   } finally {
     client.release();
-
   }
 }
 

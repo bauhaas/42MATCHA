@@ -6,7 +6,8 @@ const pool = new pg.Pool({
   password: 'password', // the password specified in the docker-compose file
   database: 'mydb', // the default database to connect to
   listen_addresses: "172.19.0.3",
-  port: 5432
+  port: 5432,
+  max:10000000
 });
 
 export default pool;

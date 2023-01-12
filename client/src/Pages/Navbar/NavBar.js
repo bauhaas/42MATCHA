@@ -117,6 +117,7 @@ const Navbar = () => {
 
   const gotoprofile = (event, id) => {
     event.preventDefault();
+    console.log(id);
     navigate(`/profile/${id}`);
   }
 

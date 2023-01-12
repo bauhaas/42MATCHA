@@ -102,6 +102,7 @@ const ProfileDetails = ({id}) => {
     const [profilePic, setProfilePic] = useState('');
 
     useEffect(() => {
+        console.log(currentUser.id, id);
         const getUser = async () => {
             await api.get(`http://localhost:3001/users/${currentUser.id}/profile/${id}`)
                 .then(response => {
@@ -128,7 +129,7 @@ const ProfileDetails = ({id}) => {
                 });
         }
         getUser();
-    }, []);
+    }, [id]);
 
     useEffect(() => {
         socket.client.on('userDisconnect', (data) => {
