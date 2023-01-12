@@ -334,25 +334,16 @@ router.put('/:id/update', async (req, res) => {
 });
 
 // Reset password
-router.put('/resetPassword', authenticateToken, async (req, res) => {
+router.post('/resetPassword', async (req, res) => {
   try {
     log.info('[userController]', 'resetpassword');
     log.info('[userController]', req.body);
     const {email} = req.body;
 
-    const user = await getUserByEmail(id);
-
     await handleForgottenPassword(email);
     res.sendStatus(200);
   } catch (err) {
-    if (err.message === 'A user with the given email already exists.' || err.message === 'Invalid email or password .') {
-      res.status(403).send(err.message);
-      return;
-    } else if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message);
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 

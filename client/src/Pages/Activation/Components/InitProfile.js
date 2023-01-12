@@ -5,7 +5,7 @@ import PreferencesForm from "./PreferencesForm";
 import InterestsForm from "./InterestsForm";
 import PictureForm from "./PictureForm";
 import IntroForm from "./IntroForm";
-// import axios from 'axios';
+import axios from 'axios';
 import api from '../../../ax';
 import { useDispatch } from 'react-redux';
 import { removeFile, setFiles, setUser, updateFiles } from "../../../userSlice";

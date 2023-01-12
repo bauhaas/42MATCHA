@@ -426,7 +426,7 @@ export const handleForgottenPassword = async (email) => {
     // If no user was found with the given email, throw an error
     if (result.rowCount === 0) {
       log.error('[userService]', 'didnt find user with that mail');
-      throw new Error('Invalid email or password');
+      throw new NotFoundError('Invalid email or password');
     }
 
     var pwd              = '';
@@ -438,13 +438,16 @@ export const handleForgottenPassword = async (email) => {
 
     log.info('[userService]', "sending email with clear password");
     await sendPasswordEmail(email, result.rows[0].first_name, pwd);
+    console.log(result.rows[0]);
 
+    var salt = bcrypt.genSaltSync(10);
+    var newHash = bcrypt.hashSync(pwd, salt);
     const resUpdate = await client.query(' \
-      UPDATE users SET \
-      password = $1 \
+      UPDATE users \
+      SET password = $1 \
       WHERE id = $2 \
       RETURNING *;', [
-      password, id
+        newHash, result.rows[0].id
     ]);
     log.info(("email sent to", email, "and user updated"));
   } catch (err) {

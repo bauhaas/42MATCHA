@@ -121,7 +121,7 @@ function Signin() {
                 <span>Forgot your password ?</span>
               </button>
             </div>
-            {pwdSent ? <div>Sent temp password via mail</div> : <></>}
+            {pwdSent ? <div>Sent temp password via mail</div> : null}
             <button onClick={handleSignInClick} className="h-10 w-full items-center justify-center  gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
               <span>Sign in</span>
             </button>
