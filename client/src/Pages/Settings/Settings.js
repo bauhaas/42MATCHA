@@ -259,6 +259,7 @@ const Settings = () => {
                                     default={user.age}
                                     value={age}
                                     placeholder={user.age}
+                                    type={'number'}
                                     onChange={(event) => setAge(event.target.value)} />
                             </div>
                         </div>

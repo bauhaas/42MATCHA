@@ -56,19 +56,23 @@ export const createNotification = async (sender_id, receiver_id, type) => {
 export const getNotificationsOfUserId = async (id) => {
     log.info('[notificationService.js]', 'getnotifById',id)
     const client = await pool.connect();
-    const notif = await client.query(`
-        SELECT * FROM notifications
-        WHERE sender_id = $1 OR receiver_id = $1
-        `, [id]);
+    try {
+        const notif = await client.query(`
+            SELECT * FROM notifications
+            WHERE sender_id = $1 OR receiver_id = $1
+            `, [id]);
 
-    console.log(notif.rows);
-    client.release();
-    if (notif.rowCount > 0) {
-        log.info('[notificationService]', 'return something');
-        return notif.rows
+        console.log(notif.rows);
+        if (notif.rowCount > 0) {
+            log.info('[notificationService]', 'return something');
+            return notif.rows
+        }
+        log.info('[notificationService]', 'return null');
+    } catch {
+        throw err;
+    } finally {
+        client.release();
     }
-    log.info('[notificationService]', 'return null');
-    return null;
 }
 
 export const getNotificationById = async (id) => {

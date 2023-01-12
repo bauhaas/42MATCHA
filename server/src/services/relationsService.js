@@ -136,8 +136,9 @@ export const insertRelation = async (sender_id, receiver_id, type) => {
             return await createLikeRelation(sender_id, receiver_id);
         else if (type == "unlike") {
             const likeRelation = await getRelation(sender_id, receiver_id, "like");
-            if (likeRelation)
+            if (likeRelation) {
                 return await deleteRelation(likeRelation.id);
+            }
 
             const match = await getRelation(sender_id, receiver_id, "match");
             if (match === null)

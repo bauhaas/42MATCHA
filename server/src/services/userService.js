@@ -818,7 +818,6 @@ export const updateStatusUser = async (id, status) => {
       ]);
       const user = result.rows[0];
 
-      client.release();
       return user;
     } else if (status === true) {
       log.info('[userService]', "set to null");
