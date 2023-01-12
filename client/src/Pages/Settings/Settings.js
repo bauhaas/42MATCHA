@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import SettingsMenu from './Components/SettingsMenu';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../../ax';
 import { useSelector } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import Radio from '@mui/material/Radio';
@@ -51,7 +52,7 @@ const Settings = () => {
 
     const updateUser = () => {
         console.log('gonna updateUser');
-        axios.put(`http://localhost:3001/users/${user.id}/update`, {
+        api.put(`http://localhost:3001/users/${user.id}/update`, {
             first_name:first_name,
             last_name:last_name,
             email:email,
@@ -83,7 +84,7 @@ const Settings = () => {
                 formData.append('file', file); // file is the file that you get from the input element's onChange event
                 formData.append('userId', user.id);
                 formData.append('is_profile_pic', false);
-                axios.post(`http://localhost:3001/users/${user.id}/upload`, formData, {
+                api.post(`http://localhost:3001/users/${user.id}/upload`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -103,7 +104,7 @@ const Settings = () => {
         event.preventDefault();
         if(user.files.length === 1)
             return;
-        axios.delete(`http://localhost:3001/users/files/${file.id}/${user.id}`)
+        api.delete(`http://localhost:3001/users/files/${file.id}/${user.id}`)
             .then(response => {
                 dispatch(removeFile(file));
             })
@@ -114,7 +115,7 @@ const Settings = () => {
 
     const setAsProfilePic = (event, file) => {
         event.preventDefault();
-        axios.put(`http://localhost:3001/users/setAsProfilePic/${file.id}`, {
+        api.put(`http://localhost:3001/users/setAsProfilePic/${file.id}`, {
             userId : user.id
         })
             .then(response => {

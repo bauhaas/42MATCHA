@@ -3,12 +3,13 @@ import {useNavigate} from 'react-router-dom';
 import useToggle from '../../Hooks/useToggle';
 import useIsAuthenticated from '../../Hooks/useIsAuthenticated';
 import axios from 'axios';
+import api from "../../ax";
 import { useDispatch } from 'react-redux';
 import jwt_decode from "jwt-decode";
 import { setUser } from "../../userSlice";
 import position from '../../Context/position'
 import CustomAlert from "../../SharedComponents/CustomAlert";
-
+// import Cookies from 'js-cookie';
 
 function Signin() {
 
@@ -63,6 +64,7 @@ function Signin() {
       position: position
     })
       .then(response => {
+        // Cookies.set('jwt', response.data);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
         const user = jwt_decode(response.data);
         dispatch(setUser(user));

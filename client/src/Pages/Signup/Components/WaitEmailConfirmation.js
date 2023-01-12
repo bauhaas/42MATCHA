@@ -1,9 +1,11 @@
-import axios from 'axios';
+// import axios from 'axios';
+
+import api from '../../../ax';
 
 const WaitEmailConfirmation = ({email, setError, setOpen}) => {
     const handleResendEmail = () => {
         console.log(email)
-        axios.post('http://localhost:3001/users/sendSignupEmail', {
+        api.post('http://localhost:3001/users/sendSignupEmail', {
             email: email
         })
             .then(response => {

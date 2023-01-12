@@ -3,11 +3,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { RiSendPlaneFill } from 'react-icons/ri'
 import socket from '../../../Context/socket';
-import axios from 'axios';
-
+// import axios from 'axios';
+import api from '../../../ax';
 import Avatar from '../../../SharedComponents/Avatar';
 import MessageBubble from './MessageBubble';
-import NavBar from '../../Navbar/NavBar';
 
 const Conversation2 = () => {
 
@@ -37,7 +36,7 @@ const Conversation2 = () => {
 
     const patchMessagesAsRead = (conversation) => {
         console.log('patchMessagesAsRead')
-        axios.patch(`http://localhost:3001/messages/${conversation.id}`)
+        api.patch(`http://localhost:3001/messages/${conversation.id}`)
             .then(response => {
                 console.log('set messages as read');
             })
@@ -65,7 +64,7 @@ const Conversation2 = () => {
         }
 
         const getMessageHistory = async () => {
-            axios.get(`http://localhost:3001/messages/history/${conversation.id}`)
+            api.get(`http://localhost:3001/messages/history/${conversation.id}`)
                 .then(response => {
                     setMessages(response.data);
                 })

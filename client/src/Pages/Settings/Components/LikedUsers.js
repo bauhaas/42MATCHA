@@ -2,17 +2,17 @@ import NavBar from '../../Navbar/NavBar';
 import SettingsMenu from './SettingsMenu';
 import SettingsHeader from './SettingsHeader';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import { useSelector } from 'react-redux';
 import SettingsPageLayout from './SettingsPageLayout';
-
+import api from '../../../ax';
 const LikedUsers = () => {
 
 	const [likedUsers, setLikedUsers] = useState([]);
 	const currentUser = useSelector((state) => state.user.user);
 
 	const getLikedUsers = () => {
-		axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
+		api.get(`http://localhost:3001/users/${currentUser.id}/liked`)
 			.then(response => {
 				setLikedUsers(response.data);
 			})
@@ -23,7 +23,7 @@ const LikedUsers = () => {
 
 	const unlikeUser = (event, id) => {
 		event.preventDefault();
-		axios.post('http://localhost:3001/relations/', {
+		api.post('http://localhost:3001/relations/', {
 				sender_id: currentUser.id,
 				receiver_id: id,
 				type:'unlike'

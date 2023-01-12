@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import axios from 'axios';
+// import axios from 'axios';
 import Slider, { SliderThumb } from '@mui/material/Slider';
 import { AiFillFire } from 'react-icons/ai';
 import { HiArrowUp } from 'react-icons/hi';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 
 import ProfileCard from './ProfileCard';
-
+import api from '../../../ax';
 
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -64,7 +64,7 @@ const CardsMap = () => {
     const sendFilters = async (event) => {
         console.log('age:', ageRange, ' distance:', distanceRange, ' fame:',fameRange, ' commontag:', commonTags)
 
-        await axios.post(`http://localhost:3001/users/${currentUser.id}/filteredBachelors/`, {
+        await api.post(`http://localhost:3001/users/${currentUser.id}/filteredBachelors/`, {
             min_age: ageRange[0],
             max_age: ageRange[1],
             min_distance: distanceRange[0],
@@ -179,7 +179,7 @@ const CardsMap = () => {
     }, []);
 
     useEffect(() => {
-        axios.get(`http://localhost:3001/users/${currentUser.id}/bachelors`)
+        api.get(`http://localhost:3001/users/${currentUser.id}/bachelors`)
             .then(response => {
                 setUsers(response.data);
             })

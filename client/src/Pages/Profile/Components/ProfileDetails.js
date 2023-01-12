@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 
 import { AiFillFire } from 'react-icons/ai';
 import Chip from '@mui/material/Chip';
-import axios from 'axios';
-
+// import axios from 'axios';
+import api from '../../../ax';
 import Avatar from "../../../SharedComponents/Avatar";
 import InteractionButtons from './InteractionButtons';
 import socket from '../../../Context/socket'
@@ -22,7 +22,7 @@ const ProfileDetails = ({id}) => {
 
     useEffect(() => {
         const isUserLiked = async () => {
-            axios.get(`http://localhost:3001/users/${currentUser.id}/liked`)
+            api.get(`http://localhost:3001/users/${currentUser.id}/liked`)
                 .then(response => {
                     const likedUsers = response.data;
                     const userExists = likedUsers.find(likedUser => likedUser.id == id);
@@ -38,7 +38,7 @@ const ProfileDetails = ({id}) => {
         }
 
         const isUserMatched = async () => {
-            axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
+            api.get(`http://localhost:3001/users/${currentUser.id}/matched`)
                 .then(response => {
                     const matchedUsers = response.data;
                     const isMatch = matchedUsers.find(matchedUser => matchedUser.id == id);
@@ -55,7 +55,7 @@ const ProfileDetails = ({id}) => {
         }
 
         const currentUserIsBlocked = async () => {
-            axios.get(`http://localhost:3001/users/${id}/blocked`)
+            api.get(`http://localhost:3001/users/${id}/blocked`)
                 .then(response => {
                     const blockedUsers = response.data;
                     const userExists = blockedUsers.find(user => user.id == currentUser.id);
@@ -86,7 +86,7 @@ const ProfileDetails = ({id}) => {
     }, [user]);
 
     const sendVisitNotification = async () => {
-            await axios.post('http://localhost:3001/notifications', {
+            await api.post('http://localhost:3001/notifications', {
                 sender_id: currentUser.id,
                 receiver_id: user.id,
                 type: 'visit'
@@ -103,7 +103,7 @@ const ProfileDetails = ({id}) => {
 
     useEffect(() => {
         const getUser = async () => {
-            await axios.get(`http://localhost:3001/users/${currentUser.id}/profile/${id}`)
+            await api.get(`http://localhost:3001/users/${currentUser.id}/profile/${id}`)
                 .then(response => {
                     // console.log(response.data);
 

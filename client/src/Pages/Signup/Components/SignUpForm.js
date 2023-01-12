@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import useValidator from '../../../Hooks/useValidator';
-import axios from 'axios';
+// import axios from 'axios';
+import api from "../../../ax";
 import position from '../../../Context/position'
 import { setUser } from "../../../userSlice";
 import { useDispatch } from 'react-redux';
@@ -27,7 +28,7 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
 
         //TODO should return user, not token
     const addUser = () => {
-        axios.post('http://localhost:3001/users', {
+        api.post('http://localhost:3001/users', {
             firstName: firstName,
             lastName: lastName,
             email: email,
@@ -38,7 +39,6 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
             .then(response => {
                 console.log(response);
                 setHasSignedUP(true);
-                // localStorage.setItem('jwt', response.data);
                 return ;
             })
             .catch(error => {

@@ -6,7 +6,8 @@ import Chip from '@mui/material/Chip';
 import { GoPrimitiveDot } from 'react-icons/go';
 import { AdjustmentsVerticalIcon, HeartIcon as HeartOutlineIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../../../ax';
 import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
 import socket from '../../../Context/socket'
 
@@ -36,7 +37,7 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
     }
 
     const gotochat = async (event) => {
-        await axios.get(`http://localhost:3001/conversations/${currentUser.id}/${user.id}`)
+        await api.get(`http://localhost:3001/conversations/${currentUser.id}/${user.id}`)
             .then(response => {
                 console.log(response, response.data);
                 navigate(`/chat/${response.data.id}`, {

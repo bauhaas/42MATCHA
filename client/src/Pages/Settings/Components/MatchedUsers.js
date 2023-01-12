@@ -2,9 +2,10 @@ import NavBar from '../../Navbar/NavBar';
 import SettingsMenu from './SettingsMenu';
 import SettingsHeader from './SettingsHeader';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import { useSelector } from 'react-redux';
 import SettingsPageLayout from './SettingsPageLayout';
+import api from '../../../ax';
 
 const MatchedUsers = () => {
 
@@ -12,7 +13,7 @@ const MatchedUsers = () => {
 	const currentUser = useSelector((state) => state.user.user);
 
 	const getMatchedUsers = () => {
-		axios.get(`http://localhost:3001/users/${currentUser.id}/matched`)
+		api.get(`http://localhost:3001/users/${currentUser.id}/matched`)
 			.then(response => {
 				setmatchedUsers(response.data);
 			})
@@ -25,7 +26,7 @@ const MatchedUsers = () => {
 	const unmatchUser = (event, id) => {
 		event.preventDefault();
 		console.log('unmatch user', id);
-		axios.post('http://localhost:3001/relations', {
+		api.post('http://localhost:3001/relations', {
 			sender_id: currentUser.id,
 			receiver_id: id,
 			type: 'unlike'
