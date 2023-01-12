@@ -1,7 +1,8 @@
 
 const Avatar = ({ imageAttribute, attribute, imagePath, from}) => {
 
-    // console.log(imagePath, typeof(imagePath), 'from:', from);
+    console.log(imagePath);
+    console.log(`http://localhost:3001/${imagePath}`)
     return (
         <div className={attribute}>
             <div className={imageAttribute}>

@@ -1,6 +1,7 @@
 import NavBar from '../../Navbar/NavBar';
 import SettingsMenu from './SettingsMenu';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../../../ax';
 import { useEffect, useState } from 'react';
 import SettingsHeader from './SettingsHeader';
 import { useSelector } from 'react-redux';
@@ -15,7 +16,7 @@ const BlockedUsers = () => {
 	const unblockUser = (event, id) => {
 		event.preventDefault();
 		console.log('unblock user', id);
-		axios.delete('http://localhost:3001/relations', {
+		api.delete('http://localhost:3001/relations', {
 			data:{
 				sender_id: currentUser.id,
 				receiver_id: id,
@@ -31,7 +32,7 @@ const BlockedUsers = () => {
 	}
 
 	const getBlockedUsers = () => {
-		axios.get(`http://localhost:3001/users/${currentUser.id}/blocked`)
+		api.get(`http://localhost:3001/users/${currentUser.id}/blocked`)
             .then(response => {
 				setBlockedUsers(response.data);
             })

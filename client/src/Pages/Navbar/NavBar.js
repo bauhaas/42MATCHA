@@ -6,10 +6,11 @@ import { BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 
 import  socket  from '../../Context/socket'
-import axios from 'axios';
+// import axios from 'axios';
 import Avatar from "../../SharedComponents/Avatar";
 import { setConvs } from "../../convSlice";
 import { persistor } from "../../store";
+import api from "../../ax";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -33,7 +34,7 @@ const Navbar = () => {
 	}, [user]);
 
   useEffect(() => {
-      axios.get(`http://localhost:3001/notifications/${user.id}/receiver`, {
+      api.get(`http://localhost:3001/notifications/${user.id}/receiver`, {
         id: user.id
       })
         .then(response => {
@@ -138,7 +139,7 @@ const Navbar = () => {
     event.preventDefault(); //do not delete, allow to not autoclose the notifications dropdown on a single suppresion
     console.log('delete notifs with id:', notifToRemove.id);
 
-    axios.delete(`http://localhost:3001/notifications/${notifToRemove.id}`, {id: notifToRemove.id
+    api.delete(`http://localhost:3001/notifications/${notifToRemove.id}`, {id: notifToRemove.id
     })
       .then(response => {
         console.log('notif has been deleted in db', response);
@@ -157,7 +158,7 @@ const Navbar = () => {
     if(!notifToUpdate.read)
     {
       console.log('notif has been read');
-      axios.put(`http://localhost:3001/notifications/${notifToUpdate.id}/update_read`, {
+      api.put(`http://localhost:3001/notifications/${notifToUpdate.id}/update_read`, {
         id: notifToUpdate.id
       })
         .then(response => {

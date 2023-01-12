@@ -18,7 +18,7 @@ const SettingsMenuButton = ({buttonText, route, icon}) => {
 
     return (
         <>
-            <li className='hover:text-white hover:bg-chess-hover border-b-2 text-xs font-bold border-chess-default'>
+            <li key={buttonText} className='hover:text-white hover:bg-chess-hover border-b-2 text-xs font-bold border-chess-default'>
                 <button onClick={() => gotoRoute(route)} className={`active:bg-chess-hover ${active === route ? 'bg-chess-hover text-white' : null}`}>
                     {icon}
                     <span className='hidden sm:inline'>{buttonText}</span>

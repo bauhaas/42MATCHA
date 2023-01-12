@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import socket from '../../Context/socket';
-import axios from 'axios';
-
+// import axios from 'axios';
+import api from '../../ax';
 import ConvCard from './Components/ConvCard';
 import NavBar from '../Navbar/NavBar';
 import { updateConversation } from "../../convSlice";
@@ -18,7 +18,7 @@ const Chat = () => {
     const [convlist, setConvList] = useState([]);
 
     const patchMessagesAsRead = (conversation) => {
-        axios.patch(`http://localhost:3001/messages/${conversation.id}`)
+        api.patch(`http://localhost:3001/messages/${conversation.id}`)
             .then(response => {
                 console.log('success patch messages');
                 // Make a copy of the conversation object
@@ -43,7 +43,7 @@ const Chat = () => {
 
     useEffect(() => {
         const getConversations = async () => {
-            axios.get(`http://localhost:3001/conversations/user/${currentUser.id}`)
+            api.get(`http://localhost:3001/conversations/user/${currentUser.id}`)
                 .then(response => {
                     console.log('get conversationof',response);
                     setConvList(response.data);

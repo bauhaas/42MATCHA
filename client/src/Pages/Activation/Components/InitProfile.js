@@ -5,7 +5,8 @@ import PreferencesForm from "./PreferencesForm";
 import InterestsForm from "./InterestsForm";
 import PictureForm from "./PictureForm";
 import IntroForm from "./IntroForm";
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../../../ax';
 import { useDispatch } from 'react-redux';
 import { removeFile, setFiles, setUser, updateFiles } from "../../../userSlice";
 
@@ -33,7 +34,7 @@ const InitProfile = ({user}) => {
 
     const handleSubmit = async () => {
         console.log(user.id);
-        await axios.put(`http://localhost:3001/users/${user.id}/update`, {
+        await api.put(`http://localhost:3001/users/${user.id}/update`, {
             bio: bio,
             age: age,
             sex: sex,
@@ -59,7 +60,7 @@ const InitProfile = ({user}) => {
                         formData.append('file', file); // file is the file that you get from the input element's onChange event
                         formData.append('user.id', user.id);
                         formData.append('is_profile_pic', true);
-                        await axios.post(`http://localhost:3001/users/${user.id}/upload`, formData, {
+                        await api.post(`http://localhost:3001/users/${user.id}/upload`, formData, {
                             headers: {
                                 'Content-Type': 'multipart/form-data'
                             }

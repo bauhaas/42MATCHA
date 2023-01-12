@@ -13,7 +13,7 @@ const Signup = () => {
   return (
     <>
     <div className="h-screen flex flex-col md:flex-row-reverse items-center content-start">
-        {/* <CustomAlert error={error} open={open} setOpen={setOpen} /> */}
+        <CustomAlert error={error} open={open} setOpen={setOpen} />
         <img className="w-screen object-cover h-1/4 md:w-1/2 md:h-screen" src='../bg-signin-signup.jpeg' alt='bg-signin-signup'/>
         <div className="w-full h-full md:w-1/2">
           <div className="w-full min-h-full flex flex-col items-center justify-center px-10 md:px-36">

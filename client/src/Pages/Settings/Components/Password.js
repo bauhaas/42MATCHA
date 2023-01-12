@@ -1,10 +1,10 @@
 import NavBar from '../../Navbar/NavBar';
 import SettingsMenu from './SettingsMenu';
 import { EyeIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
+// import axios from 'axios';
 import { useState } from 'react';
 import SettingsHeader from './SettingsHeader';
-
+import api from '../../../ax';
 import { useSelector } from 'react-redux';
 import SettingsPageLayout from './SettingsPageLayout';
 
@@ -28,7 +28,7 @@ const Password = () => {
 
     const resetPassword = () => {
         console.log('sne pin clicked');
-        axios.put(`http://localhost:3001/users/sendPin`, {
+        api.put(`http://localhost:3001/users/sendPin`, {
             currentPassword: currentPassword,
             id: user.id
         })
@@ -43,7 +43,7 @@ const Password = () => {
 
     const validateNewPassword = () => {
         console.log('validate new password clicked');
-        axios.put(`http://localhost:3001/users/pin`, {
+        api.put(`http://localhost:3001/users/pin`, {
             pin: Number(pin),
             newPassword: password,
             id: user.id
