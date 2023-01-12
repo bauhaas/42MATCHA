@@ -16,6 +16,7 @@ function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [open, setOpen] = useState(false);
+  const [pwdSent, setPwdSent] = useState(false);
   const [error, setError] = useState([])
   // const { isAuthenticated } = useIsAuthenticated();
 
@@ -75,6 +76,21 @@ function Signin() {
       });
   }
 
+  const forgotPassword = (event) => {
+    event.preventDefault();
+
+    axios.post('http://localhost:3001/users/resetPassword', {
+      email: email
+    })
+      .then(response => {
+        console.log("set new password, check email");
+        setPwdSent(true);
+      })
+      .catch(error => {
+        setError([error.response.status, error.response.data]);
+        console.log(error);
+      });
+  }
 
   return (
     <>
@@ -98,9 +114,12 @@ function Signin() {
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="***********"
               value={password}
               onChange={(event) => setPassword(event.target.value)} />
-            {/* <div className="w-full flex items-center  mb-4">
-              <label className="grow  text-end ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"><a href="#" className="text-blue-600 dark:text-blue-500 hover:underline">Forgot your password ?</a></label>
-            </div> */}
+            <div className="w-full flex items-center  mb-4">
+              <button onClick={forgotPassword} className="grow  text-end ml-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                <span>Forgot your password ?</span>
+              </button>
+            </div>
+            {pwdSent ? <div>Sent temp password via mail</div> : <></>}
             <button onClick={handleSignInClick} className="h-10 w-full items-center justify-center  gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
               <span>Sign in</span>
             </button>

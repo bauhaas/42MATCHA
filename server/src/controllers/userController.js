@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
-import { validateNewPassword, resendSignupEmail, updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
+import { handleForgottenPassword, validateNewPassword, resendSignupEmail, updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
@@ -64,7 +64,7 @@ router.post('/:id/upload', async (req, res, next) => {
 });
 
 
-router.get('/files/:userId', async (req, res) => {
+router.get('/files/:userId', authenticateToken, async (req, res) => {
   try {
     const userId = req.params.userId;
     const files = await getUserFiles(userId);
@@ -74,7 +74,7 @@ router.get('/files/:userId', async (req, res) => {
   }
 });
 
-router.delete('/files/:id/:userId', async (req, res) => {
+router.delete('/files/:id/:userId', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
     const userId = req.params.userId;
@@ -402,8 +402,31 @@ router.put('/:id/update', async (req, res) => {
   }
 });
 
-// Reset password send pin via mail
-router.put('/resetpassword', async (req, res) => {
+// Reset password
+router.put('/resetPassword', authenticateToken, async (req, res) => {
+  try {
+    log.info('[userController]', 'resetpassword');
+    log.info('[userController]', req.body);
+    const {email} = req.body;
+
+    const user = await getUserByEmail(id);
+
+    await handleForgottenPassword(email);
+    res.sendStatus(200);
+  } catch (err) {
+    if (err.message === 'A user with the given email already exists.' || err.message === 'Invalid email or password .') {
+      res.status(403).send(err.message);
+      return;
+    } else if (typeof(err) === "string" && err.includes('400')) {
+      res.status(400).send(err.message);
+      return;
+    }
+    res.status(500).send(err.message);
+  }
+});
+
+// Send pin via mail
+router.put('/sendPin', authenticateToken, async (req, res) => {
   try {
     log.info('[userController]', 'resetpassword');
     log.info('[userController]', req.body);
@@ -429,7 +452,7 @@ router.put('/resetpassword', async (req, res) => {
 });
 
 // verif pin and set new password
-router.put('/pin', async (req, res) => {
+router.put('/pin', authenticateToken, async (req, res) => {
   try {
     log.info('[userController]', 'pin');
     log.info('[userController]', req.body);

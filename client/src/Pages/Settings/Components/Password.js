@@ -27,8 +27,8 @@ const Password = () => {
     const user = useSelector((state) => state.user.user);
 
     const resetPassword = () => {
-        console.log('reset password clicked');
-        axios.put(`http://localhost:3001/users/resetpassword`, {
+        console.log('sne pin clicked');
+        axios.put(`http://localhost:3001/users/sendPin`, {
             currentPassword: currentPassword,
             id: user.id
         })

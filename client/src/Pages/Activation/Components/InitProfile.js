@@ -45,6 +45,7 @@ const InitProfile = ({user}) => {
             active: true
         })
             .then(async response => {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
                 console.log(response);
                 console.log(upload);
                 dispatch(setUser(response.data));

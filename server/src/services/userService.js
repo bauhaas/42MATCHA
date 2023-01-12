@@ -425,6 +425,69 @@ export const getUserByIdProfile = async (id) => {
   }
 };
 
+const sendPasswordEmail = async (email, first_name, password) => {
+  const transporter = nodemailer.createTransport(
+    {
+      service: 'gmail',
+      auth: {
+        user: process.env.NODEMAILER_USER,
+        pass: process.env.NODEMAILER_PASS
+      }
+    }
+  );
+
+  // send mail with defined transport object
+  await transporter.sendMail({
+    from: '"Matcha" <matcha@noreply.com>',
+    to: email,
+    subject: "Change your password",
+    text: `Hi ${first_name},\n\nHere is your temporary password: ${password}\nPlease change it quickly :)\n— Matcha`,
+  });
+
+  log.info('[userService]', "Email sent to ", email);
+};
+
+// Get user from database where email match the paramater
+export const handleForgottenPassword = async (email) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(`
+      SELECT *
+      FROM users
+      WHERE email = $1
+    `, [email]);
+
+    // If no user was found with the given email, throw an error
+    if (result.rowCount === 0) {
+      log.error('[userService]', 'didnt find user with that mail');
+      throw new Error('Invalid email or password');
+    }
+
+    var pwd              = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < 10; i++ ) {
+      pwd += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    log.info('[userService]', "sending email with clear password");
+    await sendPasswordEmail(email, result.rows[0].first_name, pwd);
+
+    const resUpdate = await client.query(' \
+      UPDATE users SET \
+      password = $1 \
+      WHERE id = $2 \
+      RETURNING *;', [
+      password, id
+    ]);
+    log.info(("email sent to", email, "and user updated"));
+  } catch (err) {
+    throw err;
+  } finally {
+      client.release();
+  }
+}
+
 // Get user from database where email match the paramater
 export const resendSignupEmail = async (email) => {
   const client = await pool.connect();
