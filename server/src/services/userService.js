@@ -23,8 +23,8 @@ import { ForbiddenError, NotFoundError } from '../errors/error.js';
 // }
 
 export const updateProfilePicture = async (fileId, userId) => {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
 
     await client.query(`
         UPDATE user_files SET is_profile_pic = $1 WHERE id = $2
@@ -38,32 +38,38 @@ export const updateProfilePicture = async (fileId, userId) => {
       SELECT * FROM user_files WHERE user_id = $1
     `, [userId]);
 
-    client.release();
     return result.rows;
   } catch (error) {
     throw error;
+  } finally {
+    client.release();
+
   }
 };
 
 export const getUserFiles = async (userId) => {
+  const client = await pool.connect();
+
   try {
     console.log('get user file of id:', userId);
-    const client = await pool.connect();
     const result = await client.query(`
       SELECT * FROM user_files WHERE user_id = $1
     `, [userId]);
-    client.release();
     return result.rows;
   } catch (error) {
     throw error;
+  } finally {
+    client.release();
+
   }
 };
 
 
 export const deleteFile = async (id, userId) => {
+  const client = await pool.connect();
+
   try {
     console.log('deleting file with id:', id);
-    const client = await pool.connect();
     // Get the file path from the database
     const result = await client.query(`
       SELECT file_path FROM user_files WHERE id = $1
@@ -95,9 +101,11 @@ export const deleteFile = async (id, userId) => {
       `, [true, randomFileId]);
     }
 
-    client.release();
   } catch (error) {
     throw error;
+  } finally {
+    client.release();
+
   }
 };
 
@@ -137,46 +145,55 @@ export const saveFile = async (userId, filePath, is_profile_pic) => {
       INSERT INTO user_files (user_id, file_path, is_profile_pic)
       VALUES ($1, $2, $3) RETURNING *;
       `, [userId, filePath, is_profile_pic]);
-    client.release();
     console.log(res, res.rows);
     return res.rows[0];
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
+
   }
 };
 
 
 export const isActive = async (id) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
     const result = await client.query(`
       SELECT active from users
       WHERE id = $1
     `, [id]);
     console.log(result);
     console.log(result.rows);
-    client.release();
     return result;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
+
   }
 }
 
 // Get all users from the database
 export const getAllUsers = async () => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
     const result = await client.query(DBgetAllUsers());
     const users = result.rows;
-    client.release();
     return users;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
   }
 };
 
 // Get bachelors from the database
 export const getBachelors = async (id) => {
+  const client = await pool.connect();
+
   try {
 
     // const t = await client.query(`
@@ -187,7 +204,6 @@ export const getBachelors = async (id) => {
     //     `, [id]);
 
 
-    const client = await pool.connect();
     const me = await getUserById(id);
     console.log("getBachelors", me);
     const result = await client.query(`
@@ -226,17 +242,20 @@ export const getBachelors = async (id) => {
 
     closeUsers.sort((a, b) => a.attractivity - b.attractivity);
 
-    client.release();
     return closeUsers;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
+
   }
 };
 
 // Get bachelors with filters from the database
 export const getFilteredBachelors = async (id, filters) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
 
     const me = await getUserById(id);
     const result = await client.query(`
@@ -280,17 +299,18 @@ export const getFilteredBachelors = async (id, filters) => {
     // sort by increasing distance
     filteredUsers.sort((a, b) => a.distance < b.distance);
 
-    client.release();
     return filteredUsers;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
   }
 };
 
 // Get user from database where email match the paramater
 export const getLogin = async (email, password) => {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
 
 
     const result = await client.query(`
@@ -343,13 +363,16 @@ export const getLogin = async (email, password) => {
     return user;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
   }
 };
 
 // Get a user by their ID from the database
 export const getUserById = async (id) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
 
     console.log(id);
     // const result = await client.query(DBgetUserById(id));
@@ -361,18 +384,21 @@ export const getUserById = async (id) => {
     `, [id]);
     const user = result.rows[0];
 
-    client.release();
     return user;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
+
   }
 };
 
 // Get a user by their ID from the database
 export const getUserByIdProfile = async (id) => {
+  const client = await pool.connect();
+
   try {
     log.info('[userService]', 'getUserByIdProfile:', id);
-    const client = await pool.connect();
     // const result = await client.query(DBgetUserById(id));
 
     const result = await client.query(`
@@ -390,10 +416,12 @@ export const getUserByIdProfile = async (id) => {
     delete(user.password);
     delete(user.report_count);
     delete(user.pin);
-    client.release();
     return user;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
+
   }
 };
 
@@ -489,6 +517,8 @@ export const resetPassword = async (oldPassword, user) => {
 };
 
 export const validateNewPassword = async (newPassword, pin, user) => {
+  const client = await pool.connect();
+
   try {
     log.info('[userService]', 'resetPassword');
 
@@ -498,7 +528,6 @@ export const validateNewPassword = async (newPassword, pin, user) => {
     if (pin !== user.pin) {
       throw new Error('wrong PIN');
     } else {
-      const client = await pool.connect();
 
       var salt = bcrypt.genSaltSync(10);
       var newHash = bcrypt.hashSync(newPassword, salt);
@@ -517,11 +546,13 @@ export const validateNewPassword = async (newPassword, pin, user) => {
         WHERE id = $1 \
         RETURNING *;',
         [user.id]);
-      client.release();
     }
     return ;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
+
   }
 };
 
@@ -558,8 +589,9 @@ const isEmailValid = async (email) => {
 
 // Insert a new user into the database
 export const insertUser = async (firstName, lastName, email, password, longitude, latitude) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
     const dupplicateEmailResult = await client.query(`
       SELECT *
       FROM users
@@ -584,15 +616,19 @@ export const insertUser = async (firstName, lastName, email, password, longitude
     const user = result.rows[0];
     const accessToken = generateAccessToken(result.rows[0]);
     await sendConfirmationEmail(email, firstName, lastName, accessToken);
-    client.release();
     return accessToken;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
+
   }
 };
 
-export const updateUserFameRating = async (id, bool) => {try {
+export const updateUserFameRating = async (id, bool) => {
   const client = await pool.connect();
+
+  try {
   const user = await getUserById(id);
   var newFame = user.fame_rating;
   if (bool === true) {
@@ -611,18 +647,21 @@ export const updateUserFameRating = async (id, bool) => {try {
   ]);
   const newUser = result.rows[0];
   console.log(newUser);
-  client.release();
   return newUser;
 } catch (err) {
   log.error('[userService]', err);
   throw err;
+} finally {
+    client.release();
+
 }
 };
 
 // Update user in db
 export const updateUser = async (data) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
 
     log.info(data);
     var interestsStr = "[";
@@ -676,11 +715,13 @@ export const updateUser = async (data) => {
 
     const user = resultUpdate.rows[0];
 
-    client.release();
     return user;
   } catch (err) {
     log.error('[userService]', err);
     throw err;
+  } finally {
+    client.release();
+
   }
 };
 
@@ -704,8 +745,9 @@ const downloadFile = async (url, fileName) => {
 
 // Insert a new user into the database
 export const CreateFakeUser = async (fakeUser, longitude, latitude) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
 
     var salt = bcrypt.genSaltSync(10);
     var fakeHash = bcrypt.hashSync(fakeUser, salt);
@@ -734,30 +776,34 @@ export const CreateFakeUser = async (fakeUser, longitude, latitude) => {
     GROUP BY users.id
         `, [res.rows[0].id]);
 
-    client.release();
     return t.rows[0];
   } catch (err) {
     log.error('[userService]', err);
     throw err;
+  } finally {
+    client.release();
   }
 };
 
 // Delete a user from the database
 export const deleteUser = async (id) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
     await client.query(DBdeleteUser(id));
-    client.release();
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
   }
 };
 
 
 // update status in user
 export const updateStatusUser = async (id, status) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
 
     log.info('[userService]', id, status);
     log.info('[userService]', 'gonna update user status/time connected');
@@ -785,19 +831,21 @@ export const updateStatusUser = async (id, status) => {
     ]);
     const user = result.rows[0];
 
-    client.release();
     return user;
   }
     throw new Error("wrong value for status");;
   } catch (err) {
     log.error('[userService]', err);
     throw err;
+  } finally {
+    client.release();
   }
 };
 
 export const getLikedUsers = async (id) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
     const result = await client.query(`
       SELECT id, first_name FROM users
       WHERE id IN (
@@ -806,16 +854,19 @@ export const getLikedUsers = async (id) => {
       )
     `, [id]);
     const users = result.rows;
-    client.release();
     return users;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
+
   }
 }
 
 export const getMatchedUsers = async (id) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
     const result = await client.query(`
       SELECT * FROM users
       WHERE id IN (
@@ -824,16 +875,18 @@ export const getMatchedUsers = async (id) => {
       )
     `, [id]);
     const users = result.rows;
-    client.release();
     return users;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
   }
 }
 
 export const getBlockedUsers = async (id) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
     const result = await client.query(`
       SELECT * FROM users
       WHERE id IN (
@@ -842,9 +895,10 @@ export const getBlockedUsers = async (id) => {
       )
     `, [id]);
     const users = result.rows;
-    client.release();
     return users;
   } catch (err) {
     throw err;
+  } finally {
+    client.release();
   }
 }
