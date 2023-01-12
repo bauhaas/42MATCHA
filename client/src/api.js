@@ -1,7 +1,7 @@
-import axios from 'axios';
+import api from './ax';
 
 export const blockUserById = async (sender_id, receiver_id) => {
-    return axios.post('http://localhost:3001/relations', {
+    return api.post('http://localhost:3001/relations', {
         sender_id: sender_id,
         receiver_id: receiver_id,
         type: 'block'
@@ -14,7 +14,7 @@ export const blockUserById = async (sender_id, receiver_id) => {
 
 
 export const likeUserById = async (sender_id, receiver_id) => {
-    return axios.post('http://localhost:3001/relations', {
+    return api.post('http://localhost:3001/relations', {
         sender_id: sender_id,
         receiver_id: receiver_id,
         type:'like'
@@ -26,7 +26,7 @@ export const likeUserById = async (sender_id, receiver_id) => {
 }
 
 export const unlikeUserById = async (sender_id, receiver_id) => {
-    return axios.post('http://localhost:3001/relations', {
+    return api.post('http://localhost:3001/relations', {
         sender_id: sender_id,
         receiver_id: receiver_id,
         type: 'unlike'
@@ -40,7 +40,7 @@ export const unlikeUserById = async (sender_id, receiver_id) => {
 export const getUserById = async (id, visit_id) => {
     try {
         console.log(id);
-        const response = await axios.get(`http://localhost:3001/users/${id}/profile/${visit_id}`);
+        const response = await api.get(`http://localhost:3001/users/${id}/profile/${visit_id}`);
         console.log('test');
         return response.data;
     } catch (error) {

@@ -278,9 +278,8 @@ function changeUserData(user, update) {
   if (update.last_name) {
     user.last_name = update.last_name;
   }
-  if (update.email && user.email != update.email) {
+  if (update.email) {
     user.email = update.email;
-    user.active = false;
   }
   if (update.age) {
     user.age = update.age;

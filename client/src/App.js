@@ -39,14 +39,14 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    useEffect(() => {
+    // useEffect(() => {
       const token = localStorage.getItem("jwt");
       console.log('u dont wait for token')
       console.log(token, location.pathname, unauthenticatedRoutes.includes(location.pathname));
       if (!token && !unauthenticatedRoutes.includes(location.pathname)) {
         navigate("/signin", { replace: true });
       }
-    }, []);
+    // }, []);
 
     const [isAuth, setIsAuth] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -73,6 +73,7 @@ function App() {
       return <div>Loading a...</div>;
     }
 
+    console.log(isAuth);
     if (!isAuth && !unauthenticatedRoutes.includes(location.pathname)) {
       console.log('u not auth')
       navigate("/signin", { replace: true });

@@ -159,7 +159,7 @@ const ProfileDetails = ({id}) => {
             socket.client.off('userConnect');
         };
     });
-
+    console.log(user.status)
     return (
         <>
             <div className='mx-2 pt-16 h-screen'>

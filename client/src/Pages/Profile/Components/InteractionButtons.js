@@ -88,6 +88,14 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
 
     console.log(user);
     console.log('rerender');
+    const m = new Date();
+    const date =  +
+    (m.getUTCHours() + 1).toString() + ":" +
+    ("0" + m.getUTCMinutes()).slice(-2) + ":" +
+    ("0" + m.getUTCSeconds()).slice(-2) + " " +
+    m.getUTCDate() + "/" +
+    ("0" + (m.getUTCMonth()+1)).slice(-2) + "/" +
+    m.getUTCFullYear();
     return (
         <>
             {
@@ -97,9 +105,9 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
                         <div className='flex ml-auto sm:p-2'>
                             <Chip
                                 size='small'
-                                label={user.status ? 'offline' : 'online'}
+                                label={user.status ? date : 'online'}
                                 icon={<GoPrimitiveDot />}
-                                className={`w-20 ${user.status ? 'bg-gray-400' : 'bg-green-400'}`}
+                                className={`w-fit ${user.status ? 'bg-gray-400' : 'bg-green-400'}`}
                                 sx={{
                                     '& .MuiChip-icon': {
                                         color: `${user.status ? 'gray' : 'green'}`,
