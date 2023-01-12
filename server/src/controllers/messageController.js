@@ -3,11 +3,12 @@ import log from '../config/log.js';
 import {getMessageHistory, setMessagesAsRead } from '../services/messageService.js';
 import { validateParamId} from '../middleware/idValidationMiddleware.js'
 import { sendErrorResponse } from '../errors/error.js';
+import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 // Get the message history for a conversation
-router.get('/history/:id', validateParamId, async (req, res) => {
+router.get('/history/:id', authenticateToken, validateParamId, async (req, res) => {
   try {
     const messageHistory = await getMessageHistory(req.params.id);
     res.status(200).send(messageHistory);
@@ -16,7 +17,7 @@ router.get('/history/:id', validateParamId, async (req, res) => {
   }
 });
 
-router.patch('/:id', validateParamId, async (req, res) => {
+router.patch('/:id', authenticateToken, validateParamId, async (req, res) => {
   try {
       await setMessagesAsRead(req.params.id);
       res.sendStatus(204);

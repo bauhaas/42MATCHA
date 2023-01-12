@@ -87,18 +87,19 @@ router.delete('/files/:id/:userId', async (req, res) => {
 
 
 // Get all users
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const users = await getAllUsers();
     res.send(users);
   } catch (err) {
-    res.status(500).send(err.message);
+    console.log('catch err get users');
+    sendErrorResponse(res, err);
   }
 });
 
 
 
-router.get('/:id/bachelors/', async (req, res) => {
+router.get('/:id/bachelors/', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id)) {
@@ -116,7 +117,7 @@ router.get('/:id/bachelors/', async (req, res) => {
   }
 });
 
-router.post('/:id/filteredBachelors', async (req, res) => {
+router.post('/:id/filteredBachelors', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id)) {
@@ -162,7 +163,7 @@ router.put('/setAsProfilePic/:fileId', async (req, res) => {
 });
 
 // Get liked users
-router.get('/:id/liked', async (req, res) => {
+router.get('/:id/liked', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id)) {
@@ -181,7 +182,7 @@ router.get('/:id/liked', async (req, res) => {
 });
 
 // Get matched users
-router.get('/:id/matched', async (req, res) => {
+router.get('/:id/matched', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id)) {
@@ -199,7 +200,7 @@ router.get('/:id/matched', async (req, res) => {
 });
 
 // Get blocked users
-router.get('/:id/blocked', async (req, res) => {
+router.get('/:id/blocked', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id)) {
@@ -263,7 +264,7 @@ router.post('/fake', async (req, res) => {
 
 
 // Get a user by their ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     if (req.params.id === null) {
       throw 'get /users/:id id undefined'
@@ -287,7 +288,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Get a user by their ID w/o email and password
-router.get('/:id/profile/:visit_id', async (req, res) => {
+router.get('/:id/profile/:visit_id', authenticateToken, async (req, res) => {
   try {
     if (req.params.id === null || req.params.visit_id === null) {
       throw 'get /users/:id/profile id undefined'
