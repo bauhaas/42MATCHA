@@ -6,7 +6,7 @@ const CustomAlert = ({ error, open, setOpen}) => {
 
     return (
         <Alert
-            className={`w-full absolute ${open ? null : "hidden"} rounded-none`}
+            className={`w-full absolute top-0 ${open ? null : "hidden"} rounded-none`}
             variant="filled"
             severity="error"
             action={

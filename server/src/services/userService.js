@@ -9,18 +9,7 @@ import  fs from 'fs';
 import request from 'request';
 import { type } from 'os';
 import { faker } from '@faker-js/faker';
-import { ForbiddenError, NotFoundError } from '../errors/error.js';
-
-// export const downloadAndStoreImageSeeding = async (id, img_number, url) => {
-//   try {
-//     const dest = './pictures/user_' + id + '_image_' + img_number + '.jpg';
-//     request(url)
-//     .pipe(fs.createWriteStream(dest))
-//     .on('close', () => {});
-//   } catch (err) {
-//     throw err;
-//   }
-// }
+import { ForbiddenError, NotFoundError, UnauthorizedError } from '../errors/error.js';
 
 export const updateProfilePicture = async (fileId, userId) => {
   const client = await pool.connect();
@@ -43,7 +32,6 @@ export const updateProfilePicture = async (fileId, userId) => {
     throw error;
   } finally {
     client.release();
-
   }
 };
 
@@ -82,7 +70,6 @@ export const deleteFile = async (id, userId) => {
       DELETE FROM user_files WHERE id = $1
     `, [id]);
 
-
     // Check if there are any other files with is_profile_pic set to true
     const result2 = await client.query(`
       SELECT * FROM user_files WHERE is_profile_pic = $1 AND user_id = $2
@@ -108,9 +95,6 @@ export const deleteFile = async (id, userId) => {
 
   }
 };
-
-
-
 
 //TODO modify the '0' and 'true' to boolean
 export const saveFile = async (userId, filePath, is_profile_pic) => {
@@ -155,7 +139,6 @@ export const saveFile = async (userId, filePath, is_profile_pic) => {
   }
 };
 
-
 export const isActive = async (id) => {
   const client = await pool.connect();
 
@@ -171,7 +154,6 @@ export const isActive = async (id) => {
     throw err;
   } finally {
     client.release();
-
   }
 }
 
@@ -195,15 +177,6 @@ export const getBachelors = async (id) => {
   const client = await pool.connect();
 
   try {
-
-    // const t = await client.query(`
-    // SELECT users.*, JSON_AGG(user_files.*) as files
-    // FROM users LEFT JOIN user_files ON users.id = user_files.user_id
-    // WHERE users.id = $1
-    // GROUP BY users.id
-    //     `, [id]);
-
-
     const me = await getUserById(id);
     console.log("getBachelors", me);
     const result = await client.query(`
@@ -247,7 +220,6 @@ export const getBachelors = async (id) => {
     throw err;
   } finally {
     client.release();
-
   }
 };
 
@@ -256,7 +228,6 @@ export const getFilteredBachelors = async (id, filters) => {
   const client = await pool.connect();
 
   try {
-
     const me = await getUserById(id);
     const result = await client.query(`
         SELECT users.*, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance, JSON_AGG(user_files.*) as files
@@ -310,8 +281,8 @@ export const getFilteredBachelors = async (id, filters) => {
 // Get user from database where email match the paramater
 export const getLogin = async (email, password) => {
   const client = await pool.connect();
-  try {
 
+  try {
 
     const result = await client.query(`
       SELECT *
@@ -322,7 +293,7 @@ export const getLogin = async (email, password) => {
     // If no user was found with the given email, throw an error
     if (result.rowCount === 0) {
       log.error('[userService]', 'didnt find user with that mail');
-      throw new Error('Invalid email or password');
+      throw new UnauthorizedError('Invalid email or password');
     }
 
     // Get the user from the result
@@ -338,19 +309,19 @@ export const getLogin = async (email, password) => {
     const user = t.rows[0];
 
 
-    // If the user isn't active (no profile pic)
-    // if (!user.active) {
-    //   log.error('[userService]', 'no profile pic on signin');
-    //   throw new ForbiddenError('No profile picture uploaded via the email link');
-    // }
-
     // Compare the given password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     // If the passwords don't match, throw an error
     if (!passwordMatch) {
       log.error('[userService]', 'pass didnt match');
-      throw new Error('Invalid email or password .');
+      throw new UnauthorizedError('Invalid email or password');
+    }
+
+    // If the user isn't active (no profile pic)
+    if (!user.active) {
+      log.error('[userService]', 'no profile pic on signin');
+      throw new ForbiddenError('No profile picture uploaded via the email link, please add a picture on the form in link');
     }
 
 
@@ -373,9 +344,7 @@ export const getUserById = async (id) => {
   const client = await pool.connect();
 
   try {
-
     console.log(id);
-    // const result = await client.query(DBgetUserById(id));
     const result = await client.query(`
       SELECT users.*, JSON_AGG(user_files.*) as files
       FROM users LEFT JOIN user_files ON users.id = user_files.user_id
@@ -389,7 +358,6 @@ export const getUserById = async (id) => {
     throw err;
   } finally {
     client.release();
-
   }
 };
 
@@ -399,7 +367,6 @@ export const getUserByIdProfile = async (id) => {
 
   try {
     log.info('[userService]', 'getUserByIdProfile:', id);
-    // const result = await client.query(DBgetUserById(id));
 
     const result = await client.query(`
       SELECT users.*, JSON_AGG(user_files.*) as files
@@ -411,7 +378,7 @@ export const getUserByIdProfile = async (id) => {
     const user = result.rows[0];
     if(user.files[0] === null)
       user.files = null;
-    console.log(user);
+
     delete(user.email);
     delete(user.password);
     delete(user.report_count);
@@ -421,7 +388,6 @@ export const getUserByIdProfile = async (id) => {
     throw err;
   } finally {
     client.release();
-
   }
 };
 
@@ -438,7 +404,7 @@ export const resendSignupEmail = async (email) => {
     // If no user was found with the given email, throw an error
     if (result.rowCount === 0) {
       log.error('[userService]', 'didnt find user with that mail');
-      throw new Error('Invalid email or password');
+      throw new NotFoundError('Invalid email or password');
     }
 
     // const emailValidation = await isEmailValid(email);
@@ -506,7 +472,7 @@ export const resetPassword = async (oldPassword, user) => {
     // If the passwords don't match, throw an error
     if (!passwordMatch) {
       log.error('[userService]', 'pass didnt match');
-      throw new Error('Invalid  password .');
+      throw new UnauthorizedError('Invalid  password');
     } else {
       await sendResetPIN(user.email, user.first_name, user.last_name, user.id);
       return "ok";
@@ -526,7 +492,7 @@ export const validateNewPassword = async (newPassword, pin, user) => {
 
     // If the passwords don't match, throw an error
     if (pin !== user.pin) {
-      throw new Error('wrong PIN');
+      throw new UnauthorizedError('wrong PIN');
     } else {
 
       var salt = bcrypt.genSaltSync(10);
@@ -599,7 +565,7 @@ export const insertUser = async (firstName, lastName, email, password, longitude
     `, [email]);
 
     if (dupplicateEmailResult.rowCount > 0)
-      throw new Error('A user with the given email already exists');
+      throw new ForbiddenError('A user with the given email already exists');
 
     // const emailValidation = await isEmailValid(email);
     // if (emailValidation.valid === false) {
@@ -748,23 +714,21 @@ export const CreateFakeUser = async (fakeUser, longitude, latitude) => {
   const client = await pool.connect();
 
   try {
-
     var salt = bcrypt.genSaltSync(10);
     var fakeHash = bcrypt.hashSync(fakeUser, salt);
 
     log.info('[userService]', 'gonna insert the fake user');
     const fakeMail = fakeUser + "@" + fakeUser + ".com" ;
     const res = await client.query(`
-      INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, bio, active, fame_rating, report_count, longitude, latitude)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+      INSERT INTO users (first_name, last_name, email, password, age, sex, sex_orientation, city, country, interests, bio, active, fame_rating, report_count, longitude, latitude, job)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
       RETURNING *;
-    `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "male", "hetero", "Paris", "France", '["test_interets"]', fakeUser, true, 0, 0, longitude, latitude]);
+    `, [fakeUser, fakeUser, fakeMail, fakeHash, 20, "male", "hetero", "Paris", "France", '["coding"]', fakeUser, true, 0, 0, longitude, latitude, 'student']);
     log.info('[userService]', JSON.stringify(res.rows[0], null,2));
 
     const seed_profile_avatar = faker.image.imageUrl(480, 480, 'man,boy,male') // 'https://loremflickr.com/1234/2345/cat'
     const url = seed_profile_avatar;
     const fileName = 'fake_profile_pic_' + res.rows[0].id;
-
 
     await downloadFile(url, fileName);
     await client.query(`INSERT INTO user_files (user_id, file_path, is_profile_pic) VALUES ($1, $2, $3) RETURNING *;`, [ res.rows[0].id, 'uploads/'+fileName, true]);

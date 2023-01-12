@@ -6,8 +6,6 @@ import { authenticateToken } from '../middleware/authMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
 import fs from 'fs';
-// import fetch from 'node-fetch';
-
 import multer from 'multer';
 import { fileTypeFromBuffer, fileTypeFromFile } from 'file-type';
 import { readChunk } from 'read-chunk';
@@ -70,7 +68,7 @@ router.get('/files/:userId', async (req, res) => {
     const files = await getUserFiles(userId);
     res.send(files);
   } catch (err) {
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
@@ -81,7 +79,7 @@ router.delete('/files/:id/:userId', async (req, res) => {
     await deleteFile(id, userId);
     res.send({ message: 'File deleted successfully' });
   } catch (err) {
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
@@ -92,7 +90,6 @@ router.get('/', authenticateToken, async (req, res) => {
     const users = await getAllUsers();
     res.send(users);
   } catch (err) {
-    console.log('catch err get users');
     sendErrorResponse(res, err);
   }
 });
@@ -102,37 +99,24 @@ router.get('/', authenticateToken, async (req, res) => {
 router.get('/:id/bachelors/', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
-    if (isNaN(id)) {
-        throw '400: id must be a number';
-    }
+    if (isNaN(id))
+      throw new BadRequestError('id must be a number');
     const users = await getBachelors(id);
     res.send(users);
   } catch (err) {
-    console.log(err);
-    if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message)
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
 router.post('/:id/filteredBachelors', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
-    if (isNaN(id)) {
-        throw '400: id must be a number';
-    }
-
+    if (isNaN(id))
+      throw new BadRequestError('id must be a number');
     const users = await getFilteredBachelors(id, req.body);
     res.send(users);
-
   } catch (err) {
-    if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message)
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
@@ -141,24 +125,17 @@ router.post('/sendSignupEmail', async (req, res) => {
     const { email } = req.body;
     await resendSignupEmail(email);
   } catch (err) {
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
-//   axios.put(`http://localhost:3001/user/setAsProfilePic/${file.id}`, {}
 router.put('/setAsProfilePic/:fileId', async (req, res) => {
   try {
-    //
     console.log(req.params.fileId);
     const files = await updateProfilePicture(req.params.fileId, req.body.userId);
-    console.log(files);
     res.send(files);
   } catch (err) {
-    if (typeof (err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message)
-      return;
-    }
-    res.status(500).send(err.message);
+   sendErrorResponse(res, err);
   }
 });
 
@@ -166,18 +143,12 @@ router.put('/setAsProfilePic/:fileId', async (req, res) => {
 router.get('/:id/liked', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
-    if (isNaN(id)) {
-        throw '400: id must be a number';
-    }
-
+    if (isNaN(id))
+      throw new BadRequestError('id must be a number');
     const likedUsers = await getLikedUsers(id);
     res.send(likedUsers);
   } catch (err) {
-    if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message)
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
@@ -185,17 +156,12 @@ router.get('/:id/liked', authenticateToken, async (req, res) => {
 router.get('/:id/matched', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
-    if (isNaN(id)) {
-        throw '400: id must be a number';
-    }
+    if (isNaN(id))
+      throw new BadRequestError('id must be a number');
     const likedUsers = await getMatchedUsers(id);
     res.send(likedUsers);
   } catch (err) {
-    if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message)
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
@@ -203,17 +169,12 @@ router.get('/:id/matched', authenticateToken, async (req, res) => {
 router.get('/:id/blocked', authenticateToken, async (req, res) => {
   try {
     const id = req.params.id;
-    if (isNaN(id)) {
-        throw '400: id must be a number';
-    }
-    const likedUsers = await getBlockedUsers(id);
-    res.send(likedUsers);
+    if (isNaN(id))
+      throw new BadRequestError('id must be a number');
+    const blockedUsers = await getBlockedUsers(id);
+    res.send(blockedUsers);
   } catch (err) {
-    if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message)
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
@@ -233,15 +194,9 @@ router.post('/login', async (req, res) => {
     const accessToken = generateAccessToken(user);
     res.send(accessToken);
   } catch (err) {
-    if (err.message === 'Invalid email or password')
-      res.status(401).send(err.message);
-    else if (err.message === 'Email not verified')
-      res.status(403).send(err.message);
-    else
-      res.status(500).send(err.message);
-    }
+    sendErrorResponse(res, err);
   }
-);
+});
 
 router.post('/fake', async (req, res) => {
   try {
@@ -254,11 +209,7 @@ router.post('/fake', async (req, res) => {
     const accessToken = generateAccessToken(user);
     res.send(accessToken);
   } catch (err) {
-    if (err.message === 'Invalid email or password.') {
-      res.status(401).send(err.message);
-    } else {
-      res.status(500).send(err.message);
-    }
+    sendErrorResponse(res, err);
   }
 });
 
@@ -267,23 +218,16 @@ router.post('/fake', async (req, res) => {
 router.get('/:id', authenticateToken, async (req, res) => {
   try {
     if (req.params.id === null) {
-      throw 'get /users/:id id undefined'
+      throw new BadRequestError('id must be defined')
     }
     if (isNaN(req.params.id)) {
-      console.log("here");
-        throw '400: id must be a number';
+      throw new BadRequestError('id must be a number')
     }
     console.log('get a user by id');
     const user = await getUserById(req.params.id);
-
     res.send(user);
   } catch (err) {
-    console.log(err)
-    if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message)
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res , err);
   }
 });
 
@@ -319,17 +263,10 @@ router.get('/:id/profile/:visit_id', authenticateToken, async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { firstName, lastName, email, password, longitude, latitude } = req.body;
-    console.log(email);
     const user = await insertUser(firstName.trim(), lastName.trim(), email.trim(), password, longitude, latitude);
     res.send(user);
   } catch (err) {
-    console.log(err)
-    if (err.message === 'A user with the given email already exists')
-      res.status(403).send(err.message);
-    else if (err.message === "Email format is invalid")
-      res.status(400).send(err.message);
-    else
-      res.status(500).send(err);
+    sendErrorResponse(res, err);
   }
 });
 
@@ -380,9 +317,8 @@ router.put('/:id/update', async (req, res) => {
   try {
     const id = req.params.id;
     log.info("[userController]", "update user:", id);
-    if (isNaN(id)) {
-        throw '400: id must be a number';
-    }
+    if (isNaN(id))
+      throw new BadRequestError('id must be a number');
     var user = await getUserById(id);
 
     console.log(user);
@@ -393,12 +329,7 @@ router.put('/:id/update', async (req, res) => {
 
     res.send(newUser);
   } catch (err) {
-    if (err.message === 'A user with the given email already exists.') {
-      res.status(403).send(err.message);
-    } else if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message);
-    }
-      res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
@@ -408,23 +339,15 @@ router.put('/resetpassword', async (req, res) => {
     log.info('[userController]', 'resetpassword');
     log.info('[userController]', req.body);
     const {currentPassword, id} = req.body;
-    if (isNaN(id)) {
-        throw '400: id must be a number';
-    }
+    if (isNaN(id))
+        throw new BadRequestError('id must be a number');
     const user = await getUserById(id);
 
     const result = await resetPassword(currentPassword, user);
     console.log(result)
     res.sendStatus(200);
   } catch (err) {
-    if (err.message === 'A user with the given email already exists.' || err.message === 'Invalid email or password .') {
-      res.status(403).send(err.message);
-      return;
-    } else if (typeof(err) === "string" && err.includes('400')) {
-      res.status(400).send(err.message);
-      return;
-    }
-    res.status(500).send(err.message);
+    sendErrorResponse(res, err);
   }
 });
 
@@ -434,22 +357,16 @@ router.put('/pin', async (req, res) => {
     log.info('[userController]', 'pin');
     log.info('[userController]', req.body);
     const {newPassword, pin, id} = req.body;
-    if (isNaN(id)) {
-        throw '400: id must be a number';
-    }
-    if (isNaN(pin)) {
-        throw '400: pin must be a number';
-    }
+    if (isNaN(id))
+      throw new BadRequestError('id must be a number');
+    if (isNaN(pin))
+        throw new BadRequestError('pin must be a number')
     const user = await getUserById(id);
 
     await validateNewPassword(newPassword, pin, user);
     res.send(200);
   } catch (err) {
-    if (err.message === "wrong PIN") {
-      res.status(400).send(err.message);
-      return ;
-    }
-    res.status(500).send(err.message)
+    sendErrorResponse(res, err);
   }
 });
 
