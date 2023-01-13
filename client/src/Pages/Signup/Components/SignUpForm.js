@@ -1,15 +1,17 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import useValidator from '../../../Hooks/useValidator';
-// import axios from 'axios';
 import api from "../../../ax";
 import position from '../../../Context/position'
+
 import { setUser } from "../../../userSlice";
 import { useDispatch } from 'react-redux';
 import jwt_decode from "jwt-decode";
 import {useNavigate} from 'react-router-dom';
+import { ErrorContext } from "../../../Context/error";
 
+const SignUpForm = ({email, setEmail, setHasSignedUP}) => {
 
-const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
+    const { setError, setShowError } = useContext(ErrorContext);
 
     let navigate = useNavigate();
 
@@ -33,8 +35,7 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
             }
         });
 
-
-        //TODO should return user, not token
+    //TODO should return user, not token
     const addUser = () => {
         api.post('http://localhost:3001/users', {
             firstName: firstName,
@@ -50,8 +51,7 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
                 return ;
             })
             .catch(error => {
-                console.log(error);
-                setOpen(true);
+                setShowError(true);
                 setError([error.response.status, error.response.data]);
             });
     }
@@ -64,7 +64,6 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
     const handleSignUpClick = (event) => {
         event.preventDefault();
         if (validator.allValid()) {
-            console.log("form is valid");
             addUser();
         } else {
             const invalidFieldsSet = new Set(invalidFields);
@@ -74,21 +73,18 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
             (!validator.check(password, "required|match|min:12|minNum")) ? invalidFieldsSet.add('password') : invalidFieldsSet.delete('password');
             (!validator.check(passwordConfirm, "required|match")) ? invalidFieldsSet.add('passwordConfirm') : invalidFieldsSet.delete('passwordConfirm');
 
-            // validator.showMessages();
-            // rerender to show messages for the first time
-            console.log(invalidFieldsSet);
             showValidationMessage(true);
             setInvalidFields(Array.from(invalidFieldsSet));
-            return
+            return ;
         }
     }
 
     return (
         <>
-            <h1 className="self-start text-2xl font-bold mb-2">Create your account</h1>
+            <h1 className="self-start mb-2 text-2xl font-bold">Create your account</h1>
             <label className={`block ${invalidFields.includes('firstName') ? "text-red-500" : "text-gray-700"} text-sm font-bold self-start mb-1`}>
                 First name
-                <span className="text-red-500 font-normal inline-block pl-1">
+                <span className="inline-block pl-1 font-normal text-red-500">
                     {validator.message("firstName", firstName, "required|alpha|max:15", {
                         messages: {
                             required: " is required",
@@ -103,7 +99,7 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
 
             <label className={`block ${invalidFields.includes('lastName') ? "text-red-500" : "text-gray-700"} text-sm font-bold self-start mb-1`}>
                 Last Name
-                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("lastName", lastName, "required|alpha|max:15", {
+                <span className="inline-block pl-1 font-normal text-red-500">{validator.message("lastName", lastName, "required|alpha|max:15", {
                     messages: {
                         required: " is required",
                         alpha: " isn't valid",
@@ -117,7 +113,7 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
 
             <label className={`block ${invalidFields.includes('email') ? "text-red-500 border-red-500" : "text-gray-700"} text-sm font-bold self-start mb-1`}>
                 Email address
-                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("email", email, "required|email", {
+                <span className="inline-block pl-1 font-normal text-red-500">{validator.message("email", email, "required|email", {
                     messages: {
                         required: " is required",
                         email: ' isn\'t valid'
@@ -143,7 +139,7 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
 
             <label className={`block ${invalidFields.includes('passwordConfirm') ? "text-red-500" : "text-gray-700"} text-sm font-bold self-start mb-1`}>
                 Password confirmation
-                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("passwordConfirm", passwordConfirm, "required|match", {
+                <span className="inline-block pl-1 font-normal text-red-500">{validator.message("passwordConfirm", passwordConfirm, "required|match", {
                     messages: {
                         required: " is required",
                         match: "doesn't match"
@@ -151,7 +147,7 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
                 })}</span>
             </label>
             <input className={`shadow appearance-none border rounded w-full py-2 px-3 ${invalidFields.includes('passwordConfirm') ? "text-red-500 border-red-500" : "text-gray-700"} mb-3 leading-tight focus:outline-none focus:shadow-outline`} id="passwordConfirm" type="password" placeholder="***********" value={passwordConfirm} onChange={(event) => setPasswordConfirm(event.target.value)} />
-            <button onClick={handleSignUpClick} className="h-10 w-full items-center justify-center  gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
+            <button onClick={handleSignUpClick} className="items-center justify-center w-full h-10 gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
                 <span>Sign up</span>
             </button>
             <label className="mt-2 self-start text-sm font-small text-gray-900 dark:text-gray-300">Already registered ? <a href="/signin" onClick={handleSignInClick} className="text-blue-600 dark:text-blue-500 hover:underline">Sign in</a></label>

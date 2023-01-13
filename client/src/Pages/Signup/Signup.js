@@ -7,20 +7,18 @@ import CustomAlert from "../../SharedComponents/CustomAlert";
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [hasSignedUp, setHasSignedUP] = useToggle(false);
-  const [error, setError] = useState([])
-  const [open, setOpen] = useState(false);
 
   return (
     <>
-    <div className="h-screen flex flex-col md:flex-row-reverse items-center content-start">
-        <CustomAlert error={error} open={open} setOpen={setOpen} />
-        <img className="w-screen object-cover h-1/4 md:w-1/2 md:h-screen" src='../bg-signin-signup.jpeg' alt='bg-signin-signup'/>
+    <div className="flex flex-col items-center content-start h-screen md:flex-row-reverse">
+        <CustomAlert />
+        <img className="object-cover w-screen h-1/4 md:w-1/2 md:h-screen" src='../bg-signin-signup.jpeg' alt='bg-signin-signup'/>
         <div className="w-full h-full md:w-1/2">
-          <div className="w-full min-h-full flex flex-col items-center justify-center px-10 md:px-36">
+          <div className="flex flex-col items-center justify-center w-full min-h-full px-10 md:px-36">
             {hasSignedUp ?
-              <WaitEmailConfirmation email={email} setError={setError} setOpen={setOpen} />
+              <WaitEmailConfirmation email={email} />
               :
-              <SignUpForm email={email} setEmail={setEmail} setError={setError} setOpen={setOpen} setHasSignedUP={setHasSignedUP} />
+              <SignUpForm email={email} setEmail={setEmail} setHasSignedUP={setHasSignedUP} />
             }
           </div>
         </div>
