@@ -9,7 +9,7 @@ import Chat from './Pages/Chat/Chat';
 import Conversation from './Pages/Chat/Components/Conversation';
 import Settings from './Pages/Settings/Settings';
 import { Route, Routes, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { useContext, useState } from 'react';
+import { useContext, useState, useLayoutEffect } from 'react';
 import socket from './Context/socket';
 import Password from './Pages/Settings/Components/Password';
 import LikedUsers from './Pages/Settings/Components/LikedUsers';

@@ -12,7 +12,7 @@ import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../
 import socket from '../../../Context/socket'
 
 const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
-
+    console.log("status", user.status)
     const currentUser = useSelector((state) => state.user.user);
     const [filledIcon, setFilledIcon] = useState(false);
     const [match, setMatch] = useState(false);
@@ -51,6 +51,16 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
             });
     }
 
+    const m = new Date(user.status);
+    console.log("MMMMM", m)
+    var date =
+        (m.getUTCHours() + 1).toString() + ":" +
+        ("0" + m.getUTCMinutes()).slice(-2) + ":" +
+        ("0" + m.getUTCSeconds()).slice(-2) + " " +
+        m.getUTCDate() + "/" +
+        ("0" + (m.getUTCMonth()+1)).slice(-2) + "/" +
+        m.getUTCFullYear();
+
     useEffect(() => {
         socket.client.on('hasmatchNotif', (data) => {
             console.log('receive a match', data)
@@ -63,39 +73,43 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
             setFilledIcon(false);
         })
 
-        // socket.client.on('userDisconnect', (data) => {
-        //     if(user.id == data)
-        //         console.log('user has disconnect', data)
-        //         user.status = true;
-        // })
+        socket.client.on('userDisconnect', (data) => {
+            console.log("DATA", data)
+            if(user.id == data.id) {
+                console.log('user has disconnect', data.id)
+                user.status = true;
+                const m2 = new Date(data.status);
+                console.log("MMMMM2", m2)
+                date = 
+                    (m2.getUTCHours() + 1).toString() + ":" +
+                    ("0" + m2.getUTCMinutes()).slice(-2) + ":" +
+                    ("0" + m2.getUTCSeconds()).slice(-2) + " " +
+                    m2.getUTCDate() + "/" +
+                    ("0" + (m2.getUTCMonth()+1)).slice(-2) + "/" +
+                    m2.getUTCFullYear();
+                console.log(user.status, date);
+            }
+        })
 
-        // socket.client.on('userConnect', (data) => {
-        //     console.log(user.id, data);
-        //     if (user.id == data)
-        //     {
-        //         console.log('user has connect', data)
-        //         user.status = null;
-        //     }
-        // })
+        socket.client.on('userConnect', (data) => {
+            console.log(user.id, data);
+            if (user.id == data)
+            {
+                console.log('user has connect', data)
+                user.status = null;
+            }
+        })
 
         return () => {
             socket.client.off('hasmatchNotif');
             socket.client.off('hasunlikehNotif');
-            // socket.client.off('userDisconnect');
-            // socket.client.off('userConnect');
+            socket.client.off('userDisconnect');
+            socket.client.off('userConnect');
         };
     }, [user]);
 
     console.log(user);
     console.log('rerender');
-    const m = new Date();
-    const date =  +
-    (m.getUTCHours() + 1).toString() + ":" +
-    ("0" + m.getUTCMinutes()).slice(-2) + ":" +
-    ("0" + m.getUTCSeconds()).slice(-2) + " " +
-    m.getUTCDate() + "/" +
-    ("0" + (m.getUTCMonth()+1)).slice(-2) + "/" +
-    m.getUTCFullYear();
     return (
         <>
             {

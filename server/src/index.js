@@ -79,11 +79,11 @@ io.on('connection', (socket) => {
   log.info('[index.js]', 'total sockets connected:', map.size);
   io.emit('userConnect', user_id);
   
-  socket.on('disconnect', () => {
+  socket.on('disconnect', async () => {
     console.log(user_id, "disconnecting");
     map.delete(user_id, socket);
-    updateStatusUser(user_id, false)
-    io.emit('userDisconnect', user_id);
+    const user = await updateStatusUser(user_id, false)
+    io.emit('userDisconnect', {id: user_id, status: user.status});
   });
 
   socket.on('sendMessage', async (messagePayload) => {

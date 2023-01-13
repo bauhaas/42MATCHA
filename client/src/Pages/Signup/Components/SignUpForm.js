@@ -6,9 +6,12 @@ import position from '../../../Context/position'
 import { setUser } from "../../../userSlice";
 import { useDispatch } from 'react-redux';
 import jwt_decode from "jwt-decode";
+import {useNavigate} from 'react-router-dom';
 
 
 const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
+
+    let navigate = useNavigate();
 
     const dispatch = useDispatch();
     const [firstName, setFirstName] = useState("");
@@ -21,6 +24,11 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
             match: {
                 rule: () => {
                     return password === passwordConfirm;
+                },
+            },
+            minNum: {
+                rule: () => {
+                    return password.replace(/[^0-9]/g,"").length > 0;
                 },
             }
         });
@@ -48,6 +56,11 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
             });
     }
 
+    const handleSignInClick = (event) => {
+        event.preventDefault();
+        navigate("/signin");
+    }
+    
     const handleSignUpClick = (event) => {
         event.preventDefault();
         if (validator.allValid()) {
@@ -58,7 +71,7 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
             (!validator.check(firstName, "required|alpha|max:15")) ? invalidFieldsSet.add('firstName') : invalidFieldsSet.delete('firstName');
             (!validator.check(lastName, "required|alpha|max:15")) ? invalidFieldsSet.add('lastName') : invalidFieldsSet.delete('lastName');
             (!validator.check(email, "required|email")) ? invalidFieldsSet.add('email') : invalidFieldsSet.delete('email');
-            (!validator.check(password, "required|match|min:12")) ? invalidFieldsSet.add('password') : invalidFieldsSet.delete('password');
+            (!validator.check(password, "required|match|min:12|minNum")) ? invalidFieldsSet.add('password') : invalidFieldsSet.delete('password');
             (!validator.check(passwordConfirm, "required|match")) ? invalidFieldsSet.add('passwordConfirm') : invalidFieldsSet.delete('passwordConfirm');
 
             // validator.showMessages();
@@ -117,11 +130,12 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
 
             <label className={`block ${invalidFields.includes('password') ? " text-red-500" : "text-gray-700"} text-sm font-bold self-start mb-1`}>
                 Password
-                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("password", password, "required|match|min:12", {
+                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("password", password, "required|match|min:12|minNum", {
                     messages: {
                         required: " is required",
                         match: "doesn't match",
-                        min: " too short, at least 12 characters"
+                        min: " too short, at least 12 characters",
+                        minNum: " need at least one number"
                     },
                 })}</span>
             </label>
@@ -140,6 +154,8 @@ const SignUpForm = ({email, setEmail, setError, setOpen, setHasSignedUP}) => {
             <button onClick={handleSignUpClick} className="h-10 w-full items-center justify-center  gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
                 <span>Sign up</span>
             </button>
+            <label className="mt-2 self-start text-sm font-small text-gray-900 dark:text-gray-300">Already registered ? <a href="/signin" onClick={handleSignInClick} className="text-blue-600 dark:text-blue-500 hover:underline">Sign in</a></label>
+
         </>
     );
 }

@@ -7,7 +7,7 @@ import SettingsHeader from './SettingsHeader';
 import api from '../../../ax';
 import { useSelector } from 'react-redux';
 import SettingsPageLayout from './SettingsPageLayout';
-
+import useValidator from '../../../Hooks/useValidator';
 
 const Password = () => {
 
@@ -22,7 +22,21 @@ const Password = () => {
 
     const [isRevealedConfirm, setIsRevealedConfirm] = useState(false);
     const toggleRevealConfirm = () => setIsRevealedConfirm(!isRevealedConfirm);
+    const [invalidFields, setInvalidFields] = useState([]);
 
+    const [validator, showValidationMessage] = useValidator(null,
+        {
+            match: {
+                rule: () => {
+                    return password === passwordConfirm;
+                },
+            },
+            minNum: {
+                rule: () => {
+                    return password.replace(/[^0-9]/g,"").length > 0;
+                },
+            }
+        });
 
     const user = useSelector((state) => state.user.user);
 
@@ -41,7 +55,7 @@ const Password = () => {
             });
     }
 
-    const validateNewPassword = () => {
+    const changePassword = () => {
         console.log('validate new password clicked');
         api.put(`http://localhost:3001/users/pin`, {
             pin: Number(pin),
@@ -54,8 +68,26 @@ const Password = () => {
             .catch(error => {
                 console.log(error);
             });
+            
     }
 
+    const validateNewPassword = (event) => {
+        console.log('validate new password clicked');
+        event.preventDefault();
+        if (validator.allValid()) {
+            console.log("form is valid");
+            changePassword();
+        } else {
+            const invalidFieldsSet = new Set(invalidFields);
+            (!validator.check(password, "required|match|min:12|minNum")) ? invalidFieldsSet.add('password') : invalidFieldsSet.delete('password');
+            (!validator.check(passwordConfirm, "required|match")) ? invalidFieldsSet.add('passwordConfirm') : invalidFieldsSet.delete('passwordConfirm');
+        
+            console.log("invalidFieldsSet", invalidFieldsSet);
+            showValidationMessage(true);
+            setInvalidFields(Array.from(invalidFieldsSet));
+        }
+    }
+    console.log(invalidFields)
 	return (
 		<>
             <SettingsPageLayout>
@@ -81,11 +113,20 @@ const Password = () => {
                                 :
                                 <div>
                                     <div className='flex flex-col mb-2 sm:flex-row sm:justify-between'>
-                                            <label className="text-white text-sm self-start">
+                                            <label className={`block ${invalidFields.includes('password') ? "text-red-500" : "text-white-700"} text-sm font-bold self-start mb-1`}>
                                                 New password
+                                                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("password", password, "required|match|min:12|minNum", {
+                                                    messages: {
+                                                        required: " is required",
+                                                        match: "doesn't match",
+                                                        min: " too short, at least 12 characters",
+                                                        minNum: " need at least one number"
+                                                    },
+                                                })}</span>
                                             </label>
                                         <div className='bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
-                                            <input className="w-full pl-2 bg-transparent text-white rounded-sm focus:outline-none focus:shadow-outline" id="password"
+                                            <input id="password"
+                                                className={`w-full pl-2 bg-transparent rounded-sm focus:outline-none focus:shadow-outline ${invalidFields.includes('password') ? " text-red-500 border-red-500" : "text-white-700"} mb-3 leading-tight focus:outline-none focus:shadow-outline`}
                                                 type={isRevealed ? 'text' : 'password'}
                                                 value={password}
                                                 onChange={(event) => setPassword(event.target.value)} />
@@ -94,12 +135,19 @@ const Password = () => {
                                             </button>
                                         </div>
                                     </div>
-                                    <div className='flex flex-col sm:flex-row sm:justify-between'>
-                                            <label className="text-white text-sm self-start">
+                                    <div className='flex flex-col mb-2 sm:flex-row sm:justify-between'>
+                                            <label className={`block ${invalidFields.includes('passwordConfirm') ? "text-red-500" : "text-white-700"} text-sm font-bold self-start mb-1`}>
                                                 Confirm new password
+                                                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("passwordConfirm", passwordConfirm, "required|match", {
+                                                    messages: {
+                                                        required: " is required",
+                                                        match: "doesn't match"
+                                                    },
+                                                })}</span>
                                             </label>
                                             <div className='bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
-                                                <input className="w-full pl-2 bg-transparent text-white rounded-sm focus:outline-none focus:shadow-outline" id="passwordConfirm"
+                                                <input id="passwordConfirm"
+                                                    className={`w-full pl-2 bg-transparent rounded-sm focus:outline-none focus:shadow-outline ${invalidFields.includes('passwordConfirm') ? "text-red-500 border-red-500" : "text-white-700"} mb-3 leading-tight focus:outline-none focus:shadow-outline`}
                                                     type={isRevealedConfirm ? 'text' : 'password'}
                                                     value={passwordConfirm}
                                                     onChange={(event) => setPasswordConfirm(event.target.value)} />
@@ -120,7 +168,7 @@ const Password = () => {
                                                     onChange={(event) => setPIN(event.target.value)} />
                                             </div>
                                     </div>
-                                    <button onClick={validateNewPassword}  className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500 ${ password !== passwordConfirm || password.length <= 0 ? 'btn-disabled': ''}`}>Change password</button>
+                                    <button onClick={validateNewPassword}  className={`btn btn-sm mt-auto rounded-md w-fit bg-green-600 hover:bg-green-500 `}>Change password</button>
                                 </div>}
                             </div>
                         </div>
