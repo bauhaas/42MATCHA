@@ -13,7 +13,6 @@ const WaitEmailConfirmation = ({email}) => {
         api.post('http://localhost:3001/users/sendSignupEmail', {
             email: email
         })
-        .then(response => response.data)
         .catch(error => {
             setShowError(true);
             setError([error.response.status, error.response.data]);

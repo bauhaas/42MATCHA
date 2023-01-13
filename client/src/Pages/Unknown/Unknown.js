@@ -1,16 +1,16 @@
 import { useNavigate} from 'react-router-dom';
 
 const Unknown = () => {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleNavToHome = (event) => {
       event.preventDefault();
-      navigate("/Home");
+      navigate("/home");
     }
 
     const handleNavToProfile = (event) => {
       event.preventDefault();
-      navigate("/Settings");
+      navigate("/settings");
     }
 
     return(
