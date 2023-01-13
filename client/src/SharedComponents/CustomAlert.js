@@ -1,12 +1,15 @@
 import Alert from '@mui/material/Alert';
 import { AiOutlineClose } from 'react-icons/ai';
 import IconButton from '@mui/material/IconButton';
+import { useContext } from 'react';
+import { ErrorContext } from '../Context/error';
 
-const CustomAlert = ({ error, open, setOpen}) => {
+const CustomAlert = () => {
 
+    const { error, showError, setShowError } = useContext(ErrorContext);
     return (
         <Alert
-            className={`w-full absolute top-0 ${open ? null : "hidden"} rounded-none`}
+            className={`w-full absolute top-0 ${showError ? null : "hidden"} rounded-none`}
             variant="filled"
             severity="error"
             action={
@@ -14,7 +17,7 @@ const CustomAlert = ({ error, open, setOpen}) => {
                     color="inherit"
                     size="small"
                     onClick={() => {
-                        setOpen(false);
+                        setShowError(false);
                     }}
                 >
                     <AiOutlineClose fontSize="inherit" />

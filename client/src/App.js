@@ -19,13 +19,17 @@ import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import {store, persistor} from './store';
 import { PersistGate } from 'redux-persist/integration/react';
-
+import { ErrorContext } from './Context/error';
 import  { successCallback, errorCallback } from './Context/position'
 import Activation from './Pages/Activation/Activation';
 
 navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
 
 function App() {
+
+  const [error, setError] = useState([]);
+  const [showError, setShowError] = useState(false);
+
   const unauthenticatedRoutes = ['/signin', '/signup', '/activation', '*'];
 
   useEffect(() => {
@@ -39,70 +43,72 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // useEffect(() => {
-      const token = localStorage.getItem("jwt");
-      console.log('u dont wait for token')
-      console.log(token, location.pathname, unauthenticatedRoutes.includes(location.pathname));
-      if (!token && !unauthenticatedRoutes.includes(location.pathname)) {
-        navigate("/signin", { replace: true });
-      }
-    // }, []);
+  //   // useEffect(() => {
+  //     const token = localStorage.getItem("jwt");
+  //     console.log('u dont wait for token')
+  //     console.log(token, location.pathname, unauthenticatedRoutes.includes(location.pathname));
+  //     if (!token && !unauthenticatedRoutes.includes(location.pathname)) {
+  //       navigate("/signin", { replace: true });
+  //     }
+  //   // }, []);
 
-    const [isAuth, setIsAuth] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [params, setParams] = useState(new URLSearchParams(location.search));
+  //   const [isAuth, setIsAuth] = useState(false);
+  //   const [loading, setLoading] = useState(true);
+  //   const [params, setParams] = useState(new URLSearchParams(location.search));
 
-    useEffect(() => {
-      setParams(new URLSearchParams(location.search));
-  }, [location]);
+  //   useEffect(() => {
+  //     setParams(new URLSearchParams(location.search));
+  // }, [location]);
 
-    useEffect(() => {
-      const token = localStorage.getItem("jwt");
+  //   useEffect(() => {
+  //     const token = localStorage.getItem("jwt");
 
 
-      if (!token) {
-          setIsAuth(false)
-          setLoading(false)
-      } else {
-        setIsAuth(true)
-        setLoading(false)
-      }
-    }, [isAuth]);
+  //     if (!token) {
+  //         setIsAuth(false)
+  //         setLoading(false)
+  //     } else {
+  //       setIsAuth(true)
+  //       setLoading(false)
+  //     }
+  //   }, [isAuth]);
 
-    if (loading) {
-      return <div>Loading a...</div>;
-    }
+  //   if (loading) {
+  //     return <div>Loading a...</div>;
+  //   }
 
-    console.log(isAuth);
-    if (!isAuth && !unauthenticatedRoutes.includes(location.pathname)) {
-      console.log('u not auth')
-      navigate("/signin", { replace: true });
-      return <div>Loading (u not auth and not in authorized routes)...</div>;
-    }
+  //   console.log(isAuth);
+  //   if (!isAuth && !unauthenticatedRoutes.includes(location.pathname)) {
+  //     console.log('u not auth')
+  //     navigate("/signin", { replace: true });
+  //     return <div>Loading (u not auth and not in authorized routes)...</div>;
+  //   }
 
     return (
     <>
       <Provider store={store}>
           <PersistGate persistor={persistor}>
-            <Routes>
-              <Route index element={<Navigate to="/home" />} />
-              <Route path='/signin' element={<Signin />} />
-              <Route path='/signup' element={<Signup />} />
-              <Route path="/activation" element={<Activation />} />
-              <Route path='/home' element={<Home />} />
-              <Route path='/profile/:id' element={<Profile />} />
-              <Route path='/profile/' element={<Profile />} />
-              <Route path='/chat/' element={<Chat />} />
-              <Route path='/chat/:id' element={<Conversation />} />
-              <Route path='settings'>
-                <Route index element={<Settings />} />
-                <Route path="blockedUsers" element={<BlockedUsers />} />
-                <Route path="matchedUsers" element={<MatchedUsers />} />
-                <Route path="likedUsers" element={<LikedUsers />} />
-                <Route path="password" element={<Password />} />
-              </Route>
-              <Route path='*' element={<Unknown />} />
-            </Routes>
+            <ErrorContext.Provider value={{ error, setError, showError, setShowError }}>
+              <Routes>
+                <Route index element={<Navigate to="/home" />} />
+                <Route path='/signin' element={<Signin />} />
+                <Route path='/signup' element={<Signup />} />
+                <Route path="/activation" element={<Activation />} />
+                <Route path='/home' element={<Home />} />
+                <Route path='/profile/:id' element={<Profile />} />
+                <Route path='/profile/' element={<Profile />} />
+                <Route path='/chat/' element={<Chat />} />
+                <Route path='/chat/:id' element={<Conversation />} />
+                <Route path='settings'>
+                  <Route index element={<Settings />} />
+                  <Route path="blockedUsers" element={<BlockedUsers />} />
+                  <Route path="matchedUsers" element={<MatchedUsers />} />
+                  <Route path="likedUsers" element={<LikedUsers />} />
+                  <Route path="password" element={<Password />} />
+                </Route>
+                <Route path='*' element={<Unknown />} />
+              </Routes>
+            </ErrorContext.Provider>
           </PersistGate>
       </Provider>
     </>

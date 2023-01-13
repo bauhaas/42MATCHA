@@ -1,21 +1,23 @@
 // import axios from 'axios';
 
+import { useContext } from 'react';
+import { ErrorContext } from '../../../Context/error';
+
 import api from '../../../ax';
 
-const WaitEmailConfirmation = ({email, setError, setOpen}) => {
+const WaitEmailConfirmation = ({email}) => {
+
+    const { setError, setShowError } = useContext(ErrorContext);
+
     const handleResendEmail = () => {
-        console.log(email)
         api.post('http://localhost:3001/users/sendSignupEmail', {
             email: email
         })
-            .then(response => {
-                console.log(response);
-            })
-            .catch(error => {
-                console.log(error);
-                setOpen(true);
-                setError([error.response.status, error.response.data]);
-            });
+        .then(response => response.data)
+        .catch(error => {
+            setShowError(true);
+            setError([error.response.status, error.response.data]);
+        });
     }
 
     return(
@@ -31,7 +33,7 @@ const WaitEmailConfirmation = ({email, setError, setOpen}) => {
             <p className="text-center">Please confirm your email address by clicking the link you received.</p>
             <br />
             <p className="text-sm">You didn't receive an email from us ?</p>
-            <button onClick={handleResendEmail} className="h-10 w-full items-center justify-center gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
+            <button onClick={handleResendEmail} className="items-center justify-center w-full h-10 gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
                 <span>Resend Email</span>
             </button>
     </>
