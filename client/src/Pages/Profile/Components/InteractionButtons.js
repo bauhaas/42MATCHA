@@ -12,10 +12,11 @@ import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../
 import socket from '../../../Context/socket'
 
 const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
-    console.log("status", user.status)
+    console.log("user", user)
     const currentUser = useSelector((state) => state.user.user);
     const [filledIcon, setFilledIcon] = useState(false);
     const [match, setMatch] = useState(false);
+    const [date, setDate] = useState(null);
     const navigate = useNavigate();
 
     const blockUser = async () => {
@@ -51,15 +52,20 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
             });
     }
 
-    const m = new Date(user.status);
-    console.log("MMMMM", m)
-    var date =
-        (m.getUTCHours() + 1).toString() + ":" +
-        ("0" + m.getUTCMinutes()).slice(-2) + ":" +
-        ("0" + m.getUTCSeconds()).slice(-2) + " " +
-        m.getUTCDate() + "/" +
-        ("0" + (m.getUTCMonth()+1)).slice(-2) + "/" +
-        m.getUTCFullYear();
+    useEffect(() => {
+        console.log('useEffect that supposed to launch once', user.status);
+        const lastConnectionDate = new Date(user.status);
+        const lastConnectionDateFormatted =
+            (lastConnectionDate.getUTCHours() + 1).toString() + ":" +
+            ("0" + lastConnectionDate.getUTCMinutes()).slice(-2) + ":" +
+            ("0" + lastConnectionDate.getUTCSeconds()).slice(-2) + " " +
+            lastConnectionDate.getUTCDate() + "/" +
+            ("0" + (lastConnectionDate.getUTCMonth() + 1)).slice(-2) + "/" +
+            lastConnectionDate.getUTCFullYear();
+        setDate(lastConnectionDateFormatted);
+
+    }, [user])
+
 
     useEffect(() => {
         socket.client.on('hasmatchNotif', (data) => {
@@ -74,13 +80,13 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
         })
 
         socket.client.on('userDisconnect', (data) => {
-            console.log("DATA", data)
+            console.log("userDisconnect event received", data)
             if(user.id == data.id) {
-                console.log('user has disconnect', data.id)
+                console.log('user has disconnect', data.id, data.status)
                 user.status = true;
                 const m2 = new Date(data.status);
                 console.log("MMMMM2", m2)
-                date = 
+                const date =
                     (m2.getUTCHours() + 1).toString() + ":" +
                     ("0" + m2.getUTCMinutes()).slice(-2) + ":" +
                     ("0" + m2.getUTCSeconds()).slice(-2) + " " +
@@ -88,15 +94,18 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
                     ("0" + (m2.getUTCMonth()+1)).slice(-2) + "/" +
                     m2.getUTCFullYear();
                 console.log(user.status, date);
+                setDate(date);
             }
         })
 
         socket.client.on('userConnect', (data) => {
+            console.log('userConnect event received', data)
             console.log(user.id, data);
             if (user.id == data)
             {
                 console.log('user has connect', data)
                 user.status = null;
+                setDate(null);
             }
         })
 
@@ -106,10 +115,10 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
             socket.client.off('userDisconnect');
             socket.client.off('userConnect');
         };
-    }, [user]);
+    }, [user, date]);
 
-    console.log(user);
-    console.log('rerender');
+    console.log(user, date);
+
     return (
         <>
             {

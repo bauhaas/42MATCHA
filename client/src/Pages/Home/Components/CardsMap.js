@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
-// import axios from 'axios';
 import Slider, { SliderThumb } from '@mui/material/Slider';
 import { AiFillFire } from 'react-icons/ai';
 import { HiArrowUp } from 'react-icons/hi';
@@ -19,6 +18,7 @@ import Select from '@mui/material/Select';
 
 const CardsMap = () => {
     const [users, setUsers] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [showTopBtn, setShowTopBtn] = useState(false);
 	const currentUser = useSelector((state) => state.user.user);
     const minDistance = 1;
@@ -76,6 +76,7 @@ const CardsMap = () => {
             .then(response => {
                 console.log(response.data);
                 setUsers(response.data);
+                setIsLoading(false);
             })
             .catch(error => {
                 console.log(error);
@@ -182,6 +183,7 @@ const CardsMap = () => {
         api.get(`http://localhost:3001/users/${currentUser.id}/bachelors`)
             .then(response => {
                 setUsers(response.data);
+                setIsLoading(false);
             })
             .catch(error => {
                 console.error(error);
@@ -286,7 +288,7 @@ const CardsMap = () => {
                 <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                     {users.map((user, index) => (
                         <li key={user + index} id={user + index} className="flex">
-                            <ProfileCard user={user} />
+                            <ProfileCard user={user} isLoading={isLoading} />
                         </li>
                     ))}
                 </ul>

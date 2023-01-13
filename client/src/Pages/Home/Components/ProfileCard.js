@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { AiFillFire } from 'react-icons/ai';
 
-const ProfileCard = ({ user }) => {
+const ProfileCard = ({ user, isLoading }) => {
 
 	const navigate = useNavigate();
 
