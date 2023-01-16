@@ -59,7 +59,7 @@ export const validateRelationBody = (req, res, next) => {
     if (isNaN(sender_id) || isNaN(receiver_id))
       throw new BadRequestError('ids must be numbers')
 
-    const validTypes = ["block", "like", "match"];
+    const validTypes = ["block", "like", "unlike", "match"];
     if (validTypes.includes(type) === false)
       throw new BadRequestError('relation type is invalid')
     next();
