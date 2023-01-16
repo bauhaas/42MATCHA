@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
 import { handleForgottenPassword, validateNewPassword, resendSignupEmail, updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
+import { validateParamId, validateParamIds, validateUserCreationBody, validatePinBody } from '../middleware/ValidationMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
 import fs from 'fs';
@@ -34,7 +35,7 @@ const errorHandler = (error, req, res, next) => {
   next();
 };
 
-router.post('/:id/upload', async (req, res, next) => {
+router.post('/:id/upload', validateParamId, async (req, res, next) => {
   // Check if the user has exceeded the maximum number of allowed files
   const userId = req.params.id;
   console.log(userId, req.file, req);
@@ -62,21 +63,21 @@ router.post('/:id/upload', async (req, res, next) => {
 });
 
 
-router.get('/files/:userId', authenticateToken, async (req, res) => {
+router.get('/files/:id', authenticateToken, validateParamId, async (req, res) => {
   try {
-    const userId = req.params.userId;
-    const files = await getUserFiles(userId);
+    const id = req.params.id;
+    const files = await getUserFiles(id);
     res.send(files);
   } catch (err) {
     sendErrorResponse(res, err);
   }
 });
 
-router.delete('/files/:id/:userId', authenticateToken, async (req, res) => {
+router.delete('/files/:id1/:id2', authenticateToken, validateParamIds, async (req, res) => {
   try {
-    const id = req.params.id;
-    const userId = req.params.userId;
-    await deleteFile(id, userId);
+    const id1 = req.params.id1;
+    const id2 = req.params.id2;
+    await deleteFile(id1, id2);
     res.send({ message: 'File deleted successfully' });
   } catch (err) {
     sendErrorResponse(res, err);
@@ -96,7 +97,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
 
 
-router.get('/:id/bachelors/', authenticateToken, async (req, res) => {
+router.get('/:id/bachelors/', authenticateToken, validateParamId, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id))
@@ -108,7 +109,7 @@ router.get('/:id/bachelors/', authenticateToken, async (req, res) => {
   }
 });
 
-router.post('/:id/filteredBachelors', authenticateToken, async (req, res) => {
+router.post('/:id/filteredBachelors', authenticateToken, validateParamId, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id))
@@ -140,7 +141,7 @@ router.put('/setAsProfilePic/:fileId', async (req, res) => {
 });
 
 // Get liked users
-router.get('/:id/liked', authenticateToken, async (req, res) => {
+router.get('/:id/liked', authenticateToken, validateParamId, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id))
@@ -153,7 +154,7 @@ router.get('/:id/liked', authenticateToken, async (req, res) => {
 });
 
 // Get matched users
-router.get('/:id/matched', authenticateToken, async (req, res) => {
+router.get('/:id/matched', authenticateToken, validateParamId, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id))
@@ -166,7 +167,7 @@ router.get('/:id/matched', authenticateToken, async (req, res) => {
 });
 
 // Get blocked users
-router.get('/:id/blocked', authenticateToken, async (req, res) => {
+router.get('/:id/blocked', authenticateToken, validateParamId, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id))
@@ -215,7 +216,7 @@ router.post('/fake', async (req, res) => {
 
 
 // Get a user by their ID
-router.get('/:id', authenticateToken, async (req, res) => {
+router.get('/:id', authenticateToken, validateParamId, async (req, res) => {
   try {
     if (req.params.id === null) {
       throw new BadRequestError('id must be defined')
@@ -260,7 +261,7 @@ router.get('/:id/profile/:visit_id', authenticateToken, async (req, res) => {
 });
 
 // Insert a new user
-router.post('/', async (req, res) => {
+router.post('/', validateUserCreationBody, async (req, res) => {
   try {
     const { firstName, lastName, email, password, longitude, latitude } = req.body;
     const user = await insertUser(firstName.trim(), lastName.trim(), email.trim(), password, longitude, latitude);
@@ -312,7 +313,7 @@ function changeUserData(user, update) {
 }
 
 // Update user
-router.put('/:id/update', async (req, res) => {
+router.put('/:id/update', validateParamId, async (req, res) => {
   try {
     const id = req.params.id;
     log.info("[userController]", "update user:", id);
@@ -365,7 +366,7 @@ router.put('/sendPin', authenticateToken, async (req, res) => {
 });
 
 // verif pin and set new password
-router.put('/pin', authenticateToken, async (req, res) => {
+router.put('/pin', authenticateToken, validatePinBody, async (req, res) => {
   try {
     log.info('[userController]', 'pin');
     log.info('[userController]', req.body);
