@@ -14,6 +14,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { Skeleton } from '@mui/material';
 
 
 const CardsMap = () => {
@@ -180,6 +181,7 @@ const CardsMap = () => {
     }, []);
 
     useEffect(() => {
+        setTimeout(function () {
         api.get(`http://localhost:3001/users/${currentUser.id}/bachelors`)
             .then(response => {
                 setUsers(response.data);
@@ -188,8 +190,10 @@ const CardsMap = () => {
             .catch(error => {
                 console.error(error);
             });
+        }, 2000);
     }, [currentUser]);
 
+    console.log(isLoading);
     return (
         <>
             <div className='mt-16'>
@@ -285,12 +289,57 @@ const CardsMap = () => {
                     </FormControl>
                 </div>
 
-                <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                    {users.map((user, index) => (
-                        <li key={user + index} id={user + index} className="flex">
-                            <ProfileCard user={user} isLoading={isLoading} />
-                        </li>
-                    ))}
+                <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7">
+                    {
+                        isLoading ?
+                            Array(18).fill().map((_, i) => (
+                                <li key={i} className='flex'>
+                                    <div className="rounded-md bg-chess-hover hover:bg-chess-dark group w-full scale-90 overflow h-fit min-h-full flex flex-col">
+                                        <Skeleton variant="rectangular" className='bg-chess-placeholder h-80  md:h-64 rounded-t-lg' />
+                                        <div className="p-1 flex flex-col grow min-h-1/2 max-h-1/2">
+                                            <div className="flex flex-row items-center w-full">
+                                                <Skeleton variant="text" className='bg-chess-placeholder w-full h-14' />
+                                                <div className='relative m-4'>
+                                                    <Skeleton variant="circular" className='bg-chess-placeholder w-10 h-10' />
+                                                </div>
+                                            </div>
+                                            <div className='mb-auto'>
+                                                <Skeleton variant="text" className='bg-chess-placeholder w-full h-12' />
+                                                <Skeleton variant="text" className='bg-chess-placeholder w-full h-12' />
+                                                {
+                                                    Array(5).fill().map((_, i) => (
+                                                        <div key={i}>
+                                                            <Skeleton variant="text" className={`bg-chess-placeholder w-${Math.floor(Math.random() * (60 - 40 + 1)) + 40}`} />
+                                                        </div>
+                                                    ))
+                                                }
+                                            </div>
+                                            <div className="flex flex-wrap p-1 gap-2">
+                                            {
+                                                    Array(3).fill().map((_, i) => (
+                                                        <div key={i}>
+                                                            <Skeleton variant="text" className='bg-chess-placeholder h-8 w-20' />
+                                                        </div>
+                                                    ))
+                                            }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            ))
+                        :
+                        <>
+                                {
+                                    users.map((user, index) => (
+                                        <li key={user + index} id={user + index} className="flex">
+                                            <ProfileCard user={user} />
+                                        </li>
+                                    ))
+                                }
+                        </>
+
+                    }
+
                 </ul>
 
                 {

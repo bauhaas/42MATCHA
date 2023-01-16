@@ -22,6 +22,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ErrorContext } from './Context/error';
 import  { successCallback, errorCallback } from './Context/position'
 import Activation from './Pages/Activation/Activation';
+import { ProtectedLayout } from './ProtectedLayout';
 
 navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
 
@@ -90,21 +91,24 @@ function App() {
           <PersistGate persistor={persistor}>
             <ErrorContext.Provider value={{ error, setError, showError, setShowError }}>
               <Routes>
-                <Route index element={<Navigate to="/home" />} />
                 <Route path='/signin' element={<Signin />} />
                 <Route path='/signup' element={<Signup />} />
                 <Route path="/activation" element={<Activation />} />
-                <Route path='/home' element={<Home />} />
-                <Route path='/profile/:id' element={<Profile />} />
-                <Route path='/profile/' element={<Profile />} />
-                <Route path='/chat/' element={<Chat />} />
-                <Route path='/chat/:id' element={<Conversation />} />
-                <Route path='settings'>
-                  <Route index element={<Settings />} />
-                  <Route path="blockedUsers" element={<BlockedUsers />} />
-                  <Route path="matchedUsers" element={<MatchedUsers />} />
-                  <Route path="likedUsers" element={<LikedUsers />} />
-                  <Route path="password" element={<Password />} />
+
+                <Route path="/" element={<ProtectedLayout />}>
+                  <Route index element={<Navigate to="/home" />} />
+                  <Route path='/home' element={<Home />} />
+                  <Route path='/profile/:id' element={<Profile />} />
+                  <Route path='/profile/' element={<Profile />} />
+                  <Route path='/chat/' element={<Chat />} />
+                  <Route path='/chat/:id' element={<Conversation />} />
+                  <Route path='settings'>
+                    <Route index element={<Settings />} />
+                    <Route path="blockedUsers" element={<BlockedUsers />} />
+                    <Route path="matchedUsers" element={<MatchedUsers />} />
+                    <Route path="likedUsers" element={<LikedUsers />} />
+                    <Route path="password" element={<Password />} />
+                  </Route>
                 </Route>
                 <Route path='*' element={<Unknown />} />
               </Routes>
