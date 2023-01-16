@@ -60,7 +60,7 @@ const SignUpForm = ({email, setEmail, setHasSignedUP}) => {
         event.preventDefault();
         navigate("/signin");
     }
-    
+
     const handleSignUpClick = (event) => {
         event.preventDefault();
         if (validator.allValid()) {
@@ -123,30 +123,32 @@ const SignUpForm = ({email, setEmail, setHasSignedUP}) => {
             <input className={`shadow appearance-none border rounded w-full mb-4 py-2 px-3 ${invalidFields.includes('email') ? "text-red-500 border-red-500" : "text-gray-700"} leading-tight focus:outline-none focus:shadow-outline`} id="email" type="text" placeholder="john.doe@gmail.com"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)} />
+            <form className="text-sm font-bold self-start mb-1 block w-full">
+                <label className={`${invalidFields.includes('password') ? " text-red-500" : "text-gray-700"}`}>
+                    Password
+                    <span className="text-red-500 font-normal inline-block pl-1">{validator.message("password", password, "required|match|min:12|minNum", {
+                        messages: {
+                            required: " is required",
+                            match: "doesn't match",
+                            min: " too short, at least 12 characters",
+                            minNum: " need at least one number"
+                        },
+                    })}</span>
+                </label>
+                <input className={`shadow appearance-none border rounded w-full py-2 px-3 ${invalidFields.includes('password') ? " text-red-500 border-red-500" : "text-gray-700"} mb-3 leading-tight focus:outline-none focus:shadow-outline`} id="password" type="password" placeholder="***********" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="off"/>
 
-            <label className={`block ${invalidFields.includes('password') ? " text-red-500" : "text-gray-700"} text-sm font-bold self-start mb-1`}>
-                Password
-                <span className="text-red-500 font-normal inline-block pl-1">{validator.message("password", password, "required|match|min:12|minNum", {
-                    messages: {
-                        required: " is required",
-                        match: "doesn't match",
-                        min: " too short, at least 12 characters",
-                        minNum: " need at least one number"
-                    },
-                })}</span>
-            </label>
-            <input className={`shadow appearance-none border rounded w-full py-2 px-3 ${invalidFields.includes('password') ? " text-red-500 border-red-500" : "text-gray-700"} mb-3 leading-tight focus:outline-none focus:shadow-outline`} id="password" type="password" placeholder="***********" value={password} onChange={(event) => setPassword(event.target.value)} />
+                <label className={`${invalidFields.includes('passwordConfirm') ? "text-red-500" : "text-gray-700"}`}>
+                    Password confirmation
+                    <span className="inline-block pl-1 font-normal text-red-500">{validator.message("passwordConfirm", passwordConfirm, "required|match", {
+                        messages: {
+                            required: " is required",
+                            match: "doesn't match"
+                        },
+                    })}</span>
+                </label>
+                <input className={`shadow appearance-none border rounded w-full py-2 px-3 ${invalidFields.includes('passwordConfirm') ? "text-red-500 border-red-500" : "text-gray-700"} mb-3 leading-tight focus:outline-none focus:shadow-outline`} id="passwordConfirm" type="password" placeholder="***********" value={passwordConfirm} onChange={(event) => setPasswordConfirm(event.target.value)} autoComplete="off" />
+            </form>
 
-            <label className={`block ${invalidFields.includes('passwordConfirm') ? "text-red-500" : "text-gray-700"} text-sm font-bold self-start mb-1`}>
-                Password confirmation
-                <span className="inline-block pl-1 font-normal text-red-500">{validator.message("passwordConfirm", passwordConfirm, "required|match", {
-                    messages: {
-                        required: " is required",
-                        match: "doesn't match"
-                    },
-                })}</span>
-            </label>
-            <input className={`shadow appearance-none border rounded w-full py-2 px-3 ${invalidFields.includes('passwordConfirm') ? "text-red-500 border-red-500" : "text-gray-700"} mb-3 leading-tight focus:outline-none focus:shadow-outline`} id="passwordConfirm" type="password" placeholder="***********" value={passwordConfirm} onChange={(event) => setPasswordConfirm(event.target.value)} />
             <button onClick={handleSignUpClick} className="items-center justify-center w-full h-10 gap-2 px-6 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none">
                 <span>Sign up</span>
             </button>

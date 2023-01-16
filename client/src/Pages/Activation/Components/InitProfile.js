@@ -30,7 +30,6 @@ const InitProfile = ({user}) => {
     const [upload, setToUpload] = useState([]);
 
     console.log(user, pictures,'upload:', upload);
-    // const uploadPhoto = async () => {}
 
     const handleSubmit = async () => {
         console.log(user.id);
@@ -87,9 +86,10 @@ const InitProfile = ({user}) => {
     }
 
     const handleNextClick = () => {
+
         if (currentStep !== 4)
             setCurrentStep(currentStep + 1);
-        else if(currentStep === 4 && pictures.length > 0)
+        else if(currentStep === 4)
             handleSubmit();
     }
 
@@ -102,7 +102,7 @@ const InitProfile = ({user}) => {
         setParams(new URLSearchParams(location.search));
     }, [location]);
 
-
+    console.log(bio, age, sex, city, job, country, sexOrientation, interests)
     return (
         <>
             <div className="bg-chess-default text-white min-h-screen">
@@ -129,7 +129,7 @@ const InitProfile = ({user}) => {
                         </button>
                         {
                         currentStep === 4 ?
-                            <button onClick={handleNextClick} className={`btn btn-sm btn-circle hover:bg-bot-logo ${pictures.length > 0 ? 'bg-mid-logo' : 'btn-disabled'}`}>
+                            <button onClick={handleNextClick} className={`btn btn-sm btn-circle hover:bg-bot-logo ${pictures.length > 0 && bio && age && sex && city && job && country && sexOrientation && interests[0]? 'bg-mid-logo' : 'btn-disabled'}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                 </svg>

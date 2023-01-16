@@ -31,8 +31,6 @@ function App() {
   const [error, setError] = useState([]);
   const [showError, setShowError] = useState(false);
 
-  const unauthenticatedRoutes = ['/signin', '/signup', '/activation', '*'];
-
   useEffect(() => {
         return () => {
           if (socket.client && socket.client.connected === true) {
@@ -40,50 +38,6 @@ function App() {
           }
       }
     }, [])
-
-    const navigate = useNavigate();
-    const location = useLocation();
-
-  //   // useEffect(() => {
-  //     const token = localStorage.getItem("jwt");
-  //     console.log('u dont wait for token')
-  //     console.log(token, location.pathname, unauthenticatedRoutes.includes(location.pathname));
-  //     if (!token && !unauthenticatedRoutes.includes(location.pathname)) {
-  //       navigate("/signin", { replace: true });
-  //     }
-  //   // }, []);
-
-  //   const [isAuth, setIsAuth] = useState(false);
-  //   const [loading, setLoading] = useState(true);
-  //   const [params, setParams] = useState(new URLSearchParams(location.search));
-
-  //   useEffect(() => {
-  //     setParams(new URLSearchParams(location.search));
-  // }, [location]);
-
-  //   useEffect(() => {
-  //     const token = localStorage.getItem("jwt");
-
-
-  //     if (!token) {
-  //         setIsAuth(false)
-  //         setLoading(false)
-  //     } else {
-  //       setIsAuth(true)
-  //       setLoading(false)
-  //     }
-  //   }, [isAuth]);
-
-  //   if (loading) {
-  //     return <div>Loading a...</div>;
-  //   }
-
-  //   console.log(isAuth);
-  //   if (!isAuth && !unauthenticatedRoutes.includes(location.pathname)) {
-  //     console.log('u not auth')
-  //     navigate("/signin", { replace: true });
-  //     return <div>Loading (u not auth and not in authorized routes)...</div>;
-  //   }
 
     return (
     <>

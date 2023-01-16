@@ -90,18 +90,17 @@ function Signin() {
             <div className="flex flex-col items-center justify-center w-3/4 min-h-full sm:w-1/2">
               <img className="self-start w-1/5" src='../logo.png' alt='logo'/>
               <h1 className="self-start mb-4 text-2xl font-bold">Sign in to your account</h1>
-              <label className="self-start block mb-2 text-sm font-bold text-gray-700">
-                Email address
-              </label>
-              <input  className="w-full px-3 py-2 mb-4 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="john.doe@gmail.com"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)} />
-              <label className="self-start block mb-2 text-sm font-bold text-gray-700">
-                Password
-              </label>
-              <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="***********"
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)} />
+            <form className="self-start block mb-2 text-sm font-bold text-gray-700">
+                <label>Email address</label>
+                <input className="w-full px-3 py-2 mb-4 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="john.doe@gmail.com"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)} />
+                <label>Password</label>
+                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="***********" autoComplete="on"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)} />
+              </form>
+
               <div className="flex items-center w-full mb-4">
                 <button onClick={forgotPassword} className="ml-2 text-sm font-medium text-blue-600 grow text-end dark:text-blue-500 hover:underline">
                   <span>Forgot your password ?</span>
