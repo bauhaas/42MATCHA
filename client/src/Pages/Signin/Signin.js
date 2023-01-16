@@ -28,7 +28,6 @@ function Signin() {
   const handleSignInClick = (event) => {
     event.preventDefault();
 
-    console.log('post login');
     axios.post('http://localhost:3001/users/login', {
       email: email,
       password: password

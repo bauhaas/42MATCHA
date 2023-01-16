@@ -27,9 +27,7 @@ const Navbar = () => {
   const [convlist, setConvList] = useState([]);
 
 	useEffect(() => {
-    console.log('try to connect');
 		if (socket.client === undefined || socket.client.connected === false) {
-      console.log('connect socket with:', user.id);
 			socket.connect(user.id);
 		}
 	}, [user]);
@@ -51,38 +49,29 @@ const Navbar = () => {
 
   useEffect(() => {
     socket.client.on('convUpdate', (data) => {
-      console.log('receive convUpdate event in navbar page', data)
 
       //to detect if the user is currently chatting with the other. in that case don't notice him
       const pathParts = window.location.pathname.split('/');
       const urlEnd = pathParts[pathParts.length - 1];
       const conversation = data.find(conv => conv.id === Number(urlEnd));
       if (!conversation || Number(urlEnd) !== conversation.id) {
-        console.log('redux save convs', data);
         dispatch(setConvs(data));
       }
     })
 
     socket.client.on('hasvisitNotif', (data) => {
-      console.log('receive a visit', data)
       setNotifications([...notifications, data]);
     })
 
     socket.client.on('haslikeNotif', (data) => {
-      console.log('receive a like', data)
-      console.log('before update notif:',notifications)
       setNotifications([...notifications, data]);
     })
 
     socket.client.on('hasmatchNotif', (data) => {
-      console.log('receive a match', data)
-      console.log('before update notif:',notifications)
       setNotifications([...notifications, data]);
     })
 
     socket.client.on('hasunlikeNotif', (data) => {
-      console.log('receive a unlike', data)
-      console.log('before update notif:',notifications)
       setNotifications([...notifications, data]);
     })
 
@@ -96,12 +85,10 @@ const Navbar = () => {
   }, [notifications, dispatch]);
 
   useEffect(() => {
-    console.log('redux convs value:', convs);
     setConvList(convs);
   }, [convs]);
 
   const logout = (event) => {
-    console.log('logout')
     event.preventDefault();
     localStorage.removeItem('jwt');
 
@@ -118,7 +105,6 @@ const Navbar = () => {
 
   const gotoprofile = (event, id) => {
     event.preventDefault();
-    console.log(id);
     navigate(`/profile/${id}`);
   }
 
@@ -139,12 +125,10 @@ const Navbar = () => {
 
   const deleteNotifs = (event, notifToRemove) => {
     event.preventDefault(); //do not delete, allow to not autoclose the notifications dropdown on a single suppresion
-    console.log('delete notifs with id:', notifToRemove.id);
 
     api.delete(`http://localhost:3001/notifications/${notifToRemove.id}`, {id: notifToRemove.id
     })
       .then(response => {
-        console.log('notif has been deleted in db', response);
         // handle success
         setNotifications(notifications.filter((notification) => notification.id !== notifToRemove.id));
       })
@@ -155,18 +139,14 @@ const Navbar = () => {
     }
 
   const setNotifRead = (event, notifToUpdate) => {
-    console.log('update notif with id:', notifToUpdate);
 
     if(!notifToUpdate.read)
     {
-      console.log('notif has been read');
       api.put(`http://localhost:3001/notifications/${notifToUpdate.id}/update_read`, {
         id: notifToUpdate.id
       })
         .then(response => {
           // handle success
-          console.log('update notif has read to the db', response);
-
           // Use the setState method to update the notifications state in an immutable way
           setNotifications(prevState => {
             // Make a copy of the notifications state array
@@ -211,7 +191,6 @@ const Navbar = () => {
     }
   }
 
-  console.log('render navbar', convs);
 
 return (
   <Disclosure as="nav" className="bg-chess-hover fixed top-0 min-w-full z-40">

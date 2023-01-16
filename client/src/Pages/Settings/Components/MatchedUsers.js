@@ -16,14 +16,12 @@ const MatchedUsers = () => {
 
   const unmatchUser = (event, id) => {
     event.preventDefault();
-    console.log('unmatch user', id);
     api.post('http://localhost:3001/relations', {
       sender_id: currentUser.id,
       receiver_id: id,
       type: 'unlike'
     })
       .then(response => {
-        console.log(response);
         getMatchedUsers(currentUser.id, setmatchedUsers, setIsLoading);
       })
       .catch(error => {

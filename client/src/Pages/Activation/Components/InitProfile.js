@@ -30,10 +30,7 @@ const InitProfile = ({user}) => {
     const [pictures, setPictures] = useState([]);
     const [upload, setToUpload] = useState([]);
 
-    console.log(user, pictures,'upload:', upload);
-
     const handleSubmit = async () => {
-        console.log(user.id);
         await api.put(`http://localhost:3001/users/${user.id}/update`, {
             bio: bio,
             age: age,
@@ -47,15 +44,12 @@ const InitProfile = ({user}) => {
         })
             .then(async response => {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
-                console.log(response);
-                console.log(upload);
                 dispatch(setUser(response.data));
 
                 if (upload.length > 0) {
                     for (let i = 0; i < upload.length; i++) {
                         const file = upload[i];
 
-                        console.log(user.id, file);
                         const formData = new FormData();
                         formData.append('file', file); // file is the file that you get from the input element's onChange event
                         formData.append('user.id', user.id);
@@ -66,8 +60,6 @@ const InitProfile = ({user}) => {
                             }
                         })
                             .then((response) => {
-                                console.log(response);
-                                console.log('redux save', response);
                                 dispatch(updateFiles(response.data));
                             })
                             .catch((error) => {
@@ -103,7 +95,6 @@ const InitProfile = ({user}) => {
         setParams(new URLSearchParams(location.search));
     }, [location]);
 
-    console.log(bio, age, sex, city, job, country, sexOrientation, interests)
     return (
         <>
             <div className="bg-chess-default text-white min-h-screen">

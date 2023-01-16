@@ -43,13 +43,11 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // // Set up the Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-console.log(import.meta.url);
 const uploadsPath = dirname(import.meta.url) + '/uploads';
 
 import * as url from 'url';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-console.log(__dirname + '../uploads', __filename)
 app.use('/uploads', express.static(__dirname + '../uploads'));
 
 // Set up the server
@@ -80,7 +78,6 @@ io.on('connection', (socket) => {
   io.emit('userConnect', user_id);
   
   socket.on('disconnect', async () => {
-    console.log(user_id, "disconnecting");
     map.delete(user_id, socket);
     const user = await updateStatusUser(user_id, false)
     io.emit('userDisconnect', {id: user_id, status: user.status});
@@ -108,8 +105,6 @@ io.on('connection', (socket) => {
       io.to(toSocket.id).emit('messageHistory', messageHistory);
 
       const conversation = await getConversationsOf(messagePayload.to);
-      console.log(conversation)
-      console.log(map.keys,toSocket.id)
       io.to(toSocket.id).emit('convUpdate', conversation);
     }
   });

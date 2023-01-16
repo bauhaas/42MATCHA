@@ -46,7 +46,6 @@ const SignUpForm = ({email, setEmail, setHasSignedUP}) => {
             latitude: position.latitude,
         })
             .then(response => {
-                console.log(response);
                 setHasSignedUP(true);
                 return ;
             })

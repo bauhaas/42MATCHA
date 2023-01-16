@@ -41,13 +41,11 @@ const Password = () => {
     const user = useSelector((state) => state.user.user);
 
     const resetPassword = () => {
-        console.log('sne pin clicked');
         api.put(`http://localhost:3001/users/sendPin`, {
             currentPassword: currentPassword,
             id: user.id
         })
             .then(response => {
-                console.log(response);
                 setEmailSent(true);
             })
             .catch(error => {
@@ -56,15 +54,11 @@ const Password = () => {
     }
 
     const changePassword = () => {
-        console.log('validate new password clicked');
         api.put(`http://localhost:3001/users/pin`, {
             pin: Number(pin),
             newPassword: password,
             id: user.id
         })
-            .then(response => {
-                console.log(response);
-            })
             .catch(error => {
                 console.log(error);
             });
@@ -72,22 +66,18 @@ const Password = () => {
     }
 
     const validateNewPassword = (event) => {
-        console.log('validate new password clicked');
         event.preventDefault();
         if (validator.allValid()) {
-            console.log("form is valid");
             changePassword();
         } else {
             const invalidFieldsSet = new Set(invalidFields);
             (!validator.check(password, "required|match|min:12|minNum")) ? invalidFieldsSet.add('password') : invalidFieldsSet.delete('password');
             (!validator.check(passwordConfirm, "required|match")) ? invalidFieldsSet.add('passwordConfirm') : invalidFieldsSet.delete('passwordConfirm');
         
-            console.log("invalidFieldsSet", invalidFieldsSet);
             showValidationMessage(true);
             setInvalidFields(Array.from(invalidFieldsSet));
         }
     }
-    console.log(invalidFields)
 	return (
 		<>
             <SettingsPageLayout>

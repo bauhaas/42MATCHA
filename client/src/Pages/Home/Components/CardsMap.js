@@ -63,8 +63,6 @@ const CardsMap = () => {
     };
 
     const sendFilters = async (event) => {
-        console.log('age:', ageRange, ' distance:', distanceRange, ' fame:',fameRange, ' commontag:', commonTags)
-
         await api.post(`http://localhost:3001/users/${currentUser.id}/filteredBachelors/`, {
             min_age: ageRange[0],
             max_age: ageRange[1],
@@ -75,7 +73,6 @@ const CardsMap = () => {
             max_common_interests: 100
         })
             .then(response => {
-                console.log(response.data);
                 setUsers(response.data);
                 setIsLoading(false);
             })
@@ -127,7 +124,6 @@ const CardsMap = () => {
 
     const handleSortByDirection = (event, direction) => {
         setSortDirection(direction);
-        console.log(sortBy, direction);
         const sort = sortBy + ' ' + direction;
         executeSort(sort);
     }
@@ -135,41 +131,30 @@ const CardsMap = () => {
     const executeSort = (sort) => {
         switch (sort) {
             case 'fame descending':
-                console.log(sort)
                 setUsers(users.sort((a, b) => b.fame_rating - a.fame_rating));
                 break;
             case 'fame ascending':
-                console.log(sort)
                 setUsers(users.sort((a, b) => a.fame_rating - b.fame_rating));
                 break;
             case 'distance descending':
-                console.log(sort)
                 setUsers(users.sort((a, b) => b.distance - a.distance));
                 break;
             case 'distance ascending':
-                console.log(sort)
                 setUsers(users.sort((a, b) => a.distance - b.distance));
                 break;
             case 'age descending':
-                console.log(sort)
-                console.log(users[0]);
                 setUsers(users.sort((a, b) => b.age - a.age));
-                console.log(users[0]);
                 break;
             case 'age ascending':
-                console.log(sort)
-                console.log(users[0]);
                 setUsers(users.sort((a, b) => a.age - b.age));
-                console.log(users[0]);
                 break;
             default:
-                console.log('switch case unknown');
+                return;
         }
     }
 
     const handleSortByChange = (event) => {
         setSortBy(event.target.value);
-        console.log(event.target.value, sortDirection);
         const sort = event.target.value + ' ' + sortDirection;
         executeSort(sort);
     };
@@ -193,7 +178,6 @@ const CardsMap = () => {
         }, 1000);
     }, [currentUser]);
 
-    console.log(isLoading);
     return (
         <>
             <div className='mt-16'>

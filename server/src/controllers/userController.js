@@ -21,7 +21,6 @@ const upload = multer({
   dest: 'uploads/',
   fileFilter: async (req, file, cb) => {
     if (!allowedTypes.includes(file.mimetype)) {
-      console.log('invalid type');
       return cb({ message: 'Invalid file type', status: 400 }, false);
     }
     cb(null, true);
@@ -38,14 +37,12 @@ const errorHandler = (error, req, res, next) => {
 router.post('/:id/upload', validateParamId, async (req, res, next) => {
   // Check if the user has exceeded the maximum number of allowed files
   const userId = req.params.id;
-  console.log(userId, req.file, req);
   const maxFiles = 5; // Maximum number of allowed files per user
   const client = await pool.connect();
   const result = await client.query(`
     SELECT COUNT(*) as count FROM user_files WHERE user_id = $1
   `, [userId]);
   const count = result.rows[0].count;
-  console.log('count:', count);
   if (count >= maxFiles) {
     return res.status(400).send({ message: `You have already reached the maximum number of allowed files (${maxFiles})` });
   }
@@ -53,7 +50,6 @@ router.post('/:id/upload', validateParamId, async (req, res, next) => {
   next();
 }, upload.single('file'), errorHandler, async (req, res) => {
   // Save the file to the database
-  console.log(req.file, 'file');
   const filePath = req.file.path;
   const userId = req.params.id;
   const is_profile_pic = req.body.is_profile_pic;
@@ -132,7 +128,6 @@ router.post('/sendSignupEmail', async (req, res) => {
 
 router.put('/setAsProfilePic/:fileId', async (req, res) => {
   try {
-    console.log(req.params.fileId);
     const files = await updateProfilePicture(req.params.fileId, req.body.userId);
     res.send(files);
   } catch (err) {
@@ -203,10 +198,7 @@ router.post('/fake', async (req, res) => {
   try {
     const fakeUser = req.body.fakeUserName;
     const position = req.body.position;
-    console.log(fakeUser);
-    console.log(position);
     const user = await CreateFakeUser(fakeUser, position.longitude, position.latitude);
-    console.log(user);
     const accessToken = generateAccessToken(user);
     res.send(accessToken);
   } catch (err) {
@@ -224,7 +216,6 @@ router.get('/:id', authenticateToken, validateParamId, async (req, res) => {
     if (isNaN(req.params.id)) {
       throw new BadRequestError('id must be a number')
     }
-    console.log('get a user by id');
     const user = await getUserById(req.params.id);
     res.send(user);
   } catch (err) {
@@ -323,9 +314,7 @@ router.put('/:id/update', validateParamId, async (req, res) => {
       throw new BadRequestError('id must be a number');
     var user = await getUserById(id);
 
-    console.log(user);
     user = changeUserData(user, req.body);
-    console.log(user);
     log.info("[userController]", user);
     const newUser = await updateUser(user);
 
@@ -360,7 +349,6 @@ router.put('/sendPin', authenticateToken, async (req, res) => {
     const user = await getUserById(id);
 
     const result = await resetPassword(currentPassword, user);
-    console.log(result)
     res.sendStatus(200);
   } catch (err) {
     sendErrorResponse(res, err);

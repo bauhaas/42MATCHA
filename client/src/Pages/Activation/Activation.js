@@ -15,7 +15,6 @@ const Activation = () => {
         if (token) {
             localStorage.setItem('jwt', token);
             const user = jwt_decode(token);
-            console.log('ddddd');
             setUser(user);
         }
     }, [token]);

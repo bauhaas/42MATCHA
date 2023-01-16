@@ -2,9 +2,6 @@ import SettingsHeader from './SettingsHeader';
 import NavBar from '../../Navbar/NavBar';
 
 const SettingsPageLayout = ({ children }) => {
-
-    console.log('settings pqge lqyout');
-
     return (
         <div className="bg-chess-default min-h-screen overflow-y-auto">
             <NavBar />

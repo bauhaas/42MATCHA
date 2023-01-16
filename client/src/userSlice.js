@@ -9,7 +9,6 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         setUser: (state, action) => {
-            // console.log('setuser in redux');
            state.user = action.payload;
         },
         updateFiles: (state, action) => {

@@ -21,7 +21,6 @@ export const createNotification = async (sender_id, receiver_id, type) => {
 
         const socket = global.map.get(String(receiver_id));
         if (socket) {
-            console.log(`has${type}Notif from createNotification`);
             socket.emit(`has${type}Notif`, notif.rows[0]);
         }
         return notif.rows[0];
@@ -42,7 +41,6 @@ export const getNotificationsOfUserId = async (id) => {
             WHERE sender_id = $1 OR receiver_id = $1
             `, [id]);
 
-        console.log(notif.rows);
         if (notif.rowCount > 0) {
             log.info('[notificationService]', 'return something');
             return notif.rows
@@ -65,7 +63,6 @@ export const getNotificationById = async (id) => {
             WHERE id = $1
             `, [id]);
 
-        console.log(notification.rows);
         if (notification.rowCount > 0) {
             log.info('[notificationService]', 'return something');
             return notification.rows
@@ -134,7 +131,6 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
 
         const socket = global.map.get(String(receiver_id));
         if (socket) {
-            console.log(`hasvistNotif from insertNotification`);
             socket.emit('hasVisitNotif', notif.rows[0]);
         }
         return notif.rows[0];
@@ -216,28 +212,3 @@ export const deleteNotification = async (id) => {
         client.release();
     }
 };
-
-
-//TODO why do we have to delete notifications on block ? seems unlogic
-// export const deleteAllNotificationsOfPair = async (sender_id, receiver_id) => {
-//     const client = await pool.connect();
-//     try {
-//     const notificationsResult = await client.query(`
-//         SELECT id FROM notifications
-//         WHERE (sender_id = $1 AND receiver_id = $2)
-//         OR (sender_id = $2 AND receiver_id = $1)
-//     `, [sender_id, receiver_id]);
-
-//     if (notificationsResult.rowCount === 0)
-//         return null;
-//     const notifications = result.rows;
-
-//     for (let i = 0; i < notifications.length; i++)
-//         await deleteNotification(notifications[i].id);
-//     return sender_id;
-//     } catch (err) {
-//         throw err;
-//     } finally {
-//         client.release();
-//     }
-// }

@@ -46,7 +46,6 @@ const Settings = () => {
     };
 
     const updateUser = () => {
-        console.log('gonna updateUser');
         api.put(`http://localhost:3001/users/${user.id}/update`, {
             first_name:first_name,
             last_name:last_name,
@@ -58,7 +57,6 @@ const Settings = () => {
             age:age
         })
             .then(response => {
-                console.log(response);
                 dispatch(setUser(response.data));
             })
             .catch(error => {

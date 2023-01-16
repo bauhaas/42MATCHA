@@ -20,12 +20,10 @@ const Chat = () => {
     const patchMessagesAsRead = (conversation) => {
         api.patch(`http://localhost:3001/messages/${conversation.id}`)
             .then(response => {
-                console.log('success patch messages');
                 // Make a copy of the conversation object
                 const updatedConversation = { ...conversation };
                 // Modify the copy
                 updatedConversation.last_message_unread = false;
-                console.log(updatedConversation);
                 dispatch(updateConversation(updatedConversation));
             })
             .catch(error => {
@@ -45,7 +43,6 @@ const Chat = () => {
         const getConversations = async () => {
             api.get(`http://localhost:3001/conversations/user/${currentUser.id}`)
                 .then(response => {
-                    console.log('get conversationof',response);
                     setConvList(response.data);
                 })
                 .catch(error => {
@@ -57,7 +54,6 @@ const Chat = () => {
 
     useEffect(() => {
         socket.client.on('convUpdate', (data) => {
-            console.log('receive convUpdate event', data)
             setConvList(data);
         })
 
@@ -66,7 +62,6 @@ const Chat = () => {
         };
     });
 
-    console.log(convlist);
     return (
         <>
             <div className="bg-chess-default min-h-screen">

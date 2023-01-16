@@ -60,7 +60,6 @@ const getHobby = async (interestsStr) => {
     else {
       interestsStr += "\"" + body.hobby + "\",";
       const data = JSON.parse(body);
-      console.log('body', data.hobby);
       return interestsStr;
     }
   });

@@ -15,7 +15,6 @@ function useIsAuthenticated() {
       try {
         // Decode the JWT to get the user's information
         const user = jwt_decode(jwt);
-        console.log(user);
         // Check if the JWT has expired
         const currentTime = Date.now() / 1000;
         if (user.exp < currentTime) {
@@ -35,7 +34,6 @@ function useIsAuthenticated() {
     }
   }, []);
 
-  console.log(isAuthenticated);
   // Return the `isAuthenticated` state variable
   return { isAuthenticated };
 }

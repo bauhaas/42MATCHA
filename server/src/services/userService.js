@@ -39,7 +39,6 @@ export const getUserFiles = async (userId) => {
   const client = await pool.connect();
 
   try {
-    console.log('get user file of id:', userId);
     const result = await client.query(`
       SELECT * FROM user_files WHERE user_id = $1
     `, [userId]);
@@ -57,7 +56,6 @@ export const deleteFile = async (id, userId) => {
   const client = await pool.connect();
 
   try {
-    console.log('deleting file with id:', id);
     // Get the file path from the database
     const result = await client.query(`
       SELECT file_path FROM user_files WHERE id = $1
@@ -74,10 +72,8 @@ export const deleteFile = async (id, userId) => {
     const result2 = await client.query(`
       SELECT * FROM user_files WHERE is_profile_pic = $1 AND user_id = $2
     `, [true, userId]);
-    console.log(result2.rowCount, typeof(result2.rowCount));
 
     if (result2.rowCount === 0) {
-      console.log('gonna select a new default profile pic');
       // If there are no other files with is_profile_pic set to true, select a random file and set it as the profile picture
       const result3 = await client.query(`
         SELECT * FROM user_files WHERE user_id = $1 ORDER BY RANDOM() LIMIT 1
@@ -107,16 +103,12 @@ export const saveFile = async (userId, filePath, is_profile_pic) => {
       WHERE user_id = $1`
       , [userId]);
     const count = result.rows[0].count;
-    console.log(count, result.rows, typeof(count));
     // If it is the first row, set is_profile_pic to true
     if (count === '0') {
-      console.log('set profile pic as true');
       is_profile_pic = 'true';
     }
-    console.log(userId, filePath, is_profile_pic, typeof (is_profile_pic));
     // Update previous rows to set is_profile_pic to false
     if (is_profile_pic == 'true') {
-      console.log('gonna change default profile pic');
       await client.query(`
         UPDATE user_files
         SET is_profile_pic = $1
@@ -129,7 +121,6 @@ export const saveFile = async (userId, filePath, is_profile_pic) => {
       INSERT INTO user_files (user_id, file_path, is_profile_pic)
       VALUES ($1, $2, $3) RETURNING *;
       `, [userId, filePath, is_profile_pic]);
-    console.log(res, res.rows);
     return res.rows[0];
   } catch (err) {
     throw err;
@@ -147,8 +138,6 @@ export const isActive = async (id) => {
       SELECT active from users
       WHERE id = $1
     `, [id]);
-    console.log(result);
-    console.log(result.rows);
     return result;
   } catch (err) {
     throw err;
@@ -178,7 +167,6 @@ export const getBachelors = async (id) => {
 
   try {
     const me = await getUserById(id);
-    console.log("getBachelors", me);
     const result = await client.query(`
       SELECT users.*, SQRT(POWER(73 * ABS($2 - longitude), 2) + POWER(111 * ABS($3 - latitude), 2)) as distance, JSON_AGG(user_files.*) as files
       FROM users LEFT JOIN user_files ON users.id = user_files.user_id
@@ -264,9 +252,6 @@ export const getFilteredBachelors = async (id, filters) => {
         return false;
     });
 
-    console.log("length", filteredUsers.length);
-    console.log("me", me);
-
     // sort by increasing distance
     filteredUsers.sort((a, b) => a.distance < b.distance);
 
@@ -324,13 +309,6 @@ export const getLogin = async (email, password) => {
       throw new ForbiddenError('No profile picture uploaded via the email link, please add a picture on the form in link');
     }
 
-
-
-    // await client.query(
-    //   'UPDATE users SET status = null WHERE id = $1',
-    //   [user.id]
-    // );
-
     return user;
   } catch (err) {
     throw err;
@@ -344,7 +322,6 @@ export const getUserById = async (id) => {
   const client = await pool.connect();
 
   try {
-    console.log(id);
     const result = await client.query(`
       SELECT users.*, JSON_AGG(user_files.*) as files
       FROM users LEFT JOIN user_files ON users.id = user_files.user_id
@@ -438,7 +415,6 @@ export const handleForgottenPassword = async (email) => {
 
     log.info('[userService]', "sending email with clear password");
     await sendPasswordEmail(email, result.rows[0].first_name, pwd);
-    console.log(result.rows[0]);
 
     var salt = bcrypt.genSaltSync(10);
     var newHash = bcrypt.hashSync(pwd, salt);
@@ -563,7 +539,6 @@ export const validateNewPassword = async (newPassword, pin, user) => {
 
       var salt = bcrypt.genSaltSync(10);
       var newHash = bcrypt.hashSync(newPassword, salt);
-      console.log("salt");
       const result = await client.query(
         'UPDATE users \
         SET password = $1 \
@@ -571,7 +546,6 @@ export const validateNewPassword = async (newPassword, pin, user) => {
         [newHash, user.id]
       );
 
-      console.log("f");
       const result2 = await client.query(' \
         UPDATE users SET \
         pin = NULL \
@@ -635,7 +609,6 @@ export const insertUser = async (firstName, lastName, email, password, longitude
 
     const emailValidation = await isEmailValid(email);
     if (emailValidation.valid === false) {
-      console.log(emailValidation)
       throw new Error('Email format is invalid');
     }
 
@@ -679,7 +652,6 @@ export const updateUserFameRating = async (id, bool) => {
       id
     ]);
     const newUser = result.rows[0];
-    console.log(newUser);
     return newUser;
   } catch (err) {
     log.error('[userService]', err);
@@ -697,7 +669,6 @@ export const updateUser = async (data) => {
 
     const emailValidation = await isEmailValid(data.email);
     if (emailValidation.valid === false) {
-      console.log(emailValidation)
       throw new BadRequestError('Email format is invalid');
     }
 
@@ -774,7 +745,6 @@ const downloadFile = async (url, fileName) => {
       request(url)
         .pipe(fs.createWriteStream(`uploads/${fileName}`))
         .on("close", () => {
-          console.log("File saved");
           resolve();
         });
     });

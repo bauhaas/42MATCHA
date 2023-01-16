@@ -7,12 +7,10 @@ const PictureForm = ({pictures, setPictures, setToUpload }) => {
     const handleFileChange = (event) => {
         const files = event.target.files;
 
-        console.log(files);
         if (files.length > 0) {
             const newImageUrls = [];
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                console.log(file);
                 const fileReader = new FileReader();
                 fileReader.onload = (event) => {
                     newImageUrls.push(event.target.result);
@@ -21,7 +19,6 @@ const PictureForm = ({pictures, setPictures, setToUpload }) => {
                     }
                 };
                 fileReader.readAsDataURL(file);
-                console.log(file);
                 setToUpload((prevState) => {
                     return [...prevState, file];
                 });

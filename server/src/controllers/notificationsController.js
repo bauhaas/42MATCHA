@@ -52,7 +52,6 @@ router.delete('/:id', authenticateToken, validateParamId, async (req, res) => {
 //TODO can't use the middleware 2id due to type in the body find another way
 // Insert a new notif
 router.post('/', authenticateToken, validatePostNotif, async (req, res) => {
-    console.log(req.body)
     try {
         const { sender_id, receiver_id, type } = req.body;
         //TODO move this block logic in the insertNotification

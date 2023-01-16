@@ -28,7 +28,6 @@ const ProfileDetails = ({id}) => {
                     const userExists = likedUsers.find(likedUser => likedUser.id == id);
                     if (userExists)
                     {
-                        console.log('i like him');
                         setFilledIcon(true);
                     }
                 })
@@ -46,7 +45,6 @@ const ProfileDetails = ({id}) => {
                     {
                         setIsMatched(true);
                         setFilledIcon(true);
-                        console.log('you have a match with it');
                     }
                 })
                 .catch(error => {
@@ -60,12 +58,7 @@ const ProfileDetails = ({id}) => {
                     const blockedUsers = response.data;
                     const userExists = blockedUsers.find(user => user.id == currentUser.id);
                     if (userExists)
-                    {
                         setBlocked(true);
-                        console.log('im blocked by him');
-                    }
-                    else
-                        console.log('im not blocked by him');
                 })
                 .catch(error => {
                     console.log(error);
@@ -79,7 +72,6 @@ const ProfileDetails = ({id}) => {
             currentUserIsBlocked();
 
             if (user && user.id) {
-                console.log('send a visit notif to:', user.id, ' from:', currentUser.id);
                 sendVisitNotification(currentUser.id, user.id);
             }
         }
@@ -91,9 +83,6 @@ const ProfileDetails = ({id}) => {
                 receiver_id: user.id,
                 type: 'visit'
             })
-                .then(response => {
-                    console.log(response.data);
-                })
                 .catch(error => {
                     console.log(error);
                 });
@@ -102,12 +91,9 @@ const ProfileDetails = ({id}) => {
     const [profilePic, setProfilePic] = useState('');
 
     useEffect(() => {
-        console.log(currentUser.id, id);
         const getUser = async () => {
             await api.get(`http://localhost:3001/users/${currentUser.id}/profile/${id}`)
                 .then(response => {
-                    // console.log(response.data);
-
                     if (response.data.files) {
                         response.data.files.sort((a, b) => {
                             if (a.is_profile_pic === true) {
@@ -131,36 +117,6 @@ const ProfileDetails = ({id}) => {
         getUser();
     }, [id]);
 
-    // useEffect(() => {
-    //     socket.client.on('userDisconnect', (data) => {
-    //         if (user.id == data)
-    //         {
-    //             setUser({
-    //                 ...user,
-    //                 status: true,
-    //             });
-    //             console.log('user has disconnect', data)
-    //         }
-    //     })
-
-    //     socket.client.on('userConnect', (data) => {
-    //         console.log(user.id, data);
-    //         if (user.id == data) {
-    //             console.log('user has connect', data)
-    //             setUser({
-    //                 ...user,
-    //                 status: null,
-    //             });
-    //         }
-    //     })
-
-    //     return () => {
-    //         socket.client.off('userDisconnect');
-    //         socket.client.off('userConnect');
-    //     };
-    // });
-
-    // console.log(user.status)
     return (
         <>
             <div className='mx-2 pt-16 h-screen'>

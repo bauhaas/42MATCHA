@@ -9,13 +9,11 @@ socket.connect = (id) => {
 }
 
 socket.disconnect = () =>{
-    console.log('socket disconnect');
     socket.client.disconnect();
 };
 
 socket.emit = (eventName, params) =>
 {
-    console.log("socket emit", eventName);
     socket.client.emit(eventName, params);
 }
 
