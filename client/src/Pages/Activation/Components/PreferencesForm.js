@@ -27,7 +27,7 @@ const PreferencesForm = ({age, setAge, sex, setSex, sexOrientation, setSexOrient
                             value={age}
                             onChange={(event) => setAge(event.target.value)}
                         >
-                            <MenuItem value="">
+                            <MenuItem value="0">
                                 <em>None</em>
                             </MenuItem>
                             {ageRange.map(ageOption => (
