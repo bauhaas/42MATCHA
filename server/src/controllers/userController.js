@@ -282,6 +282,8 @@ function changeUserData(user, update) {
   if (update.email) {
     user.email = update.email;
   }
+  if (isNaN(update.age))
+    throw new BadRequestError('age must be a number');
   if (update.age) {
     user.age = update.age;
   }

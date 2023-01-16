@@ -9,7 +9,7 @@ import  fs from 'fs';
 import request from 'request';
 import { type } from 'os';
 import { faker } from '@faker-js/faker';
-import { ForbiddenError, NotFoundError, UnauthorizedError } from '../errors/error.js';
+import { BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } from '../errors/error.js';
 
 export const updateProfilePicture = async (fileId, userId) => {
   const client = await pool.connect();
@@ -694,6 +694,12 @@ export const updateUser = async (data) => {
   const client = await pool.connect();
 
   try {
+
+    const emailValidation = await isEmailValid(data.email);
+    if (emailValidation.valid === false) {
+      console.log(emailValidation)
+      throw new BadRequestError('Email format is invalid');
+    }
 
     log.info(data);
     var interestsStr = "[";

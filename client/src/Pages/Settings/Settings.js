@@ -30,7 +30,7 @@ const Settings = () => {
     const [age, setAge] = useState(user.age);
     const [interests, setInterests] = useState(user.interests);
     const [newInterest, setNewInterest] = useState('');
-
+    
     const handleDelete = (tag) => {
         var array = [...interests]; // make a separate copy of the array
         var index = array.indexOf(tag)
@@ -133,11 +133,10 @@ const Settings = () => {
                     <span className='font-bold'>Profile</span>
                     <div className='flex flex-col w-3/4 h-full'>
 
-                        {fields.map(field => (
+                        {fields.map((field, index) => (
                             <FormField
-                                key={field.label}
+                                key={field.label + index}
                                 label={field.label}
-                                defaultValue={field.defaultValue}
                                 value={field.value}
                                 placeholder={field.defaultValue}
                                 onChange={field.onChange}
@@ -274,7 +273,7 @@ const Settings = () => {
                                 <div className='w-64'>
                                     {interests.map((tag, index) => (
                                         <Chip
-                                            key={tag + index}
+                                            key={index}
                                             label={tag}
                                             size="small"
                                             color="primary"
@@ -307,20 +306,17 @@ const Settings = () => {
                                 <div className='w-64'>
                                     <div className='grid grid-cols-1 sm:grid-cols-2'>
                                         {user.files && user.files.map((file, index) => (
-                                            <>
-                                                <div key={file.id + index} className='relative m-2 rounded-lg group'>
-                                                    <button onClick={(event) => deleteImage(event, file)} className="absolute right-0 invisible m-2 btn btn-circle btn-xs group-hover:visible">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                                        </svg>
-                                                    </button>
-                                                    <button onClick={(event) => setAsProfilePic(event, file)} className={`rounded-b-lg absolute bottom-0 left-0 w-full text-center text-xs py-1 bg-orange-300 text-black invisible  ${file.is_profile_pic === true ? null : 'group-hover:visible'} `}>
-                                                        set as profile pic</button>
-                                                    <img className={`aspect-square h-full w-full rounded-lg ${file.is_profile_pic === true ? 'border-2 border-orange-300' : null}`} src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
+                                            <div key={index} className='relative m-2 rounded-lg group'>
+                                                <button onClick={(event) => deleteImage(event, file)} className="absolute right-0 invisible m-2 btn btn-circle btn-xs group-hover:visible">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+                                                <button onClick={(event) => setAsProfilePic(event, file)} className={`rounded-b-lg absolute bottom-0 left-0 w-full text-center text-xs py-1 bg-orange-300 text-black invisible  ${file.is_profile_pic === true ? null : 'group-hover:visible'} `}>
+                                                    set as profile pic</button>
+                                                <img className={`aspect-square h-full w-full rounded-lg ${file.is_profile_pic === true ? 'border-2 border-orange-300' : null}`} src={`http://localhost:3001/${file.file_path}`} alt="uploaded file" />
 
-                                                </div>
-                                            </>
-
+                                            </div>
                                         ))}
                                     </div>
                                 </div>

@@ -11,6 +11,7 @@ const FormField = ({ label, defaultValue, value, placeholder, onChange }) => {
           defaultValue={defaultValue}
           value={value}
           placeholder={placeholder}
+          type={label === "Age" ? "number" : "text"}
           onChange={onChange}
         />
       </div>

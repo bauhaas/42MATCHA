@@ -34,13 +34,17 @@ export const validateBodyMultipleId = (req, res, next) => {
 export const validatePostNotif = (req, res, next) => {
   try {
     const { sender_id, receiver_id, type } = req.body;
-
+    console.log("here")
+    console.log(req.body)
     if (typeof sender_id === 'undefined' || typeof receiver_id === 'undefined' || typeof type === 'undefined')
       throw new BadRequestError('undefined variable');
+    console.log("here2")
     if (isNaN(sender_id) || isNaN(receiver_id))
       throw new BadRequestError('ids must be numbers')
-    if (["like", "unlike", "match", "visit"].includes(type) === falase)
+    console.log("here3")
+    if (["like", "unlike", "match", "visit"].includes(type) === false)
       throw new BadRequestError('wrong notification type');
+    console.log("here4")
     next();
   } catch (err) {
     sendErrorResponse(res, err);
