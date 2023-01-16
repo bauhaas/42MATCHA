@@ -99,13 +99,27 @@ export async function seedUsersTable() {
 
         var interestsStr = "[";
 
-        const commonHobbies = ["42", "matcha", "super", "chouette", "I am a common hobby", "vitesse"];
+        const commonHobbies = [
+          "cinema",
+          "test",
+          "sport",
+          "42",
+          "party",
+          "games",
+          "swimming",
+          "football",
+          "paint",
+          "museums",
+          "beer",
+          "restaurants",
+          "travel",
+          "food"];
         let randomCommon = commonHobbies.sort(() => .5 - Math.random()).slice(0,4)
         for (let i = 0; i < randomCommon.length; i++) {
           interestsStr += "\"" + randomCommon[i] + "\",";
         }
 
-        const hobbies = ["sport", "bagarre", "flute", "contrebasse", "trompette", "aviation", "chanter", "danser", "courgette", "livre", "je suis un interet", "je suis un hobby"];
+        const hobbies = ["bagarre", "flute", "contrebasse", "trompette", "aviation", "chanter", "danser", "courgette", "livre", "je suis un interet", "je suis un hobby"];
         let randomOther = hobbies.sort(() => .5 - Math.random()).slice(0,Math.floor(Math.random() * 6))
         for (let i = 0; i < randomOther.length; i++) {
           interestsStr += "\"" + randomOther[i] + "\",";
