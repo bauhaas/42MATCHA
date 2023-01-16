@@ -473,10 +473,10 @@ export const resendSignupEmail = async (email) => {
       throw new NotFoundError('Invalid email or password');
     }
 
-    // const emailValidation = await isEmailValid(email);
-    // if (emailValidation.valid === false) {
-    //   throw new Error('Email format is invalid');
-    // }
+    const emailValidation = await isEmailValid(email);
+    if (emailValidation.valid === false) {
+      throw new Error('Email format is invalid');
+    }
 
     log.info('[userService]', "generating token and sending it again");
     const user = result.rows[0];
@@ -633,11 +633,11 @@ export const insertUser = async (firstName, lastName, email, password, longitude
     if (dupplicateEmailResult.rowCount > 0)
       throw new ForbiddenError('A user with the given email already exists');
 
-    // const emailValidation = await isEmailValid(email);
-    // if (emailValidation.valid === false) {
-    //   console.log(emailValidation)
-    //   throw new Error('Email format is invalid');
-    // }
+    const emailValidation = await isEmailValid(email);
+    if (emailValidation.valid === false) {
+      console.log(emailValidation)
+      throw new Error('Email format is invalid');
+    }
 
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);

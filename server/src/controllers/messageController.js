@@ -1,7 +1,7 @@
 import express from 'express';
 import log from '../config/log.js';
 import {getMessageHistory, setMessagesAsRead } from '../services/messageService.js';
-import { validateParamId} from '../middleware/idValidationMiddleware.js'
+import { validateParamId} from '../middleware/ValidationMiddleware.js'
 import { sendErrorResponse } from '../errors/error.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 

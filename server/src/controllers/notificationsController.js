@@ -4,7 +4,7 @@ import { getNotificationsOfUserId, getAllNotifications, getReceivedNotifications
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
 import { sendErrorResponse, ForbiddenError } from '../errors/error.js';
-import { validateBodyMultipleId, validateParamId} from '../middleware/idValidationMiddleware.js'
+import { validateParamId, validatePostNotif} from '../middleware/ValidationMiddleware.js'
 import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -51,7 +51,7 @@ router.delete('/:id', authenticateToken, validateParamId, async (req, res) => {
 
 //TODO can't use the middleware 2id due to type in the body find another way
 // Insert a new notif
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, validatePostNotif, async (req, res) => {
     try {
         const { sender_id, receiver_id, type } = req.body;
 
