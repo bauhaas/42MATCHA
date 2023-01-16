@@ -590,7 +590,7 @@ export const validateNewPassword = async (newPassword, pin, user) => {
 
 
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10000s' });
 }
 
 export const sendConfirmationEmail = async (email, firstName, lastName, accessToken) => {

@@ -31,7 +31,8 @@ const ConvCard = ({conv}) => {
 
     useEffect(() => {
         socket.client.on('userDisconnect', (data) => {
-            if (partnerID == data) {
+            console.log('disconnect event', data, partnerID)
+            if (partnerID == data.id) {
                 setpartnerStatus(false);
                 console.log('user has disconnect', data)
             }

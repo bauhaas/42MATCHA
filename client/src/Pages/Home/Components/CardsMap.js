@@ -190,7 +190,7 @@ const CardsMap = () => {
             .catch(error => {
                 console.error(error);
             });
-        }, 2000);
+        }, 1000);
     }, [currentUser]);
 
     console.log(isLoading);

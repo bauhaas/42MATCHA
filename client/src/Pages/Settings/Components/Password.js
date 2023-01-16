@@ -161,7 +161,7 @@ const Password = () => {
                                                 Pin sent to your email
                                             </label>
                                             <div className='bg-chess-placeholder flex flex-row rounded-sm sm:w-64'>
-                                                <input className="w-full pl-2 bg-transparent text-white rounded-sm focus:outline-none focus:shadow-outline" id="passwordConfirm"
+                                                <input className="w-full pl-2 bg-transparent text-white rounded-sm focus:outline-none focus:shadow-outline" id="pin"
                                                     type={'text'}
                                                     value={pin}
                                                     input={'number'}

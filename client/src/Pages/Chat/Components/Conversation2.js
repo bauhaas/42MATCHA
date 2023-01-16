@@ -19,7 +19,7 @@ const Conversation2 = () => {
     const [convPartner, setConvPartner] = useState('');
     const [convPartnerPath, setConvPartnerPath] = useState('');
     const [partnerStatus, setpartnerStatus] = useState(false);
-    const [partnerID, setpartnerID] = useState(false);
+    const [partnerID, setpartnerID] = useState(0);
     const [messageToSend, setMessageToSend] = useState("");
     const [messages, setMessages] = useState([]);
     const messagesRef = useRef(null);
@@ -84,13 +84,14 @@ const Conversation2 = () => {
 
         socket.client.on('userDisconnect', (data) => {
             console.log('receive userDisconect:', data, partnerID)
-            if (partnerID == data) {
+            if (partnerID == data.id) {
+                console.log('toggle the bubble off')
                 setpartnerStatus(false);
             }
         })
 
         socket.client.on('userConnect', (data) => {
-            console.log('receive userDisconect:', data, partnerID)
+            console.log('receive connect:', data, partnerID)
             if (partnerID == data) {
                 setpartnerStatus(true);
             }
