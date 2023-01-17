@@ -12,7 +12,6 @@ const GET_MESSAGE_HISTORY =
 export const createMessage = async (payload) => {
     const client = await pool.connect();
     try {
-        log.info('[messageService]', 'createMessage:', payload);
 
         const conversation = await client.query('\
             SELECT id \
@@ -21,7 +20,6 @@ export const createMessage = async (payload) => {
         [payload.from, payload.to]);
 
         if (conversation.rowCount === 0) {
-            log.info(new NotFoundError('conversation between these users does not exist'));
             return null;
         }
 
@@ -44,7 +42,6 @@ export const createMessage = async (payload) => {
 export const setMessagesAsRead = async (id) => {
     const client = await pool.connect();
     try {
-        log.info('[messageService]', 'setMessagesAsRead');
 
         await client.query('\
             UPDATE messages \
@@ -63,7 +60,6 @@ export const setMessagesAsRead = async (id) => {
 export const getMessageHistory = async (id) => {
     const client = await pool.connect();
     try {
-        log.info('[messageService]', 'getMessageHistory');
 
         const messageHistory = await client.query(GET_MESSAGE_HISTORY, [id]);
         return messageHistory.rows;

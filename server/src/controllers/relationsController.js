@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.post('/', authenticateToken, validateRelationBody, async (req, res) => {
   try {
-    log.info('[relationsController]', 'post relation');
     const { sender_id, receiver_id, type } = req.body;
     if (isNaN(sender_id) || isNaN(receiver_id))
         throw new BadRequestError('id must be a number');
@@ -23,7 +22,6 @@ router.post('/', authenticateToken, validateRelationBody, async (req, res) => {
 
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    log.info('[relationsController]', 'get all relations');
     const relations = await getAllRelations();
     res.status(200).send(relations);
   } catch (err) {
@@ -33,7 +31,6 @@ router.get('/', authenticateToken, async (req, res) => {
 
 router.delete('/', authenticateToken, async (req, res) => {
   try {
-    log.info('[relationsController]', 'delete relation', req.body);
 
     const { sender_id, receiver_id, type } = req.body;
     await deleteRelationByContent(sender_id, receiver_id, type.trim());

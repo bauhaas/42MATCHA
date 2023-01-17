@@ -116,8 +116,6 @@ const createLikeRelation = async (sender_id, receiver_id) => {
     return match;
 }
 
-//TODO flemme un peu mais normalement on devrait pas insert d'unlike relation mais
-// passer par la route delete pour ça.
 export const insertRelation = async (sender_id, receiver_id, type) => {
     try {
 
@@ -165,7 +163,6 @@ export const insertRelation = async (sender_id, receiver_id, type) => {
 export const deleteRelationByContent = async (sender_id, receiver_id, type) => {
     const client = await pool.connect();
     try {
-        log.info('[relationsService]', 'gonna delete relation');
 
         const result = await client.query(`
             DELETE FROM relations
