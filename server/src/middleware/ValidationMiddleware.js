@@ -70,6 +70,9 @@ export const validateUserCreationBody = (req, res, next) => {
       || typeof password === 'undefined' || typeof longitude === 'undefined' || typeof latitude === 'undefined')
       throw new BadRequestError('undefined variable');
 
+      if (firstName.length > 100 || lastName.length > 100 || email.length > 100 || password.length > 100)
+      throw new BadRequestError('var too long');
+
     next();
   } catch (err) {
     sendErrorResponse(res, err);
@@ -83,7 +86,59 @@ export const validatePinBody = (req, res, next) => {
       throw new BadRequestError('undefined variable');
     if (isNaN(pin) || isNaN(id))
       throw new BadRequestError('pin and id must be numbers')
+      if (newPassword.length > 100)
+      throw new BadRequestError('new password too long');
+    next();
+  } catch (err) {
+    sendErrorResponse(res, err);
+  }
+};
 
+export const validateUpdateArgs = (req, res, next) => {
+  try {
+    const {first_name, last_name, email, sex, sex_orientation, interests, bio, age} = req.body;
+
+    if (isNaN(req.params.id))
+      throw new BadRequestError('id must be a number');
+    if (isNaN(id))
+      throw new BadRequestError('pin and id must be numbers')
+    if (typeof first_name === 'undefined' || typeof last_name === 'undefined' || typeof email === 'undefined'
+      || typeof sex === 'undefined' || typeof sex_orientation === 'undefined' || typeof interests === 'undefined'
+      || typeof bio === 'undefined' || typeof age === 'undefined')
+      throw new BadRequestError('undefined variable');
+    if (first_name.length > 100 || last_name.length > 100 || email.length > 100 || sex.length > 100
+      || sex_orientation.length > 100)
+      throw new BadRequestError('variable too long');
+    next();
+  } catch (err) {
+    sendErrorResponse(res, err);
+  }
+};
+
+export const validateSendPin = (req, res, next) => {
+  try {
+    const {currentPassword, id} = req.body;
+
+    if (typeof currentPassword === 'undefined' || typeof id === 'undefined')
+      throw new BadRequestError('undefined variable');
+    if (isNaN(id))
+      throw new BadRequestError('id must be a number');
+    if (email.length > 100)
+      throw new BadRequestError('email too long');
+    next();
+  } catch (err) {
+    sendErrorResponse(res, err);
+  }
+};
+
+export const validateLogin = (req, res, next) => {
+  try {
+    const {email, password} = req.body;
+
+    if (typeof email === 'undefined' || typeof password === 'undefined')
+      throw new BadRequestError('undefined variable');
+    if (email.length > 100 || password.length > 100)
+      throw new BadRequestError('variable too long');
     next();
   } catch (err) {
     sendErrorResponse(res, err);

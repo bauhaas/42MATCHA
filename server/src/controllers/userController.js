@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
 import { handleForgottenPassword, validateNewPassword, resendSignupEmail, updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
-import { validateParamId, validateParamIds, validateUserCreationBody, validatePinBody } from '../middleware/ValidationMiddleware.js'
+import { validateLogin, validateSendPin, validateUpdateArgs, validateParamId, validateParamIds, validateUserCreationBody, validatePinBody } from '../middleware/ValidationMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
 import fs from 'fs';
@@ -183,7 +183,7 @@ function generateRefreshToken(user) {
   return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1y'});
 }
 
-router.post('/login', async (req, res) => {
+router.post('/login', validateLogin, async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await getLogin(email, password);
@@ -306,7 +306,7 @@ function changeUserData(user, update) {
 }
 
 // Update user
-router.put('/:id/update', validateParamId, async (req, res) => {
+router.put('/:id/update', validateUpdateArgs, async (req, res) => {
   try {
     const id = req.params.id;
     if (isNaN(id))
@@ -335,7 +335,7 @@ router.post('/resetPassword', async (req, res) => {
 });
 
 // Send pin via mail
-router.put('/sendPin', authenticateToken, async (req, res) => {
+router.put('/sendPin', authenticateToken, validateSendPin, async (req, res) => {
   try {
     const {currentPassword, id} = req.body;
     if (isNaN(id))
