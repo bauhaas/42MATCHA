@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
 import { handleForgottenPassword, validateNewPassword, resendSignupEmail, updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
-import { validateParamId, validateParamIds, validateUserCreationBody, validatePinBody } from '../middleware/ValidationMiddleware.js'
+import { validateLogin, validateSendPin, validateUpdateArgs, validateParamId, validateParamIds, validateUserCreationBody, validatePinBody } from '../middleware/ValidationMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
 import fs from 'fs';
@@ -11,7 +11,6 @@ import multer from 'multer';
 import { fileTypeFromBuffer, fileTypeFromFile } from 'file-type';
 import { readChunk } from 'read-chunk';
 import { BadRequestError, ForbiddenError, NotFoundError, sendErrorResponse } from '../errors/error.js';
-
 
 const router = express.Router();
 
@@ -183,7 +182,7 @@ function generateRefreshToken(user) {
   return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1y'});
 }
 
-router.post('/login', async (req, res) => {
+router.post('/login', validateLogin, async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await getLogin(email, password);
@@ -306,7 +305,7 @@ function changeUserData(user, update) {
 }
 
 // Update user
-router.put('/:id/update', validateParamId, async (req, res) => {
+router.put('/:id/update', validateUpdateArgs, async (req, res) => {
   try {
     const id = req.params.id;
     log.info("[userController]", "update user:", id);
@@ -339,13 +338,11 @@ router.post('/resetPassword', async (req, res) => {
 });
 
 // Send pin via mail
-router.put('/sendPin', authenticateToken, async (req, res) => {
+router.put('/sendPin', authenticateToken, validateSendPin, async (req, res) => {
   try {
     log.info('[userController]', 'resetpassword');
     log.info('[userController]', req.body);
     const {currentPassword, id} = req.body;
-    if (isNaN(id))
-        throw new BadRequestError('id must be a number');
     const user = await getUserById(id);
 
     const result = await resetPassword(currentPassword, user);

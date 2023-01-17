@@ -11,7 +11,7 @@ export async function createMessagesTable() {
             FOREIGN KEY (sender_id) REFERENCES users (id),
             conversation_id INT NOT NULL,
             FOREIGN KEY (conversation_id) REFERENCES conversation (id),
-            message VARCHAR(255),
+            message TEXT,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             unread BOOLEAN NOT NULL DEFAULT TRUE
           );`);
