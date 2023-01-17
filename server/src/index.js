@@ -68,13 +68,10 @@ var map = new Map();
 global.map = map;
 
 io.on('connection', (socket) => {
-  log.info('[index.js]', `${socket.id} is connected!`);
   var user_id = socket.request._query['id'];
-  log.info('[index.js]', user_id, typeof(user_id));
 
   updateStatusUser(user_id, true)
   map.set(user_id, socket);
-  log.info('[index.js]', 'total sockets connected:', map.size);
   io.emit('userConnect', user_id);
   
   socket.on('disconnect', async () => {
@@ -84,8 +81,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('sendMessage', async (messagePayload) => {
-    log.info('[index.js]', 'receive sendMessage event');
-    log.info('[index.js]', 'payload:', messagePayload);
 
     const messageHistory = await createMessage(messagePayload);
     if (messageHistory === null) {
@@ -96,12 +91,10 @@ io.on('connection', (socket) => {
 
     if (fromSocket)
     {
-      log.info('[index.js]', 'send messageHistory to the message author');
       io.to(fromSocket.id).emit('messageHistory', messageHistory);
     }
     if (toSocket)
     {
-      log.info('[index.js]', 'send messageHistory to the receiver');
       io.to(toSocket.id).emit('messageHistory', messageHistory);
 
       const conversation = await getConversationsOf(messagePayload.to);
@@ -111,7 +104,6 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, async () => {
-  log.info('[index.js]', `Server listening on port ${port}`);
   await createUsersTable();
   await createFilesModel();
   await createRelationsTable();

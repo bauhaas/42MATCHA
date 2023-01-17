@@ -16,7 +16,6 @@ export async function createRelationsTable() {
             type VARCHAR(255),
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
           );`);
-        log.info('[relationModel.js]', 'notifications table have been created');
         client.release();
     } catch (err) {
       log.error('[relationModel.js]', err);

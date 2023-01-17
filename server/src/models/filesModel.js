@@ -12,7 +12,6 @@ export async function createFilesModel() {
             file_path VARCHAR(255),
             is_profile_pic BOOLEAN NOT NULL DEFAULT FALSE
           );`);
-        log.info('[filesModel.js]', 'files table have been created');
         client.release();
     } catch (err) {
       log.error('[filesModel.js]', err);

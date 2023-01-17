@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
 import { handleForgottenPassword, validateNewPassword, resendSignupEmail, updateProfilePicture, deleteFile, getUserFiles, isActive, saveFile, getFilteredBachelors, getAllUsers, getUserById, insertUser, updateUser, deleteUser, getLogin, CreateFakeUser, resetPassword, getLikedUsers, getMatchedUsers, getUserByIdProfile, getBachelors, getBlockedUsers } from '../services/userService.js';
 import { authenticateToken } from '../middleware/authMiddleware.js'
-import { validateLogin, validateSendPin, validateUpdateArgs, validateParamId, validateParamIds, validateUserCreationBody, validatePinBody } from '../middleware/ValidationMiddleware.js'
+import { validateParamId, validateParamIds, validateUserCreationBody, validatePinBody } from '../middleware/ValidationMiddleware.js'
 import { isBlocked } from '../services/relationsService.js';
 import log from '../config/log.js';
 import fs from 'fs';
@@ -11,6 +11,7 @@ import multer from 'multer';
 import { fileTypeFromBuffer, fileTypeFromFile } from 'file-type';
 import { readChunk } from 'read-chunk';
 import { BadRequestError, ForbiddenError, NotFoundError, sendErrorResponse } from '../errors/error.js';
+
 
 const router = express.Router();
 
@@ -182,7 +183,7 @@ function generateRefreshToken(user) {
   return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1y'});
 }
 
-router.post('/login', validateLogin, async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await getLogin(email, password);
@@ -305,16 +306,14 @@ function changeUserData(user, update) {
 }
 
 // Update user
-router.put('/:id/update', validateUpdateArgs, async (req, res) => {
+router.put('/:id/update', validateParamId, async (req, res) => {
   try {
     const id = req.params.id;
-    log.info("[userController]", "update user:", id);
     if (isNaN(id))
       throw new BadRequestError('id must be a number');
     var user = await getUserById(id);
 
     user = changeUserData(user, req.body);
-    log.info("[userController]", user);
     const newUser = await updateUser(user);
 
     res.send(newUser);
@@ -326,8 +325,6 @@ router.put('/:id/update', validateUpdateArgs, async (req, res) => {
 // Reset password
 router.post('/resetPassword', async (req, res) => {
   try {
-    log.info('[userController]', 'resetpassword');
-    log.info('[userController]', req.body);
     const {email} = req.body;
 
     await handleForgottenPassword(email);
@@ -338,11 +335,11 @@ router.post('/resetPassword', async (req, res) => {
 });
 
 // Send pin via mail
-router.put('/sendPin', authenticateToken, validateSendPin, async (req, res) => {
+router.put('/sendPin', authenticateToken, async (req, res) => {
   try {
-    log.info('[userController]', 'resetpassword');
-    log.info('[userController]', req.body);
     const {currentPassword, id} = req.body;
+    if (isNaN(id))
+        throw new BadRequestError('id must be a number');
     const user = await getUserById(id);
 
     const result = await resetPassword(currentPassword, user);
@@ -355,8 +352,6 @@ router.put('/sendPin', authenticateToken, validateSendPin, async (req, res) => {
 // verif pin and set new password
 router.put('/pin', authenticateToken, validatePinBody, async (req, res) => {
   try {
-    log.info('[userController]', 'pin');
-    log.info('[userController]', req.body);
     const {newPassword, pin, id} = req.body;
     if (isNaN(id))
       throw new BadRequestError('id must be a number');

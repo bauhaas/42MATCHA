@@ -5,7 +5,6 @@ import { NotFoundError } from '../errors/error.js';
 const getConversationWithRecipientDetails = async (id, userId1, userId2) => {
     const client = await pool.connect();
     try {
-        log.info('[conversationService]', 'getConversationWithRecipientDetails');
 
         const conversation = await client.query(`
             SELECT conversation.id, conversation.userId1, conversation.userId2,
@@ -23,7 +22,6 @@ const getConversationWithRecipientDetails = async (id, userId1, userId2) => {
             WHERE conversation.id = $1 AND ((conversation.userId1 = $2 AND conversation.userId2 = $3) OR (conversation.userId1 = $3 AND conversation.userId2 = $2));
         `, [id, userId1, userId2]);
 
-        log.info('[conversationService]', 'gonna return');
         return conversation.rows[0];
     } catch (err) {
         throw err;
@@ -36,9 +34,7 @@ const getConversationWithRecipientDetails = async (id, userId1, userId2) => {
 export const getConversationBetween = async (userId1, userId2) => {
     const client = await pool.connect();
     try {
-        log.info('[conversationService]', 'getConversationBetween', userId1,userId2 );
 
-        //TODO duplicate also
         const conversation = await client.query(' \
             SELECT * FROM conversation \
             WHERE (userId1 = $1 AND userId2 = $2) OR (userId1 = $2 AND userId2 = $1)',
@@ -58,9 +54,7 @@ export const getConversationBetween = async (userId1, userId2) => {
 export const createConversation = async (userId1, userId2) => {
     const client = await pool.connect();
     try {
-        log.info('[conversationService]', 'createConversation with user:', userId1,userId2 );
 
-        //TODO duplicate also (see deleteconv of pair)
         const conversation = await client.query(' \
             SELECT * FROM conversation \
             WHERE (userId1 = $1 AND userId2 = $2) OR (userId1 = $2 AND userId2 = $1)',
@@ -75,7 +69,6 @@ export const createConversation = async (userId1, userId2) => {
             return getConversationWithRecipientDetails(result.rows[0].id, userId1, userId2);
         }
         else {
-            log.info('[conversationService]', 'A conversation between these 2 users already exists');
             return getConversationWithRecipientDetails(conversation.rows[0].id, userId1, userId2);
         }
     } catch (err) {
@@ -88,7 +81,6 @@ export const createConversation = async (userId1, userId2) => {
 export const getConversationsOf = async (id) => {
     const client = await pool.connect();
     try {
-        log.info('[conversationService]', 'getConversations');
 
         const conversations = await client.query(`
             SELECT conversation.id, conversation.userId1, conversation.userId2,
@@ -120,7 +112,6 @@ export const getConversationsOf = async (id) => {
 export const deleteConversation = async (id) => {
     const client = await pool.connect();
     try {
-        log.info('[conversationService]', 'deleteConversation');
 
         await client.query(`
             DELETE FROM messages
@@ -142,10 +133,7 @@ export const deleteConversation = async (id) => {
 export const deleteConversationOfPair = async (id1, id2) => {
     const client = await pool.connect();
     try {
-        log.info('[conversationService]', 'deleteConversationOfPair');
 
-
-        //TODO duplicate in the (createMessage in messageService, refacto)
         const conversation = await client.query(' \
             SELECT id FROM conversation \
             WHERE (userId1 = $1 AND userId2 = $2) \

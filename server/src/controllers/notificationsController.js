@@ -19,7 +19,7 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 });
 
-// Get notifs where user is receiver //TODO seems useless. I should only need to get the notif where user is receiver; here it returns either receiver or sender
+// Get notifs where user is receiver
 router.get('/:id', authenticateToken, validateParamId, async (req, res) => {
     try {
         const notifications = await getNotificationsOfUserId(req.params.id);
@@ -49,12 +49,10 @@ router.delete('/:id', authenticateToken, validateParamId, async (req, res) => {
     }
 });
 
-//TODO can't use the middleware 2id due to type in the body find another way
 // Insert a new notif
 router.post('/', authenticateToken, validatePostNotif, async (req, res) => {
     try {
         const { sender_id, receiver_id, type } = req.body;
-        //TODO move this block logic in the insertNotification
         const blocked = await isBlocked(sender_id, receiver_id);
         if (blocked) {
             log.error('[notifController]', 'you are blocked');

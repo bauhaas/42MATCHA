@@ -11,11 +11,10 @@ export async function createMessagesTable() {
             FOREIGN KEY (sender_id) REFERENCES users (id),
             conversation_id INT NOT NULL,
             FOREIGN KEY (conversation_id) REFERENCES conversation (id),
-            message TEXT,
+            message VARCHAR(255),
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             unread BOOLEAN NOT NULL DEFAULT TRUE
           );`);
-        log.info('[messageModel.js]', 'messages table have been created');
         client.release();
     } catch (err) {
       log.error('[messageModel.js]', err);
