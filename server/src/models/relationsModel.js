@@ -13,7 +13,7 @@ export async function createRelationsTable() {
             FOREIGN KEY (sender_id) REFERENCES users (id),
             receiver_id INT,
             FOREIGN KEY (receiver_id) REFERENCES users (id),
-            type VARCHAR(255),
+            type TEXT,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
           );`);
         client.release();

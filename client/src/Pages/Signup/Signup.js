@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 import useToggle from '../../Hooks/useToggle';
 import WaitEmailConfirmation from "./Components/WaitEmailConfirmation";
 import SignUpForm from "./Components/SignUpForm";

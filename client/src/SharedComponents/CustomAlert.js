@@ -6,12 +6,12 @@ import { ErrorContext } from '../Context/error';
 
 const CustomAlert = () => {
 
-    const { error, showError, setShowError } = useContext(ErrorContext);
+    const { error, showError, setShowError, severity } = useContext(ErrorContext);
     return (
         <Alert
-            className={`w-full absolute top-0 ${showError ? null : "hidden"} rounded-none`}
+            className={`w-full absolute top-0 ${showError ? null : "hidden"} rounded-none z-50`}
             variant="filled"
-            severity="error"
+            severity={severity}
             action={
                 <IconButton
                     color="inherit"
@@ -24,7 +24,7 @@ const CustomAlert = () => {
                 </IconButton>
             }
         >
-            <p className="font-bold">Error {error[0]}: <span className="font-normal">{error[1]}</span></p>
+<p className="font-bold">{error[0] !== 0 ? `Error ${error[0]}:` : null } <span className="font-normal">{error[1]}</span></p>
         </Alert>
     );
 };

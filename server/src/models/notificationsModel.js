@@ -13,7 +13,7 @@ export async function createNotificationsTable() {
             FOREIGN KEY (sender_id) REFERENCES users (id),
             receiver_id INT,
             FOREIGN KEY (receiver_id) REFERENCES users (id),
-            type VARCHAR(255),
+            type TEXT,
             read BOOLEAN,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

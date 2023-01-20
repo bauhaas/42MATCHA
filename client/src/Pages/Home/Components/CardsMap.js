@@ -14,7 +14,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { Skeleton } from '@mui/material';
+import Skeleton from '@mui/material/Skeleton';
 
 
 const CardsMap = () => {
@@ -113,7 +113,7 @@ const CardsMap = () => {
         return (
             <SliderThumb {...other}>
                 {children}
-                <AiFillFire className='w-full h-full text-red-700 bg-transparent absolute bottom-1'/>
+                <AiFillFire className='absolute w-full h-full text-red-700 bg-transparent bottom-1'/>
             </SliderThumb>
         );
     }
@@ -182,13 +182,13 @@ const CardsMap = () => {
         <>
             <div className='mt-16'>
                 <div className='flex items-center justify-center gap-4 pt-2'>
-                    <label htmlFor="my-modal" className="btn h-16 bg-chess-dark">Filters</label>
+                    <label htmlFor="my-modal" className="h-16 btn bg-chess-dark">Filters</label>
                     <input type="checkbox" id="my-modal" className="modal-toggle" />
                     <div className="modal">
                         <div className="modal-box">
-                            <h3 className="font-bold text-lg">Profiles search filter</h3>
+                            <h3 className="text-lg font-bold">Profiles search filter</h3>
                             <p className="py-4">Set filters to browse profiles matching your preferences.</p>
-                            <h3 className="font-bold text-lg">Age {ageRange[0]}-{ageRange[1]}</h3>
+                            <h3 className="text-lg font-bold">Age {ageRange[0]}-{ageRange[1]}</h3>
                             <Slider
                                 value={ageRange}
                                 onChange={handleAgeChange}
@@ -203,7 +203,7 @@ const CardsMap = () => {
                                     }
                                 }}
                             />
-                            <h3 className="font-bold text-lg">Distance {distanceRange[0]}-{distanceRange[1]}km</h3>
+                            <h3 className="text-lg font-bold">Distance {distanceRange[0]}-{distanceRange[1]}km</h3>
                             <Slider
                                 value={distanceRange}
                                 onChange={handleDistanceChange}
@@ -218,7 +218,7 @@ const CardsMap = () => {
                                     }
                                 }}
                             />
-                            <h3 className="font-bold text-lg">Minimum common tags</h3>
+                            <h3 className="text-lg font-bold">Minimum common tags</h3>
                             <Slider
                                 defaultValue={0}
                                 onChange={handleCommonTagsChange}
@@ -231,7 +231,7 @@ const CardsMap = () => {
                                 }}
                                 marks={marks}
                             />
-                            <h3 className="font-bold text-lg">Fame</h3>
+                            <h3 className="text-lg font-bold">Fame</h3>
                             <Slider
                                 defaultValue={0}
                                 valueLabelDisplay="auto"
@@ -259,7 +259,7 @@ const CardsMap = () => {
                         )}
                     </div>
 
-                    <FormControl className='bg-chess-dark rounded-lg w-40'>
+                    <FormControl className='w-40 rounded-lg bg-chess-dark'>
                         <InputLabel id="demo-simple-select-label" className='text-white'>Sort by</InputLabel>
                         <Select
                             value={sortBy}
@@ -278,18 +278,18 @@ const CardsMap = () => {
                         isLoading ?
                             Array(18).fill().map((_, i) => (
                                 <li key={i} className='flex'>
-                                    <div className="rounded-md bg-chess-hover hover:bg-chess-dark group w-full scale-90 overflow h-fit min-h-full flex flex-col">
-                                        <Skeleton variant="rectangular" className='bg-chess-placeholder h-80  md:h-64 rounded-t-lg' />
-                                        <div className="p-1 flex flex-col grow min-h-1/2 max-h-1/2">
+                                    <div className="flex flex-col w-full min-h-full scale-90 rounded-md bg-chess-hover hover:bg-chess-dark group overflow h-fit">
+                                        <Skeleton variant="rectangular" className='rounded-t-lg bg-chess-placeholder h-80 md:h-64' />
+                                        <div className="flex flex-col p-1 grow min-h-1/2 max-h-1/2">
                                             <div className="flex flex-row items-center w-full">
-                                                <Skeleton variant="text" className='bg-chess-placeholder w-full h-14' />
+                                                <Skeleton variant="text" className='w-full bg-chess-placeholder h-14' />
                                                 <div className='relative m-4'>
-                                                    <Skeleton variant="circular" className='bg-chess-placeholder w-10 h-10' />
+                                                    <Skeleton variant="circular" className='w-10 h-10 bg-chess-placeholder' />
                                                 </div>
                                             </div>
                                             <div className='mb-auto'>
-                                                <Skeleton variant="text" className='bg-chess-placeholder w-full h-12' />
-                                                <Skeleton variant="text" className='bg-chess-placeholder w-full h-12' />
+                                                <Skeleton variant="text" className='w-full h-12 bg-chess-placeholder' />
+                                                <Skeleton variant="text" className='w-full h-12 bg-chess-placeholder' />
                                                 {
                                                     Array(5).fill().map((_, i) => (
                                                         <div key={i}>
@@ -298,11 +298,11 @@ const CardsMap = () => {
                                                     ))
                                                 }
                                             </div>
-                                            <div className="flex flex-wrap p-1 gap-2">
+                                            <div className="flex flex-wrap gap-2 p-1">
                                             {
                                                     Array(3).fill().map((_, i) => (
                                                         <div key={i}>
-                                                            <Skeleton variant="text" className='bg-chess-placeholder h-8 w-20' />
+                                                            <Skeleton variant="text" className='w-20 h-8 bg-chess-placeholder' />
                                                         </div>
                                                     ))
                                             }
@@ -328,8 +328,8 @@ const CardsMap = () => {
 
                 {
                     showTopBtn &&
-                    <button onClick={(event) => { window.scrollTo({ top: 0, behavior: 'smooth' }) }} className='btn btn-circle bg-orange-500 fixed bottom-5 right-5'>
-                        <HiArrowUp className='h-6 w-6'/>
+                    <button onClick={(event) => { window.scrollTo({ top: 0, behavior: 'smooth' }) }} className='fixed bg-orange-500 btn btn-circle bottom-5 right-5'>
+                        <HiArrowUp className='w-6 h-6'/>
                     </button>
                 }
 

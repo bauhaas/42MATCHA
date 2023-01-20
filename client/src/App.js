@@ -29,6 +29,7 @@ navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
 function App() {
 
   const [error, setError] = useState([]);
+  const [severity, setSeverity] = useState("error");
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
@@ -43,7 +44,7 @@ function App() {
     <>
       <Provider store={store}>
           <PersistGate persistor={persistor}>
-            <ErrorContext.Provider value={{ error, setError, showError, setShowError }}>
+            <ErrorContext.Provider value={{ error, setError, showError, setShowError, severity, setSeverity }}>
               <Routes>
                 <Route path='/signin' element={<Signin />} />
                 <Route path='/signup' element={<Signup />} />

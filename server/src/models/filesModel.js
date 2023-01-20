@@ -9,7 +9,7 @@ export async function createFilesModel() {
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id),
             FOREIGN KEY (user_id) REFERENCES users (id),
-            file_path VARCHAR(255),
+            file_path TEXT,
             is_profile_pic BOOLEAN NOT NULL DEFAULT FALSE
           );`);
         client.release();
