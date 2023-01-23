@@ -44,7 +44,6 @@ const Password = () => {
             id: user.id
         })
             .then(response => {
-                console.log('sent an email')
                 setEmailSent(true);
                 setShowError(true);
                 setSeverity('info');

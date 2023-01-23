@@ -308,16 +308,13 @@ function changeUserData(user, update) {
 // Update user
 router.put('/:id/update', async (req, res) => {
   try {
-    console.log('test')
     const id = req.params.id;
     if (isNaN(id))
       throw new BadRequestError('id must be a number');
     var user = await getUserById(id);
 
-    console.log('e');
     user = changeUserData(user, req.body);
     const newUser = await updateUser(user);
-    console.log('e');
 
     res.send(newUser);
   } catch (err) {
@@ -339,7 +336,6 @@ router.post('/resetPassword', async (req, res) => {
 
 // Send pin via mail
 router.put('/sendPin', authenticateToken, validateSendPin, async (req, res) => {
-  console.log("test")
   try {
     const {currentPassword, id} = req.body;
     if (isNaN(id))
@@ -364,7 +360,7 @@ router.put('/pin', authenticateToken, validatePinBody, async (req, res) => {
     const user = await getUserById(id);
 
     await validateNewPassword(newPassword, pin, user);
-    res.send(200);
+    res.sendStatus(200);
   } catch (err) {
     sendErrorResponse(res, err);
   }

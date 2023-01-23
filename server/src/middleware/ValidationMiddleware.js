@@ -96,24 +96,20 @@ export const validatePinBody = (req, res, next) => {
 
 export const validateUpdateArgs = (req, res, next) => {
   try {
-    console.log('eee', req.body)
     const {first_name, last_name, email, sex, sex_orientation, interests, bio, age} = req.body;
 
     if (isNaN(req.params.id))
       throw new BadRequestError('id must be a number');
     if (isNaN(id))
       throw new BadRequestError('pin and id must be numbers')
-      console.log('tt')
     if (typeof first_name === 'undefined' || typeof last_name === 'undefined' || typeof email === 'undefined'
       || typeof sex === 'undefined' || typeof sex_orientation === 'undefined' || typeof interests === 'undefined'
       || typeof bio === 'undefined' || typeof age === 'undefined')
       throw new BadRequestError('undefined variable');
-      console.log('tt')
 
     if (first_name.length > 100 || last_name.length > 100 || email.length > 100 || sex.length > 100
       || sex_orientation.length > 100)
       throw new BadRequestError('variable too long');
-      console.log('tt')
 
     next();
   } catch (err) {
@@ -123,7 +119,6 @@ export const validateUpdateArgs = (req, res, next) => {
 
 export const validateSendPin = (req, res, next) => {
   try {
-    console.log(req.body)
     const {currentPassword, id} = req.body;
 
     if (typeof currentPassword === 'undefined' || typeof id === 'undefined')
@@ -131,7 +126,6 @@ export const validateSendPin = (req, res, next) => {
     if (isNaN(id))
       throw new BadRequestError('id must be a number');
 
-      console.log(req.body)
     next();
   } catch (err) {
     sendErrorResponse(res, err);
