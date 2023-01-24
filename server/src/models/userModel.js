@@ -12,14 +12,14 @@ export async function createUsersTable() {
     const result = await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
-        first_name VARCHAR(255),
-        last_name VARCHAR(255),
-        email VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL,
+        first_name TEXT,
+        last_name TEXT,
+        email TEXT NOT NULL,
+        password TEXT NOT NULL,
         age INTEGER,
-        sex VARCHAR(255),
-        sex_orientation VARCHAR(255),
-        city VARCHAR(255),
+        sex TEXT,
+        sex_orientation TEXT,
+        city TEXT,
         country TEXT,
         interests JSON,
         seed_profile_avatar TEXT,
@@ -34,7 +34,6 @@ export async function createUsersTable() {
         pin INTEGER DEFAULT NULL
       );
     `);
-    log.info('[userModel.js]', 'user table have been created');
     client.release();
   } catch (err) {
     log.error('[userModel.js - create user table]', err);
@@ -42,29 +41,6 @@ export async function createUsersTable() {
 }
 
 import request from 'request';
-import { setDefaultResultOrder } from 'dns';
-
-const getHobby = async (interestsStr) => {
-  const categories = ["general", "sports_and_outdoors", "education", "collection", "competition", "observation"];
-  const category = categories[Math.floor(Math.random() * categories.length)];
-
-  request.get({
-    url: `https://api.api-ninjas.com/v1/hobbies?category=${category}`,
-    headers: {
-      "X-Api-Key": "YkwtUopPCegHLiExwO50iA==i5sUUacN8j0OxUHs",
-    },
-  }, function (error, response, body) {
-    if (error) return console.error("Request failed:", error);
-    else if (response.statusCode != 200)
-      return console.error("Error:", response.statusCode, body.toString("utf8"));
-    else {
-      interestsStr += "\"" + body.hobby + "\",";
-      const data = JSON.parse(body);
-      console.log('body', data.hobby);
-      return interestsStr;
-    }
-  });
-};
 
 
 export async function seedUsersTable() {
@@ -188,7 +164,6 @@ export async function seedUsersTable() {
         await client.query(`INSERT INTO user_files (user_id, file_path, is_profile_pic) VALUES ($1, $2, $3) RETURNING *;`, [ res.rows[0].id, 'uploads/'+fileName, true]);
 
       }
-      log.info('[userModel.js]', 'user table seeded');
     }
     else {
       log.info('[userModel.js]', 'user table already seeded - no need to seed');

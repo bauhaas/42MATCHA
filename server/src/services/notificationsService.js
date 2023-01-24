@@ -21,7 +21,6 @@ export const createNotification = async (sender_id, receiver_id, type) => {
 
         const socket = global.map.get(String(receiver_id));
         if (socket) {
-            console.log(`has${type}Notif from createNotification`);
             socket.emit(`has${type}Notif`, notif.rows[0]);
         }
         return notif.rows[0];
@@ -32,9 +31,7 @@ export const createNotification = async (sender_id, receiver_id, type) => {
     }
 }
 
-//TODO seems useless. I should only need to get the notif where user is receiver
 export const getNotificationsOfUserId = async (id) => {
-    log.info('[notificationService.js]', 'getnotifById',id)
     const client = await pool.connect();
     try {
         const notif = await client.query(`
@@ -42,12 +39,9 @@ export const getNotificationsOfUserId = async (id) => {
             WHERE sender_id = $1 OR receiver_id = $1
             `, [id]);
 
-        console.log(notif.rows);
         if (notif.rowCount > 0) {
-            log.info('[notificationService]', 'return something');
             return notif.rows
         }
-        log.info('[notificationService]', 'return null');
         return null;
     } catch {
         throw err;
@@ -59,18 +53,14 @@ export const getNotificationsOfUserId = async (id) => {
 export const getNotificationById = async (id) => {
     const client = await pool.connect();
     try {
-        log.info('[notificationService.js]', 'getNotificationById:', id)
         const notification = await client.query(`
             SELECT * FROM notifications
             WHERE id = $1
             `, [id]);
 
-        console.log(notification.rows);
         if (notification.rowCount > 0) {
-            log.info('[notificationService]', 'return something');
             return notification.rows
         }
-        log.info('[notificationService]', 'return null');
         return null;
     } catch {
         throw err;
@@ -82,7 +72,6 @@ export const getNotificationById = async (id) => {
 export const getReceivedNotifications = async (id) => {
     const client = await pool.connect();
     try {
-        log.info('[notificationService]', 'getReceivedNotifications of user:', id);
 
         const notifications = await client.query(`
             SELECT notifications.*, users.first_name || ' ' ||  users.last_name as fullname, user_files.file_path
@@ -118,23 +107,18 @@ export const insertNotification = async (sender_id, receiver_id, type) => {
         `, [sender_id, receiver_id, type]);
 
         if (notif.rowCount == 0) {
-            log.info('[notificationService]', 'createNotification and return');
             return await createNotification(sender_id, receiver_id, type);
         }
 
         const id = notif.rows[0].id
         if (notif.read === true) {
-            log.info('[notificationService]', 'updateReadNotifcation');
             await updateReadNotification(id)
         }
-        log.info('[notificationService]', 'updateTimeNotification');
 
         await updateTimeNotification(id)
-        log.info('[notificationService]', sender_id, receiver_id);
 
         const socket = global.map.get(String(receiver_id));
         if (socket) {
-            console.log(`hasvistNotif from insertNotification`);
             socket.emit('hasVisitNotif', notif.rows[0]);
         }
         return notif.rows[0];
@@ -163,7 +147,6 @@ export const getAllNotifications = async () => {
 export const updateTimeNotification = async (id) => {
     const client = await pool.connect();
     try {
-        log.info('[notifService]', 'id:', id);
 
         const notif = await getNotificationsOfUserId(id);
         if (notif === null) {
@@ -181,7 +164,6 @@ export const updateTimeNotification = async (id) => {
 export const setNotificationAsRead = async (id) => {
     const client = await pool.connect();
     try {
-        log.info('[notifService]', 'setNotificationAsRead');
 
         const notification = await getNotificationById(id);
         if (notification === null)
@@ -204,7 +186,6 @@ export const setNotificationAsRead = async (id) => {
 export const deleteNotification = async (id) => {
     const client = await pool.connect();
     try {
-        log.info('[notifService]', 'deleteNotification');
 
         const notification = await getNotificationById(id);
         if (notification === null)
@@ -216,28 +197,3 @@ export const deleteNotification = async (id) => {
         client.release();
     }
 };
-
-
-//TODO why do we have to delete notifications on block ? seems unlogic
-// export const deleteAllNotificationsOfPair = async (sender_id, receiver_id) => {
-//     const client = await pool.connect();
-//     try {
-//     const notificationsResult = await client.query(`
-//         SELECT id FROM notifications
-//         WHERE (sender_id = $1 AND receiver_id = $2)
-//         OR (sender_id = $2 AND receiver_id = $1)
-//     `, [sender_id, receiver_id]);
-
-//     if (notificationsResult.rowCount === 0)
-//         return null;
-//     const notifications = result.rows;
-
-//     for (let i = 0; i < notifications.length; i++)
-//         await deleteNotification(notifications[i].id);
-//     return sender_id;
-//     } catch (err) {
-//         throw err;
-//     } finally {
-//         client.release();
-//     }
-// }

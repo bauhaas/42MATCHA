@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import SettingsMenu from './Components/SettingsMenu';
-// import axios from 'axios';
 import api from '../../ax';
 import { useSelector } from 'react-redux';
 import TextField from '@mui/material/TextField';
@@ -30,7 +29,7 @@ const Settings = () => {
     const [age, setAge] = useState(user.age);
     const [interests, setInterests] = useState(user.interests);
     const [newInterest, setNewInterest] = useState('');
-    
+
     const handleDelete = (tag) => {
         var array = [...interests]; // make a separate copy of the array
         var index = array.indexOf(tag)
@@ -46,7 +45,6 @@ const Settings = () => {
     };
 
     const updateUser = () => {
-        console.log('gonna updateUser');
         api.put(`http://localhost:3001/users/${user.id}/update`, {
             first_name:first_name,
             last_name:last_name,
@@ -58,7 +56,6 @@ const Settings = () => {
             age:age
         })
             .then(response => {
-                console.log(response);
                 dispatch(setUser(response.data));
             })
             .catch(error => {

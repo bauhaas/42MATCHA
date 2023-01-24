@@ -12,7 +12,6 @@ import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../
 import socket from '../../../Context/socket'
 
 const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
-    console.log("user", user)
     const currentUser = useSelector((state) => state.user.user);
     const [filledIcon, setFilledIcon] = useState(false);
     const [match, setMatch] = useState(false);
@@ -40,7 +39,6 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
     const gotochat = async (event) => {
         await api.get(`http://localhost:3001/conversations/${currentUser.id}/${user.id}`)
             .then(response => {
-                console.log(response, response.data);
                 navigate(`/chat/${response.data.id}`, {
                     state: {
                         conv: response.data,
@@ -53,7 +51,6 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
     }
 
     useEffect(() => {
-        console.log('useEffect that supposed to launch once', user.status);
         const lastConnectionDate = new Date(user.status);
         const lastConnectionDateFormatted =
             (lastConnectionDate.getUTCHours() + 1).toString() + ":" +
@@ -69,23 +66,18 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
 
     useEffect(() => {
         socket.client.on('hasmatchNotif', (data) => {
-            console.log('receive a match', data)
             setMatch(true);
         })
 
         socket.client.on('hasunlikeNotif', (data) => {
-            console.log('receive a unlike', data)
             setMatch(false);
             setFilledIcon(false);
         })
 
         socket.client.on('userDisconnect', (data) => {
-            console.log("userDisconnect event received", data)
             if(user.id == data.id) {
-                console.log('user has disconnect', data.id, data.status)
                 user.status = true;
                 const m2 = new Date(data.status);
-                console.log("MMMMM2", m2)
                 const date =
                     (m2.getUTCHours() + 1).toString() + ":" +
                     ("0" + m2.getUTCMinutes()).slice(-2) + ":" +
@@ -93,17 +85,13 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
                     m2.getUTCDate() + "/" +
                     ("0" + (m2.getUTCMonth()+1)).slice(-2) + "/" +
                     m2.getUTCFullYear();
-                console.log(user.status, date);
                 setDate(date);
             }
         })
 
         socket.client.on('userConnect', (data) => {
-            console.log('userConnect event received', data)
-            console.log(user.id, data);
             if (user.id == data)
             {
-                console.log('user has connect', data)
                 user.status = null;
                 setDate(null);
             }
@@ -117,7 +105,6 @@ const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {
         };
     }, [user, date]);
 
-    console.log(user, date);
 
     return (
         <>

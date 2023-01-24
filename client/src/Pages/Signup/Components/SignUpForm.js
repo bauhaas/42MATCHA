@@ -35,7 +35,6 @@ const SignUpForm = ({email, setEmail, setHasSignedUP}) => {
             }
         });
 
-    //TODO should return user, not token
     const addUser = () => {
         api.post('http://localhost:3001/users', {
             firstName: firstName,
@@ -46,7 +45,6 @@ const SignUpForm = ({email, setEmail, setHasSignedUP}) => {
             latitude: position.latitude,
         })
             .then(response => {
-                console.log(response);
                 setHasSignedUP(true);
                 return ;
             })

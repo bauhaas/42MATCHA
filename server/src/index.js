@@ -43,13 +43,11 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // // Set up the Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-console.log(import.meta.url);
 const uploadsPath = dirname(import.meta.url) + '/uploads';
 
 import * as url from 'url';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-console.log(__dirname + '../uploads', __filename)
 app.use('/uploads', express.static(__dirname + '../uploads'));
 
 // Set up the server
@@ -70,25 +68,19 @@ var map = new Map();
 global.map = map;
 
 io.on('connection', (socket) => {
-  log.info('[index.js]', `${socket.id} is connected!`);
   var user_id = socket.request._query['id'];
-  log.info('[index.js]', user_id, typeof(user_id));
 
   updateStatusUser(user_id, true)
   map.set(user_id, socket);
-  log.info('[index.js]', 'total sockets connected:', map.size);
   io.emit('userConnect', user_id);
   
   socket.on('disconnect', async () => {
-    console.log(user_id, "disconnecting");
     map.delete(user_id, socket);
     const user = await updateStatusUser(user_id, false)
     io.emit('userDisconnect', {id: user_id, status: user.status});
   });
 
   socket.on('sendMessage', async (messagePayload) => {
-    log.info('[index.js]', 'receive sendMessage event');
-    log.info('[index.js]', 'payload:', messagePayload);
 
     const messageHistory = await createMessage(messagePayload);
     if (messageHistory === null) {
@@ -99,24 +91,19 @@ io.on('connection', (socket) => {
 
     if (fromSocket)
     {
-      log.info('[index.js]', 'send messageHistory to the message author');
       io.to(fromSocket.id).emit('messageHistory', messageHistory);
     }
     if (toSocket)
     {
-      log.info('[index.js]', 'send messageHistory to the receiver');
       io.to(toSocket.id).emit('messageHistory', messageHistory);
 
       const conversation = await getConversationsOf(messagePayload.to);
-      console.log(conversation)
-      console.log(map.keys,toSocket.id)
       io.to(toSocket.id).emit('convUpdate', conversation);
     }
   });
 });
 
 server.listen(port, async () => {
-  log.info('[index.js]', `Server listening on port ${port}`);
   await createUsersTable();
   await createFilesModel();
   await createRelationsTable();

@@ -31,18 +31,14 @@ const ConvCard = ({conv}) => {
 
     useEffect(() => {
         socket.client.on('userDisconnect', (data) => {
-            console.log('disconnect event', data, partnerID)
             if (partnerID == data.id) {
                 setpartnerStatus(false);
-                console.log('user has disconnect', data)
             }
         })
 
         socket.client.on('userConnect', (data) => {
-            console.log(partnerID, data);
             if (partnerID == data) {
                 setpartnerStatus(true);
-                console.log('user has connect', data)
             }
         })
 
@@ -52,7 +48,6 @@ const ConvCard = ({conv}) => {
         };
     });
 
-    console.log(partnerStatus);
     return (
         <>
             <div className={`flex bg-chess-dark rounded-lg gap-2 p-2 ${conv.last_message_unread && conv.last_message_author_id !== currentUser.id ? 'bg-red-500' : 'hover:bg-chess-hover'}`}>

@@ -15,7 +15,6 @@ export async function createConversationTable() {
             FOREIGN KEY (userId2) REFERENCES users (id),
             message_history INT[]
           );`);
-        log.info('[conversationModel.js]', 'conversation table have been created');
         client.release();
     } catch (err) {
       log.error('[conversationModel.js]', err);

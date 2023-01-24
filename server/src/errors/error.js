@@ -29,7 +29,6 @@ export class InternalServerError extends Error { //500
 }
 
 export const sendErrorResponse = (res, err) => {
-	console.log('sendErrorResponse');
 	if (err instanceof BadRequestError)
 		return res.status(400).send(err.message);
 	else if (err instanceof UnauthorizedError)

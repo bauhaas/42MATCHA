@@ -13,12 +13,11 @@ export async function createNotificationsTable() {
             FOREIGN KEY (sender_id) REFERENCES users (id),
             receiver_id INT,
             FOREIGN KEY (receiver_id) REFERENCES users (id),
-            type VARCHAR(255),
+            type TEXT,
             read BOOLEAN,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
           );`);
-        log.info('[notifModel.js]', 'notifications table have been created');
         client.release();
     } catch (err) {
       log.error('[notifModel.js]', err);
@@ -27,7 +26,6 @@ export async function createNotificationsTable() {
 
 
 
-//TODO useless notifs seed no ?
 // Seed the users table with fake data
 export async function seedNotificationsTable() {
     try {
@@ -76,7 +74,6 @@ export async function seedNotificationsTable() {
             `;
               await client.query(query);
           }
-          log.info('[notifModel.js]', 'notifs table seeded');
         }
         else {
           log.info('[notifModel.js]', 'notifs table already seeded - no need to seed');

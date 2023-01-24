@@ -18,7 +18,6 @@ const notifSlice = createSlice({
             const { id } = action.payload;
             const notifIndex = state.notifs.findIndex((notif) => notif.id === id);
             if (notifIndex >= 0) {
-                console.log('set notif has read in redux');
                 state.notifs[notifIndex].read = true;
             }
         }

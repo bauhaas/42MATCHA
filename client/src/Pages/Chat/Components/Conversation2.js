@@ -35,11 +35,7 @@ const Conversation2 = () => {
     }
 
     const patchMessagesAsRead = (conversation) => {
-        console.log('patchMessagesAsRead')
         api.patch(`http://localhost:3001/messages/${conversation.id}`)
-            .then(response => {
-                console.log('set messages as read');
-            })
             .catch(error => {
                 console.log(error);
             });
@@ -77,21 +73,17 @@ const Conversation2 = () => {
 
     useEffect(() => {
         socket.client.on('messageHistory', (data) => {
-            console.log('receive messagehistory event', data);
             setMessages(data);
             patchMessagesAsRead(conversation);
         })
 
         socket.client.on('userDisconnect', (data) => {
-            console.log('receive userDisconect:', data, partnerID)
             if (partnerID == data.id) {
-                console.log('toggle the bubble off')
                 setpartnerStatus(false);
             }
         })
 
         socket.client.on('userConnect', (data) => {
-            console.log('receive connect:', data, partnerID)
             if (partnerID == data) {
                 setpartnerStatus(true);
             }
@@ -108,8 +100,6 @@ const Conversation2 = () => {
         if(messages)
             messagesRef.current.scrollTo(0, messagesRef.current.scrollHeight);
     }, [messages]);
-
-    console.log('render conversation');
 
     return (
         <>

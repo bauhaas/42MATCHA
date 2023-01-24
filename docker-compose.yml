@@ -8,7 +8,6 @@ services:
       - ./server:/usr/code
     depends_on:
       - db
-        # condition: service_healthy
     restart: always
 
   react-app:

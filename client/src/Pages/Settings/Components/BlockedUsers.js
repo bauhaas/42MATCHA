@@ -16,7 +16,6 @@ const BlockedUsers = () => {
 
   const unblockUser = (event, id) => {
     event.preventDefault();
-    console.log('unblock user', id);
     api.delete('http://localhost:3001/relations', {
     data:{
         sender_id: currentUser.id,
