@@ -13,7 +13,7 @@
 </p>
 
 # Matcha
- 
+
 This project is about creating an app allowing two potential lovers to meet, from the registration to the final encounter. A user will then be able to register, connect, fill his/her profile, search and look into the profile of other users, like them, chat with those that he matched with.
 
 To meet all the required features, a **Full Stack Javascript**
@@ -51,7 +51,7 @@ REFRESH_TOKEN_SECRET=424200000X1
 
 ```
 
-Finally, at the root of the project 
+Finally, at the root of the project
 
 ```txt
 ./run.sh
@@ -65,51 +65,56 @@ https://localhost:3000/signin
 
 ### Nodemailer system setup with google
 
-
 > ⚠️ If you do not follow the steps below, you won’t be able to access to a complete personalized user creation. However you can still access the app by creating a dummy user.
-
-
 
 <details>
 <summary>Steps to follow</summary>
 
 1. Go to your google account settings
-    
+
     ![Untitled](assets/images/mailSetup/nodemailer_step1.png)
-    
+
 2. Go to the `Security` settings
-    
+
     ![Untitled](assets/images/mailSetup/nodemailer_step2.png)
-    
+
 3. Click on `App passwords`
-    
+
    ![Untitled](assets/images/mailSetup/nodemailer_step3.png)
-    
+
 4. Click on Select app and then Other, you can call it matcha for example
-    
+
     ![Untitled](assets/images/mailSetup/nodemailer_step4.png)
-    
+
 5. Save the generated password
-    
+
     ![Untitled](assets/images/mailSetup/nodemailer_step5.png)
-    
+
 6. add these variables to your `/server/.env`
-    
+
 ```bash
 NODEMAILER_USER=google_email_address
 NODEMAILER_PASS=google_app_password
 ```
-   
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 </details>
+<br>
 
-## Usage
+## Screenshots
 
-Provide instructions and examples for use. Include screenshots as needed.
+<details>
+<summary>Signin page</summary>
 
-To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
+ ![Untitled](assets/images/screenshots/signin.png)
+</details>
 
+<details>
+<summary>Signup page</summary>
+
+ ![Untitled](assets/images/screenshots/signup.png)
+</details>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Features
