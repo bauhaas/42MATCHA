@@ -119,14 +119,14 @@ NODEMAILER_PASS=google_app_password
 
 <details>
   <summary>Home page</summary>
-  <details>
+  <details style="margin-left: 20px;">
     <summary>mobile view</summary>
       <div align="center">
         <img src="assets/images/screenshots/home_mobile.png" height="400">
         <img src="assets/images/screenshots/searchfilters_mobile.png" height="400">
       </div>
   </details>
-  <details>
+  <details style="margin-left: 20px;">
     <summary>desktop view</summary>
     <img src="assets/images/screenshots/home_desktop.png" width="600">
   </details>
@@ -134,14 +134,14 @@ NODEMAILER_PASS=google_app_password
 
 <details>
   <summary>Settings page</summary>
-  <details>
+  <details style="margin-left: 20px;">
     <summary>mobile view</summary>
       <div align="center">
         <img src="assets/images/screenshots/settings_mobile.png" height="400">
         <img src="assets/images/screenshots/settingsUserslist_mobile.png" height="400">
       </div>
   </details>
-  <details>
+  <details style="margin-left: 20px;">
     <summary>desktop view</summary>
      <img src="assets/images/screenshots/settings_desktop.png" width="600">
   </details>
@@ -149,11 +149,13 @@ NODEMAILER_PASS=google_app_password
 
 <details>
   <summary>Chat page</summary>
-  <div align="center">
-    <img src="assets/images/screenshots/chatlist_mobile.png" height="400">
-    <img src="assets/images/screenshots/chat_mobile.png" height="400">
-  </div>
-
+  <details style="margin-left: 20px;">
+    <summary>mobile view</summary>
+      <div align="center">
+        <img src="assets/images/screenshots/chatlist_mobile.png" height="400">
+        <img src="assets/images/screenshots/chat_mobile.png" height="400">
+      </div>
+  </details>
 </details>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
