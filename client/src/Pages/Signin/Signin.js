@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useContext } from "react"
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
-import api from "../../ax";
 import { useDispatch } from 'react-redux';
 import jwt_decode from "jwt-decode";
 import { setUser } from "../../userSlice";

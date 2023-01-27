@@ -4,11 +4,9 @@ import { useSelector } from 'react-redux';
 
 import { AiFillFire } from 'react-icons/ai';
 import Chip from '@mui/material/Chip';
-// import axios from 'axios';
 import api from '../../../ax';
 import Avatar from "../../../SharedComponents/Avatar";
 import InteractionButtons from './InteractionButtons';
-import socket from '../../../Context/socket'
 
 const ProfileDetails = ({id}) => {
 

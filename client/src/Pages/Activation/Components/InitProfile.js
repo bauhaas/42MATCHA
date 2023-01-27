@@ -8,7 +8,7 @@ import IntroForm from "./IntroForm";
 import axios from 'axios';
 import api from '../../../ax';
 import { useDispatch } from 'react-redux';
-import { removeFile, setFiles, setUser, updateFiles } from "../../../userSlice";
+import { setUser, updateFiles } from "../../../userSlice";
 import { AiOutlineCheck, AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
 
 const InitProfile = ({user}) => {

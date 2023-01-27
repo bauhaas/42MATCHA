@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState, useRef } from 'react';
+import { useRef } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline'
 const PictureForm = ({pictures, setPictures, setToUpload }) => {
     const fileInputRef = useRef(null);

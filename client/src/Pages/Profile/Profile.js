@@ -1,8 +1,5 @@
 import { useParams, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-
-import jwt_decode from "jwt-decode";
-
+import { useEffect } from 'react';
 import ProfileDetails from './Components/ProfileDetails';
 import NavBar from '../Navbar/NavBar';
 
@@ -13,14 +10,9 @@ const Profile = () => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
 
-
-    const [userId, setUserId] = useState();
     useEffect(() => {
-        if (token) {
+        if (token)
             localStorage.setItem('jwt', token);
-            const user = jwt_decode(token);
-            setUserId(user.id);
-        }
     }, [token]);
 
     return (

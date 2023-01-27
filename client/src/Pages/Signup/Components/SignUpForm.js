@@ -2,10 +2,6 @@ import React, { useContext, useState } from "react"
 import useValidator from '../../../Hooks/useValidator';
 import api from "../../../ax";
 import position from '../../../Context/position'
-
-import { setUser } from "../../../userSlice";
-import { useDispatch } from 'react-redux';
-import jwt_decode from "jwt-decode";
 import {useNavigate} from 'react-router-dom';
 import { ErrorContext } from "../../../Context/error";
 
@@ -15,7 +11,6 @@ const SignUpForm = ({email, setEmail, setHasSignedUP}) => {
 
     let navigate = useNavigate();
 
-    const dispatch = useDispatch();
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [password, setPassword] = useState("");

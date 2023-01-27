@@ -4,11 +4,10 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Chip from '@mui/material/Chip';
 import { GoPrimitiveDot } from 'react-icons/go';
-import { AdjustmentsVerticalIcon, HeartIcon as HeartOutlineIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartOutlineIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, ExclamationCircleIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/solid';
-// import axios from 'axios';
 import api from '../../../ax';
-import { getUserById, blockUserById, likeUserById, unlikeUserById } from '../../../api';
+import { blockUserById, likeUserById, unlikeUserById } from '../../../api';
 import socket from '../../../Context/socket'
 
 const InteractionButtons = ({ user, isMatched, filled, setFilledIconp }) => {

@@ -6,10 +6,8 @@ import { BellIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 
 import  socket  from '../../Context/socket'
-// import axios from 'axios';
 import Avatar from "../../SharedComponents/Avatar";
 import { setConvs } from "../../convSlice";
-import { persistor } from "../../store";
 import api from "../../ax";
 import { setUser } from "../../userSlice";
 

@@ -1,12 +1,5 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
-import { RiSendPlaneFill } from 'react-icons/ri'
-import socket from '../../../Context/socket';
-// import axios from 'axios';
+import React from 'react';
 
-import Avatar from '../../../SharedComponents/Avatar';
-import MessageBubble from './MessageBubble';
 import NavBar from '../../Navbar/NavBar';
 import Conversation2 from './Conversation2';
 

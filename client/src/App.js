@@ -1,4 +1,3 @@
-import Navbar from './Pages/Navbar/NavBar';
 
 import Home from './Pages/Home/Home';
 import Signin from './Pages/Signin/Signin';
@@ -8,8 +7,8 @@ import Profile from './Pages/Profile/Profile';
 import Chat from './Pages/Chat/Chat';
 import Conversation from './Pages/Chat/Components/Conversation';
 import Settings from './Pages/Settings/Settings';
-import { Route, Routes, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { useContext, useState, useLayoutEffect } from 'react';
+import { Route, Routes, Navigate } from 'react-router-dom';
+import { useState } from 'react';
 import socket from './Context/socket';
 import Password from './Pages/Settings/Components/Password';
 import LikedUsers from './Pages/Settings/Components/LikedUsers';
