@@ -30,10 +30,11 @@ Through this project, we learned about:
 
 ## Table of Contents
 
-- [Installation](https://www.notion.so/Matcha-0ba46308b4a64a4198089ca7355e8c4b)
-- [Usage](https://www.notion.so/Matcha-0ba46308b4a64a4198089ca7355e8c4b)
-- [Features](https://www.notion.so/Matcha-0ba46308b4a64a4198089ca7355e8c4b)
-- [Contact](https://www.notion.so/Matcha-0ba46308b4a64a4198089ca7355e8c4b)
+- [Installation](#installation)
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [To go further](#to-go-further)
+- [Contact](#contact)
 
 ## Installation
 
@@ -115,6 +116,46 @@ NODEMAILER_PASS=google_app_password
 
  ![Untitled](assets/images/screenshots/signup.png)
 </details>
+
+<details>
+  <summary>Home page</summary>
+  <details>
+    <summary>mobile view</summary>
+      <div align="center">
+        <img src="assets/images/screenshots/home_mobile.png" height="400">
+        <img src="assets/images/screenshots/searchfilters_mobile.png" height="400">
+      </div>
+  </details>
+  <details>
+    <summary>desktop view</summary>
+    <img src="assets/images/screenshots/home_desktop.png" width="600">
+  </details>
+</details>
+
+<details>
+  <summary>Settings page</summary>
+  <details>
+    <summary>mobile view</summary>
+      <div align="center">
+        <img src="assets/images/screenshots/settings_mobile.png" height="400">
+        <img src="assets/images/screenshots/settingsUserslist_mobile.png" height="400">
+      </div>
+  </details>
+  <details>
+    <summary>desktop view</summary>
+     <img src="assets/images/screenshots/settings_desktop.png" width="600">
+  </details>
+</details>
+
+<details>
+  <summary>Chat page</summary>
+  <div align="center">
+    <img src="assets/images/screenshots/chatlist_mobile.png" height="400">
+    <img src="assets/images/screenshots/chat_mobile.png" height="400">
+  </div>
+
+</details>
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Features
